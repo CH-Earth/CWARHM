@@ -1,0 +1,2 @@
+# Make the initial folder structure
+Both notebook and Python script need to be modified to point to the right control file. When executed, both will copy this control file into `control_active.txt` and create the basic folder structure on the path specified in the control file. In particular, this creates folders for the catchment and river network shapefiles that are needed for subsequent steps. The user must manually copy the `.shp` files into these directories.

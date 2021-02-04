@@ -19,6 +19,12 @@ This section gives a brief description of the contents and purpose of each folde
 ### 0_controlFiles
 Contains control files in which the user can specify folder locations for data downloads, model setting files and model simulations. Scripts in the `summaWorkflow_public` repository will look for the file 'control_active.txt' by default.
 
+### 1_folderPrep
+Contains code to set up the basic folder structure in the data directory specified in the control file. In particular, this generates the folders where shapefiles of the catchment(s) and river network need to go.
+
+### 2_install
+Contains scripts that create local clones of the SUMMA and mizuRoute GitHub repositories. Also contains scripts that show how both were compiled on the Unviersity of Saskatchewan's HPC cluster "Copernicus".
+
 
 
 
