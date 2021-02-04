@@ -10,8 +10,10 @@ domain_name            | BowAtBanff                                      # Used 
 # Install settings
 github_summa           | https://github.com/ncar/summa         # Replace this with the path to your own fork if you forked the repo
 github_mizuroute       | https://github.com/ncar/mizuroute     # Replace this with the path to your own fork if you forked the repo
-install_path_summa     | default                               # if 'default', clones source code into root_path/installs/summa. Otherwise needs full path, e.g. C:\my\path\to\summa
-install_path_mizuroute | default                               # if 'default', clones source code into root_path/installs/smizuroute. Otherwise needs full path, e.g. C:\my\path\to\mizuroute
+install_path_summa     | default                               # if 'default', clones source code into root_path/installs/summa. Otherwise needs full path, e.g. /home/user/path/to/summa
+install_path_mizuroute | default                               # if 'default', clones source code into root_path/installs/mizuroute. Otherwise needs full path, e.g. /home/user/path/to/mizuRoute
+exe_name_summa         | summa.exe                             # name of the compiled executable
+exe_name_mizuroute     | mizuroute.exe                         # name of the compiled executable
 
 
 # Forcing settings
