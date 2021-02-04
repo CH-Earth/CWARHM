@@ -1,0 +1,46 @@
+# SUMMA workflow setting file.
+# Lines starting with '#' are ignored.
+
+# Domain settings
+root_path             | C:\Globus endpoint\summaWorkflow_data # Root folder where data will be stored
+domain_name           | BowAtBanff                            # Used as part of the root folder name for the prepared data
+
+
+
+
+
+# Folder structure
+# Example of the resulting folder structure in "root_path". New domains will go into their own folder.
+
+- summWorkflow_data
+   |
+   |_ domain_BowAtBanff
+   |   |
+   |   |_ shapefiles
+   |   |   |_ catchment
+   |   |   |_ catchment_intersection
+   |   |   |   |_ with_forcing
+   |   |   |   |_ with_soil
+   |   |   |   |_ with_veg
+   |   |   |_ forcing
+   |   |   |_ river_network
+   |   |
+   |   |_ forcing
+   |   |   |_ 1_raw_data
+   |   |   |_ 2_merged_data
+   |   |   |_ 3_SUMMA_input
+   |   |
+   |   |_ parameters
+   |   |   |_ soilclass
+   |   |       |_ 
+   |   |   |_ vegclass
+   |   |       |_
+   |   |
+   |   |_ simulations
+   |       |_run1
+   |          |_ 1_summa
+   |          |_ 2_mizuRoute
+   |
+   |_ installs
+       |_ mizuRoute
+       |_ SUMMA

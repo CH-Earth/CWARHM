@@ -1,0 +1,9 @@
+# Logs and databases #
+######################
+slurm-*.out
+output*.out
+ERA5_createForcing_CONUS*.sh
+core.*
+
+# notebook stuff
+.ipynb_checkpoints

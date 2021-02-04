@@ -1,0 +1,71 @@
+# SUMMA workflow setting file.
+# Indicate comments on lines with settings with '#'. '|' and '#' are used as separators to find the actual setting values.
+
+
+# Domain settings
+root_path              | C:\Globus endpoint\summaWorkflow_data # Root folder where data will be stored
+domain_name            | BowAtBanff                            # Used as part of the root folder name for the prepared data
+
+
+# Install settings
+github_summa           | https://github.com/ncar/summa         # Replace this with the path to your own fork if you forked the repo
+github_mizuroute       | https://github.com/ncar/mizuroute     # Replace this with the path to your own fork if you forked the repo
+install_path_summa     | default                               # if 'default', clones source code into root_path/installs/summa. Otherwise needs full path, e.g. C:\my\path\to\summa
+install_path_mizuroute | default                               # if 'default', clones source code into root_path/installs/smizuroute. Otherwise needs full path, e.g. C:\my\path\to\mizuroute
+
+
+# Forcing settings
+
+
+
+
+# Parameters: SOILGRIDS
+
+
+# Parameters: MODIS
+
+
+# Parameters: MERIT Hydro DEM
+
+
+# 
+
+
+
+# Folder structure
+# Example of the resulting folder structure in "root_path". New domains will go into their own folder.
+
+- summWorkflow_data
+   |
+   |_ domain_BowAtBanff
+   |   |
+   |   |_ shapefiles
+   |   |   |_ catchment
+   |   |   |_ catchment_intersection
+   |   |   |   |_ with_forcing
+   |   |   |   |_ with_soil
+   |   |   |   |_ with_veg
+   |   |   |_ forcing
+   |   |   |_ river_network
+   |   |
+   |   |_ forcing
+   |   |   |_ 1_raw_data
+   |   |   |_ 2_merged_data
+   |   |   |_ 3_SUMMA_input
+   |   |
+   |   |_ parameters
+   |   |   |_ soilclass
+   |   |       |_ 
+   |   |   |_ vegclass
+   |   |       |_
+   |   |
+   |   |_ settings
+   |   |
+   |   |_ simulations
+   |       |_run1
+   |          |_ 1_summa
+   |          |_ 2_mizuRoute
+   |
+   |_ installs
+       |_ mizuRoute
+       |_ SUMMA
