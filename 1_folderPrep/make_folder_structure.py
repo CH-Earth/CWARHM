@@ -67,7 +67,7 @@ Path( rootPath / domainFolder / 'shapefiles/river_network' ).mkdir(parents=True,
 # --- Code provenance
 # Generates a basic log file in the domain folder and copies the control file and itself there.
 # Create a log folder
-logFolder = '_log'
+logFolder = '_workflow_log'
 Path( rootPath / domainFolder / logFolder ).mkdir(parents=True, exist_ok=True)
 
 # Copy the control file
