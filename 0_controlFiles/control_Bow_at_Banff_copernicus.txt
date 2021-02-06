@@ -2,22 +2,28 @@
 # Indicate comments on lines with settings with '#'. '|' and '#' are used as separators to find the actual setting values.
 
 
-# Domain settings
+# Modeling domain settings
 root_path              | /project/gwf/gwf_cmt/wknoben/summaWorkflow_data # Root folder where data will be stored
 domain_name            | BowAtBanff                                      # Used as part of the root folder name for the prepared data
 
 
+# Shapefile folder settings
+catchment_shp_path     | default                                         # if 'default', uses 'root_path/domain_[name]/shapefiles/catchment'. Otherwise needs full path, e.g. '/home/user/path/to/shapefile'
+catchment_shp_name     | bow_distributed_elevation_zone.shp              # name of the catchment shapefile
+river_network_path     | default                                         # if 'default', uses 'root_path/domain_[name]/shapefiles/river_network'. Otherwise needs full path, e.g. '/home/user/path/to/shapefile'
+river_network_shp_name | bow_river_network_from_merit_hydro.shp          # name of the river network shapefile
+
 # Install settings
-github_summa           | https://github.com/ncar/summa         # Replace this with the path to your own fork if you forked the repo
-github_mizuroute       | https://github.com/ncar/mizuroute     # Replace this with the path to your own fork if you forked the repo
-install_path_summa     | default                               # if 'default', clones source code into root_path/installs/summa. Otherwise needs full path, e.g. /home/user/path/to/summa
-install_path_mizuroute | default                               # if 'default', clones source code into root_path/installs/mizuroute. Otherwise needs full path, e.g. /home/user/path/to/mizuRoute
-exe_name_summa         | summa.exe                             # name of the compiled executable
-exe_name_mizuroute     | mizuroute.exe                         # name of the compiled executable
+github_summa           | https://github.com/ncar/summa                   # Replace this with the path to your own fork if you forked the repo
+github_mizuroute       | https://github.com/ncar/mizuroute               # Replace this with the path to your own fork if you forked the repo
+install_path_summa     | default                                         # if 'default', clones source code into 'root_path/installs/summa'. Otherwise needs full path, e.g. '/home/user/path/to/summa'
+install_path_mizuroute | default                                         # if 'default', clones source code into 'root_path/installs/mizuroute'. Otherwise needs full path, e.g. '/home/user/path/to/mizuRoute'
+exe_name_summa         | summa.exe                                       # name of the compiled executable
+exe_name_mizuroute     | mizuroute.exe                                   # name of the compiled executable
 
 
 # Forcing settings
-
+forcing_raw_path       | default                                         # if 'default', uses 'root_path/domain_[name]/forcing/1_raw_data'. Otherwise needs full path, e.g. '/home/user/path/to/forcing'
 
 
 
@@ -34,7 +40,7 @@ exe_name_mizuroute     | mizuroute.exe                         # name of the com
 
 
 
-# Folder structure
+# Default folder structure
 # Example of the resulting folder structure in "root_path". New domains will go into their own folder.
 
 - summWorkflow_data
