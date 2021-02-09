@@ -2,6 +2,19 @@
 
 The ERA5 product is a reanalysis data set. See documentation (link below) for details about which observations are used and how they are combined in the reanalysis. ERA5's forcing variables (called parameters in the ERA5 documentation) can be either instantaneous or time-step averages (see the data documentation). They are provided at various heights: surface and single level for every of the 137 air layers that ERA5 uses. 
 
+## Code setup
+### Notebooks
+Calls the control file to find download path, download period and spatial domain. Downloads data and makes log file.
+
+### Python and shell scripts
+Shell scripts call the control file to find download path, download period and spatial domain. They then call the relevant Python script with path, download year and spatial domain as input arguments. Python script downloads data. Shell script makes log files.
+
+
+## Assumptions not specified in `control_active.txt`
+
+- Downloads are of hourly data in monthly chunks. Requires changes to download scripts to adjust;
+- Maximum number of parallel download jobs is set to 5. Requires minor changes to `run_download_[data]_annual.sh` to adjust.
+
 
 ## Forcing needed to run SUMMA
 
