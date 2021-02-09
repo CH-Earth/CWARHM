@@ -2,20 +2,33 @@
 # Indicate comments on lines with settings with '#'. '|' and '#' are used as separators to find the actual setting values.
 
 
-# Domain settings
-root_path              | C:\Globus endpoint\summaWorkflow_data # Root folder where data will be stored
-domain_name            | BowAtBanff                            # Used as part of the root folder name for the prepared data
+# Modeling domain settings
+root_path              | C:\Globus endpoint\summaWorkflow_data           # Root folder where data will be stored
+domain_name            | BowAtBanff                                      # Used as part of the root folder name for the prepared data
+
+
+# Shapefile folder settings
+catchment_shp_path     | default                                         # if 'default', uses 'root_path/domain_[name]/shapefiles/catchment'. Otherwise needs full path, e.g. '/home/user/path/to/shapefile'
+catchment_shp_name     | bow_distributed_elevation_zone.shp              # name of the catchment shapefile
+river_network_path     | default                                         # if 'default', uses 'root_path/domain_[name]/shapefiles/river_network'. Otherwise needs full path, e.g. '/home/user/path/to/shapefile'
+river_network_shp_name | bow_river_network_from_merit_hydro.shp          # name of the river network shapefile
 
 
 # Install settings
-github_summa           | https://github.com/ncar/summa         # Replace this with the path to your own fork if you forked the repo
-github_mizuroute       | https://github.com/ncar/mizuroute     # Replace this with the path to your own fork if you forked the repo
-install_path_summa     | default                               # if 'default', clones source code into root_path/installs/summa. Otherwise needs full path, e.g. C:\my\path\to\summa
-install_path_mizuroute | default                               # if 'default', clones source code into root_path/installs/smizuroute. Otherwise needs full path, e.g. C:\my\path\to\mizuroute
+github_summa           | https://github.com/ncar/summa                   # Replace this with the path to your own fork if you forked the repo
+github_mizuroute       | https://github.com/ncar/mizuroute               # Replace this with the path to your own fork if you forked the repo
+install_path_summa     | default                                         # if 'default', clones source code into 'root_path/installs/summa'. Otherwise needs full path, e.g. '/home/user/path/to/summa'
+install_path_mizuroute | default                                         # if 'default', clones source code into 'root_path/installs/mizuroute'. Otherwise needs full path, e.g. '/home/user/path/to/mizuRoute'
+exe_name_summa         | summa.exe                                       # name of the compiled executable
+exe_name_mizuroute     | mizuroute.exe                                   # name of the compiled executable
 
 
 # Forcing settings
-
+forcing_raw_path       | default                                         # if 'default', uses 'root_path/domain_[name]/forcing/1_raw_data'. Otherwise needs full path, e.g. '/home/user/path/to/forcing'
+forcing_raw_time       | 1979,1979                                       # years to download: Jan-[from],Dec-[to]
+forcing_raw_space      | 51.75/-116.75/50.75/-115.5                      # coordinates to download: lat_max/lon_min/lat_min/lon_max. Should cover the shapefile completely. Note that order and use of '/' to separate values is required for cdsapi to work.
+forcing_merged_path    | default 
+forcing_summa_path     | default
 
 
 
@@ -32,7 +45,7 @@ install_path_mizuroute | default                               # if 'default', c
 
 
 
-# Folder structure
+# Default folder structure
 # Example of the resulting folder structure in "root_path". New domains will go into their own folder.
 
 - summWorkflow_data

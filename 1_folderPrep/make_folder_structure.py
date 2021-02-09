@@ -60,9 +60,22 @@ domainName = read_from_control(controlFolder/controlFile,'domain_name')
 domainFolder = 'domain_' + domainName
 Path( rootPath / domainFolder ).mkdir(parents=True, exist_ok=True)
 
-# Create a folder where the user can place shapefiles
-Path( rootPath / domainFolder / 'shapefiles/catchment' ).mkdir(parents=True, exist_ok=True)
-Path( rootPath / domainFolder / 'shapefiles/river_network' ).mkdir(parents=True, exist_ok=True)
+
+# --- Make the shapefile folders
+# Find the catchment shapefile folder in 'control_active'
+catchmentShapeFolder = read_from_control(controlFolder/controlFile,'catchment_shp_path')
+networkShapeFolder = read_from_control(controlFolder/controlFile,'river_network_path')
+
+# Specify the default paths if required
+if catchmentShapeFolder == 'default':
+    catchmentShapeFolder = 'shapefiles/catchment'
+if networkShapeFolder == 'default':
+    networkShapeFolder = 'shapefiles/river_network'
+
+# Try to make the shapefile folders; does nothing if the folder already exists
+Path( rootPath / domainFolder / catchmentShapeFolder ).mkdir(parents=True, exist_ok=True)
+Path( rootPath / domainFolder / networkShapeFolder ).mkdir(parents=True, exist_ok=True)
+
 
 # --- Code provenance
 # Generates a basic log file in the domain folder and copies the control file and itself there.
