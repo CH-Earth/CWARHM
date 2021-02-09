@@ -1,4 +1,0 @@
-# SUMMA workflow setting file.
-# Indicate comments on lines with settings with '#'. '|' and '#' are used as separators to find the actual setting values.
-
-# populate later from control_active.txt
