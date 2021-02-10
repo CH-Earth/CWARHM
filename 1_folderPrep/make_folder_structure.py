@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 '''
 SUMMA workflow: make folder structure
 Makes the initial folder structure for a given control file. All other files in the workflow will look for the file `control_active.txt` during their execution. This script:
