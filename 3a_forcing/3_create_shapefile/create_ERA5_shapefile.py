@@ -12,7 +12,6 @@ import os
 import shapefile # listed for install as "PyShp" library
 import numpy as np
 import netCDF4 as nc4
-import geopandas as gpd
 from pathlib import Path
 from shutil import copyfile
 from datetime import datetime
