@@ -132,7 +132,7 @@ for year in range(years[0],years[1]+1):
         loop_attr_copy_these = ['units','long_name','standard_name'] # we will define new values for _FillValue and missing_value when writing the .nc variables' attributes
 
         # Open the destination file and transfer information
-        with nc4.Dataset(forcingPath / data_pres) as src1, nc4.Dataset(daforcingPathta_path / data_surf) as src2, nc4.Dataset(mergePath / data_dest, "w") as dest: 
+        with nc4.Dataset(forcingPath / data_pres) as src1, nc4.Dataset(forcingPath / data_surf) as src2, nc4.Dataset(mergePath / data_dest, "w") as dest: 
     
             # === Some general attributes
             dest.setncattr('History','Created ' + time.ctime(time.time()))
@@ -290,7 +290,7 @@ logFolder = '_workflow_log'
 Path( mergePath / logFolder ).mkdir(parents=True, exist_ok=True)
 
 # Copy this script
-thisFile = 'ERA5_surface_and_pressure_level_combiner.ipynb'
+thisFile = 'ERA5_surface_and_pressure_level_combiner.py'
 copyfile(thisFile, mergePath / logFolder / thisFile);
 
 # Get current date and time
