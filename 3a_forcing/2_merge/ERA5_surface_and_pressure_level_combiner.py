@@ -66,8 +66,13 @@ mergePath = read_from_control(controlFolder/controlFile,'forcing_merged_path')
 # Specify the default paths if required
 if forcingPath == 'default':
     forcingPath = make_default_path('forcing/1_ERA5_raw_data')
+else: 
+    forcingPath = Path(forcingPath) # ensure Path() object 
+    
 if mergePath == 'default':
     mergePath = make_default_path('forcing/2_merged_data')
+else: 
+    forcingPath = Path(forcingPath) # ensure Path() object 
     
 # Make the merge folder if it doesn't exist
 mergePath.mkdir(parents=True, exist_ok=True)
