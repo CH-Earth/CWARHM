@@ -2,7 +2,7 @@
 # Indicate comments on lines with settings with '#'. '|' and '#' are used as separators to find the actual setting values.
 
 # Modeling domain settings
-root_path              | /project/gwf/gwf_cmt/wknoben/summaWorkflow_data           # Root folder where data will be stored
+root_path              | C:\Globus endpoint\summaWorkflow_data           # Root folder where data will be stored
 domain_name            | BowAtBanff                                      # Used as part of the root folder name for the prepared data
 
 
@@ -32,21 +32,16 @@ forcing_shape_name     | era5_grid.shp                                   # name 
 forcing_summa_path     | default
 
 
-# Parameters: SOILGRIDS
-
-
-# Parameters: MODIS
-
-
-# Parameters: MERIT Hydro DEM
-
-
-# 
-
+# Parameter settings
+parameter_soil_raw_path   | default                                         # if 'default', uses 'root_path/domain_[name]/parameters/soilclasses/1_SOILGRIDS_raw_data'. Otherwise needs full path, e.g. '/home/user/path/to/soil/download'
+parameter_soil_value      | mean                                            # SOILGRIDS prediction value to download. Must be one of: Q0.05, Q0.5, Q0.95, mean, uncertainty
+parameter_soil_class_path | default                                         # if 'default', uses 'root_path/domain_[name]/parameters/soilclasses/2_soil_classes'. Otherwise needs full path, e.g. '/home/user/path/to/soil/classes'
+parameter_soil_mode_path  | default                                         # if 'default', uses 'root_path/domain_[name]/parameters/soilclasses/3_mode_soil_class'. Otherwise needs full path, e.g. '/home/user/path/to/soil/class'
 
 
 # Default folder structure
-# Example of the resulting folder structure in "root_path". New domains will go into their own folder.
+# Example of the resulting folder structure in "root_path". 
+# New domains will go into their own folder.
 
 - summWorkflow_data
    |
@@ -68,16 +63,39 @@ forcing_summa_path     | default
    |   |
    |   |_ parameters
    |   |   |_ soilclass
-   |   |       |_ 
+   |   |   |   |_ 1_raw_data
+   |   |   |   |_ 2_usgs_soil_classes
+   |   |   |   |_ 3_mode_over_depth
+   |   |   |   
    |   |   |_ vegclass
-   |   |       |_
+   |   |   |   |_ 1_raw_data
+   |   |   |   |_ 2_vrt_native_crs
+   |   |   |   |_ 3_vrt_epsg_4326
+   |   |   |   |_ 4_specify_subdomain
+   |   |   |   |_ 5_multiband_vrt
+   |   |   |   |_ 6_convert_to_tif
+   |   |   |   |_ 7_mode_over_years
+   |   |   |   
+   |   |   |_ DEM
+   |   |       |_ 1_raw_data
+   |   |       |_ 2_raw_data_unpack
+   |   |       |_ 3_vrt
+   |   |       |_ 4_specify_subdomain
+   |   |       |_ 5_convert_to_tif
    |   |
    |   |_ settings
    |   |
    |   |_ simulations
    |       |_run1
-   |          |_ 1_summa
-   |          |_ 2_mizuRoute
+   |       |  |_ 1_summa
+   |       |  |_ 2_mizuRoute
+   |       |_run2
+   |
+   |_ domain_global
+   |   |_ ...
+   |
+   |_ domain_northAmerica
+   |   |_ ...
    |
    |_ installs
        |_ mizuRoute

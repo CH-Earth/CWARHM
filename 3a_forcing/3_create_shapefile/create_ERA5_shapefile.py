@@ -64,7 +64,8 @@ mergePath = read_from_control(controlFolder/controlFile,'forcing_merged_path')
 # Specify the default path if required
 if mergePath == 'default':
     mergePath = make_default_path('forcing/2_merged_data')
-    
+else: 
+    forcingPath = Path(forcingPath) # ensure Path() object     
     
 # --- Find spatial extent of domain
 # Find which locations to download
@@ -84,6 +85,8 @@ shapePath = read_from_control(controlFolder/controlFile,'forcing_shape_path')
 # Specify the default path if required
 if shapePath == 'default':
     shapePath = make_default_path('shapefiles/forcing')
+else: 
+    forcingPath = Path(forcingPath) # ensure Path() object 
     
 # Find name of the new shapefil
 shapeName = read_from_control(controlFolder/controlFile,'forcing_shape_name')
