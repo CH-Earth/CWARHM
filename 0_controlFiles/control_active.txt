@@ -2,7 +2,7 @@
 # Indicate comments on lines with settings with '#'. '|' and '#' are used as separators to find the actual setting values.
 
 # Modeling domain settings
-root_path              | /project/gwf/gwf_cmt/wknoben/summaWorkflow_data           # Root folder where data will be stored
+root_path              | C:\Globus endpoint\summaWorkflow_data           # Root folder where data will be stored
 domain_name            | BowAtBanff                                      # Used as part of the root folder name for the prepared data
 
 

@@ -79,7 +79,7 @@ for file in os.listdir(landClassPath):
         source_file = file
 
 # New file
-dest_file = 'NA_MCD12Q1_mode_of_years.tif'
+dest_file = 'MCD12Q1_mode_of_years.tif'
 
 
 # --- Function definition
@@ -137,6 +137,7 @@ def write_geotif_sameDomain(src_file,des_file,des_data):
 
 # -------------------------------------------------------------
 
+# ---  Find mode land class 
 # Get land use classes for each year
 land_use_classes = np.dstack((open_geotif( str(landClassPath/source_file) ,1)[0], \
                               open_geotif( str(landClassPath/source_file) ,2)[0], \
