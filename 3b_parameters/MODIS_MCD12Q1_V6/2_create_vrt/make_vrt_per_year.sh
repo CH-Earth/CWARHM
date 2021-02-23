@@ -35,7 +35,6 @@ if [ "$source_path" = "default" ]; then
 
 fi
 
-echo $source_path
 
 # --- Location where converted data needs to go
 dest_line=$(grep -m 1 "parameter_land_vrt1_path" ../../../0_controlFiles/control_active.txt) # full settings line

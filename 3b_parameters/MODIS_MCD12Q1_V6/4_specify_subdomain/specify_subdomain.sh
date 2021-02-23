@@ -4,14 +4,14 @@
 # Extract the modeling domain out of the global-cover VRTs.
 
 # load the module
-module load gdal
+module load nixpkgs/16.09  gcc/5.4.0 gdal/2.1.3
 
 
 #---------------------------------
 # Specify settings
 #---------------------------------
 
-# --- Location of raw data
+# --- Location of source VRT data
 dest_line=$(grep -m 1 "parameter_land_vrt2_path" ../../../0_controlFiles/control_active.txt) # full settings line
 source_path=$(echo ${dest_line##*|})   # removing the leading text up to '|'
 source_path=$(echo ${source_path%% #*}) # removing the trailing comments, if any are present
@@ -34,7 +34,7 @@ if [ "$source_path" = "default" ]; then
 
 fi
 
-# --- Location where converted data needs to go
+# --- Location where cropped VRT needs to go
 dest_line=$(grep -m 1 "parameter_land_vrt3_path" ../../../0_controlFiles/control_active.txt) # full settings line
 dest_path=$(echo ${dest_line##*|})   # removing the leading text up to '|'
 dest_path=$(echo ${dest_path%% #*}) # removing the trailing comments, if any are present
@@ -77,9 +77,6 @@ done <<< "$domain_full"
 # Crop the domain
 #---------------------------------
 
-# Clean any existing file_list.txt
-rm -f $dest_path//file_list.txt
-
 # Loop over all files
 for FILE_SRC in $source_path/MCD*.vrt
 do
@@ -92,9 +89,6 @@ do
 
 	# Do the cut out
 	gdal_translate -of VRT -projwin $LON_MIN $LAT_MAX $LON_MAX $LAT_MIN $FILE_SRC $FILE_DES
-
-	# Keep a list of files for the next step
-	echo $(pwd)/$FILE_DES >> $dest_path/file_list.txt
 
 done
 
@@ -109,7 +103,7 @@ mkdir -p $log_path
 
 # Log filename
 today=`date '+%F'`
-log_file="${today}_compile_log.txt"
+log_file="${today}_specify_subdomain_log.txt"
 
 # Make the log
 this_file='specify_subdomain.sh'
