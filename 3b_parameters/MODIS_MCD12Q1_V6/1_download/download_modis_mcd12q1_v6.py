@@ -5,7 +5,7 @@
 # modules
 import os
 import time
-import urllib3
+import shutil
 import requests
 from netrc import netrc
 from pathlib import Path
@@ -94,47 +94,45 @@ pwd = netrc(netrc_folder).authenticators(url)[2]
 # Get the download links from file
 file_list = open(links_file, 'r').readlines()
 
-# Count how many files we're trying to download
-for i, l in enumerate(file_list):
-    pass
-num_files = i+1 # number of downloads
+# Retry settings: connection can be unstable, so specify a number of retries
+retries_max = 100 
 
-# The server connection is somewhat unstable, so keep trying until number of files in folder matches expectations
-while len(os.listdir(modis_path)) < num_files:
+# Loop over the download files
+for file_url in file_list:
     
-    try:
-
-        # Loop over the individual files and download
-        for file_url in file_list:
+    # Make the file name
+    file_name = file_url.split('/')[-1].strip() # Get the last part of the url, strip whitespace and characters
     
-            # Make the file name
-            file_name = file_url.split('/')[-1].strip() # Get the last part of the url, strip whitespace and characters
-    
-            # Check if file already exists (i.e. interupted earlier download) and move to next file if so
-            if (modis_path / file_name).is_file():
-                continue 
-    
-            # Attempt a download
+    # Check if file already exists (i.e. interupted earlier download) and move to next file if so
+    if (modis_path / file_name).is_file():
+        continue 
+        
+    # Make sure the connection is re-tried if it fails
+    retries_cur = 1
+    while retries_cur <= retries_max:
+        try:
+            # Send a HTTP request to the server and save the HTTP response in a response object called resp
+            # 'stream = True' ensures that only response headers are downloaded initially (and not all file contents too, which are 2GB+)
             with requests.get(file_url.strip(), verify=True, stream=True, auth=(usr,pwd)) as response:
-    
+        
                 # Decode the response
                 response.raw.decode_content = True
-                content = response.raw
-    
-                # Save the response to file
+                content = response.raw        
+        
+                # Write to file
                 with open(modis_path / file_name, 'wb') as data:
-                    while True:
-                        chunk = content.read(16 * 1024)
-                        if not chunk:
-                            break
-                        data.write(chunk)
-                
-            # Progress
-            print('Successfully downloaded: {}'.format(file_name))
-            time.sleep(3) # sleep for a bit so we don't overwhelm the server
+                    shutil.copyfileobj(content, data)
             
-    except: 
-        print('--- Restarting download attempt ---')  
+                # Progress
+                print('Successfully downloaded: {}'.format(file_name))
+                time.sleep(3) # sleep for a bit so we don't overwhelm the server
+                
+        except:
+            print('Error downloading ' + file_name + ' on try ' + str(retries_cur))
+            retries_cur += 1
+            continue
+        else:
+            break  
         
 
 # --- Code provenance
