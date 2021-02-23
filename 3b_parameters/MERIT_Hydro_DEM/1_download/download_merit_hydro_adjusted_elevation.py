@@ -1,117 +1,197 @@
-# Script to download the MERIT DEM data
-# Source: http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_DEM/index.html
+# Download MERIT Hydro adjusted elevation data
 #
-# Note: this requires the user to be registered, which can be done through the website
+# Data source: http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_DEM/index.html. Download requires the user to be registered, which can be done through the website
+#
+# Workflow:
+# - Find data locations;
+# - Determine the files that need to be downloaded to cover the modelling domain;
+# - Download data.
 
-# modules
+# Modules
+from datetime import datetime
+from shutil import copyfile
+from pathlib import Path
+import numpy as np
 import requests
-import os  
+import shutil
+import os
 
-# login details
-user = 'hydrography'
-login = 'rivernetwork'
 
-# Locations
-loc_src = 'http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/distribute/v1.0/'
-loc_des = '/project/6008034/Model_Output/ClimateForcingData/MERIT_Hydro_adjusted_elevation_raw/'
+# --- Control file handling
+# Easy access to control file folder
+controlFolder = Path('../../../0_controlFiles')
 
-# Check if the destination directory exists and create it if not
-if not os.path.exists(loc_des):
-    os.makedirs(loc_des)
+# Store the name of the 'active' file in a variable
+controlFile = 'control_active.txt'
 
-# specify a list of files to download
-file_list = ['elv_n60w180.tar',
-             'elv_n60w150.tar',
-             'elv_n60w120.tar',
-             'elv_n60w090.tar',
-             'elv_n60w060.tar',
-             'elv_n60w030.tar',
-             'elv_n60e000.tar',
-             'elv_n60e030.tar',
-             'elv_n60e060.tar',
-             'elv_n60e090.tar',
-             'elv_n60e120.tar',
-             'elv_n60e150.tar',
-             'elv_n30w180.tar',
-             'elv_n30w150.tar',
-             'elv_n30w120.tar',
-             'elv_n30w090.tar',
-             'elv_n30w060.tar',
-             'elv_n30w030.tar',
-             'elv_n30e000.tar',
-             'elv_n30e030.tar',
-             'elv_n30e060.tar',
-             'elv_n30e090.tar',
-             'elv_n30e120.tar',
-             'elv_n30e150.tar',
-             'elv_n00w180.tar',
-             'elv_n00w120.tar',
-             'elv_n00w090.tar',
-             'elv_n00w060.tar',
-             'elv_n00w030.tar',
-             'elv_n00e000.tar',
-             'elv_n00e030.tar',
-             'elv_n00e060.tar',
-             'elv_n00e090.tar',
-             'elv_n00e120.tar',
-             'elv_n00e150.tar',
-             'elv_s30w180.tar',
-             'elv_s30w150.tar',
-             'elv_s30w120.tar',
-             'elv_s30w090.tar',
-             'elv_s30w060.tar',
-             'elv_s30w030.tar',
-             'elv_s30e000.tar',
-             'elv_s30e030.tar',
-             'elv_s30e060.tar',
-             'elv_s30e090.tar',
-             'elv_s30e120.tar',
-             'elv_s30e150.tar',
-             'elv_s60w180.tar',
-             'elv_s60w090.tar',
-             'elv_s60w060.tar',
-             'elv_s60w030.tar',
-             'elv_s60e000.tar',
-             'elv_s60e030.tar',
-             'elv_s60e060.tar',
-             'elv_s60e090.tar',
-             'elv_s60e120.tar',
-             'elv_s60e150.tar']
-
-# loop over the list and download each item
-for item in file_list:
-
-    # if file already exists in destination, move to next file
-    if os.path.isfile(loc_des + item):
-        continue
-
-    # specify the url to get
-    file_url = loc_src + item
-
-    # Make sure the connection is re-tried if it fails
-    retries_max = 1
-    retries_cur = 1
-    while retries_cur <= retries_max:
-        try: 
-
-            # Send a HTTP request to the server and save the HTTP response in a response object called resp
-            # 'stream = True' ensures that only response headers are downloaded initially (and not all file contents too, which are 2GB+)
-            resp = requests.get(file_url, auth=(user, login), stream=True)  
-
-            # When fully downloaded, write to file
-            if resp.status_code == 200:
-
-                # write the contents of the response (r.content) to file ...
-                with open(loc_des + item,"wb") as f:
-                    f.write(resp.raw.read())
-
-            # print a completion message
-            print('Successfully downloaded ' + file_url)
-
-        except:
-            print('Error downloading ' + file_url + ' on try ' + str(retries_cur))
-            retries_cur += 1
-            continue
-        else:
+# Function to extract a given setting from the control file
+def read_from_control( file, setting ):
+    
+    # Open 'control_active.txt' and ...
+    for line in open(file):
+        
+        # ... find the line with the requested setting
+        if setting in line:
             break
+    
+    # Extract the setting's value
+    substring = line.split('|',1)[1]      # Remove the setting's name (split into 2 based on '|', keep only 2nd part)
+    substring = substring.split('#',1)[0] # Remove comments, does nothing if no '#' is found
+    substring = substring.strip()         # Remove leading and trailing whitespace, tabs, newlines
+    
+    # Return this value    
+    return substring
+    
+# Function to specify a default path
+def make_default_path(suffix):
+    
+    # Get the root path
+    rootPath = Path( read_from_control(controlFolder/controlFile,'root_path') )
+    
+    # Get the domain folder
+    domainName = read_from_control(controlFolder/controlFile,'domain_name')
+    domainFolder = 'domain_' + domainName
+    
+    # Specify the forcing path
+    defaultPath = rootPath / domainFolder / suffix
+    
+    return defaultPath
+    
+    
+# --- Find where to save the files
+# Find the path where the raw files need to go
+merit_path = read_from_control(controlFolder/controlFile,'parameter_dem_raw_path')
 
+# Specify the default paths if required 
+if merit_path == 'default':
+    merit_path = make_default_path('parameters/dem/1_MERIT_raw_data') # outputs a Path()
+else:
+    merit_path = Path(merit_path) # make sure a user-specified path is a Path()
+    
+# Make the folder if it doesn't exist
+merit_path.mkdir(parents=True, exist_ok=True)
+
+
+# --- Find the download area and which MERIT packages cover this area
+# Get the download url info
+merit_url = read_from_control(controlFolder/controlFile,'parameter_dem_main_url')
+merit_template = read_from_control(controlFolder/controlFile,'parameter_dem_file_template')
+
+# Find which locations to download
+coordinates = read_from_control(controlFolder/controlFile,'forcing_raw_space')
+
+# Split coordinates into the format the download interface needs
+coordinates = coordinates.split('/')
+
+# Store coordinates as floats in individual variables
+domain_min_lon = np.array(float(coordinates[1]))
+domain_max_lon = np.array(float(coordinates[3]))
+domain_min_lat = np.array(float(coordinates[2]))
+domain_max_lat = np.array(float(coordinates[0]))
+
+# Define the edges of the download areas
+lon_right_edge  = np.array([-150,-120, -90,-60,-30,  0,30,60,90,120,150,180])
+lon_left_edge   = np.array([-180,-150,-120,-90,-60,-30, 0,30,60, 90,120,150])
+lat_bottom_edge = np.array([-60,-30,0, 30,60]) # NOTE: latitudes -90 to -60 are NOT part of the MERIT domain
+lat_top_edge    = np.array([-30,  0,30,60,90]) 
+
+# Define the download variables
+dl_lon_all = np.array(['w180','w150','w120','w090','w060','w030','e000','e030','e060','e090','e120','e150'])
+dl_lat_all = np.array(['s60','s30','n00','n30','n60'])
+
+# Find the lower-left corners of each download square
+dl_lons = dl_lon_all[(domain_min_lon < lon_right_edge) & (domain_max_lon > lon_left_edge)]
+dl_lats = dl_lat_all[(domain_min_lat < lat_top_edge) & (domain_max_lat > lat_bottom_edge)]
+
+
+# --- Get authentication info
+# Open the login details file and store as a dictionary
+merit_login = {}
+with open(os.path.expanduser("~/.merit")) as file:
+    for line in file:
+        (key, val) = line.split(':')
+        merit_login[key] = val.strip() # remove whitespace, newlines
+        
+# Get the authentication details
+usr = merit_login['name']
+pwd = merit_login['pass']
+
+
+# --- Do the downloads
+# Retry settings
+retries_max = 10
+
+# Loop over the download files
+for dl_lon in dl_lons:
+    for dl_lat in dl_lats:
+        
+        # Skip those combinations for which no MERIT data exists
+        if (dl_lat == 'n00' and dl_lon == 'w150') or \
+           (dl_lat == 's60' and dl_lon == 'w150') or \
+           (dl_lat == 's60' and dl_lon == 'w120'):
+            continue
+        
+        # Make the download URL
+        file_url = (merit_url + merit_template).format(dl_lat,dl_lon)
+        
+        # Extract the filename from the URL
+        file_name = file_url.split('/')[-1].strip() # Get the last part of the url, strip whitespace and characters
+        
+        # If file already exists in destination, move to next file
+        if os.path.isfile(merit_path / file_name):
+            continue
+            
+        # Make sure the connection is re-tried if it fails
+        retries_cur = 1
+        while retries_cur <= retries_max:
+            try: 
+
+                # Send a HTTP request to the server and save the HTTP response in a response object called resp
+                # 'stream = True' ensures that only response headers are downloaded initially (and not all file contents too, which are 2GB+)
+                with requests.get(file_url.strip(), auth=(usr, pwd), stream=True) as response:
+    
+                    # Decode the response
+                    response.raw.decode_content = True
+                    content = response.raw
+    
+                    # Write to file
+                    with open(merit_path / file_name, 'wb') as data:
+                        shutil.copyfileobj(content, data)
+
+                    # print a completion message
+                    print('Successfully downloaded ' + file_url)
+
+            except:
+                print('Error downloading ' + file_url + ' on try ' + str(retries_cur))
+                retries_cur += 1
+                continue
+            else:
+                break
+                
+                
+# --- Code provenance
+# Generates a basic log file in the domain folder and copies the control file and itself there.
+
+# Set the log path and file name
+logPath = merit_path
+log_suffix = '_merit_dem_download_log.txt'
+
+# Create a log folder
+logFolder = '_workflow_log'
+Path( logPath / logFolder ).mkdir(parents=True, exist_ok=True)
+
+# Copy this script
+thisFile = 'download_merit_hydro_adjusted_elevation.py'
+copyfile(thisFile, logPath / logFolder / thisFile);
+
+# Get current date and time
+now = datetime.now()
+
+# Create a log file 
+logFile = now.strftime('%Y%m%d') + log_suffix
+with open( logPath / logFolder / logFile, 'w') as file:
+    
+    lines = ['Log generated by ' + thisFile + ' on ' + now.strftime('%Y/%m/%d %H:%M:%S') + '\n',
+             'Downloaded MERIT Hydro adjusted elevation for area (lat_max, lon_min, lat_min, lon_max) [{}].'.format(coordinates)]
+    for txt in lines:
+        file.write(txt) 

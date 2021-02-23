@@ -1,10 +1,10 @@
 # GDAL doc: https://gdal.org/programs/gdalwarp.html
-# MODIS doc: https://lpdaac.usgs.gov/documents/101/MCD12_User_Guide_V6.pdf
+# MERIT doc: http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/
 
-# Extract the modeling domain out of the global-cover VRTs.
+# Extract the modeling domain out of the larger-domain VRT.
 
-# load the module
-module load nixpkgs/16.09  gcc/5.4.0 gdal/2.1.3
+# load gdal
+module load nixpkgs/16.09 gcc/5.4.0  gdal/2.1.3
 
 
 #---------------------------------
@@ -12,7 +12,7 @@ module load nixpkgs/16.09  gcc/5.4.0 gdal/2.1.3
 #---------------------------------
 
 # --- Location of source VRT data
-dest_line=$(grep -m 1 "parameter_land_vrt2_path" ../../../0_controlFiles/control_active.txt) # full settings line
+dest_line=$(grep -m 1 "parameter_dem_vrt1_path" ../../../0_controlFiles/control_active.txt) # full settings line
 source_path=$(echo ${dest_line##*|})   # removing the leading text up to '|'
 source_path=$(echo ${source_path%% #*}) # removing the trailing comments, if any are present
 
@@ -30,12 +30,12 @@ if [ "$source_path" = "default" ]; then
  domain_name=$(echo ${domain_name%% #*})
  
  # source path
- source_path="${root_path}/domain_${domain_name}/parameters/landclass/3_vrt_epsg_4326"
+ source_path="${root_path}/domain_${domain_name}/parameters/dem/3_vrt"
 
 fi
 
 # --- Location where cropped VRT needs to go
-dest_line=$(grep -m 1 "parameter_land_vrt3_path" ../../../0_controlFiles/control_active.txt) # full settings line
+dest_line=$(grep -m 1 "parameter_dem_vrt2_path" ../../../0_controlFiles/control_active.txt) # full settings line
 dest_path=$(echo ${dest_line##*|})   # removing the leading text up to '|'
 dest_path=$(echo ${dest_path%% #*}) # removing the trailing comments, if any are present
 
@@ -53,11 +53,12 @@ if [ "$dest_path" = "default" ]; then
  domain_name=$(echo ${domain_name%% #*})
  
  # destination path
- dest_path="${root_path}/domain_${domain_name}/parameters/landclass/4_domain_vrt_epsg_4326"
+ dest_path="${root_path}/domain_${domain_name}/parameters/dem/4_domain_vrt"
 fi
 
 # Make destination directory 
 mkdir -p $dest_path
+
 
 # --- Find dimensions of modeling domain
 domain_line=$(grep -m 1 "forcing_raw_space" ../../../0_controlFiles/control_active.txt) # full settings line
@@ -77,20 +78,17 @@ done <<< "$domain_full"
 # Crop the domain
 #---------------------------------
 
-# Loop over all files
-for FILE_SRC in $source_path/MCD*.vrt
-do
+# Find the source file
+source_file=$(find $source_path/*.vrt)
 
-	# Extract the filename
-	FILENAME=$(basename -- $FILE_SRC)
+# Extract the filename
+filename=$(basename -- $source_file)
 
-	# construct the destination file
-	FILE_DES=$dest_path/"domain_"$FILENAME
+# Make the output filename
+dest_file=$dest_path/"domain_"$filename
 
-	# Do the cut out
-	gdal_translate -of VRT -projwin $LON_MIN $LAT_MAX $LON_MAX $LAT_MIN $FILE_SRC $FILE_DES
-
-done
+# Do the cut out
+gdal_translate -of VRT -projwin $LON_MIN $LAT_MAX $LON_MAX $LAT_MIN $source_file $dest_file
 
 
 #---------------------------------
@@ -112,6 +110,9 @@ echo 'Cropped VRTs to modeling domain.' >> $log_path/$log_file # 2nd line, appen
 
 # Copy this file to log directory
 cp $this_file $log_path
+
+
+
 
 
 
