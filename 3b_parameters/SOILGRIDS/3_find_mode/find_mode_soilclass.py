@@ -55,7 +55,7 @@ soilClassPath = read_from_control(controlFolder/controlFile,'parameter_soil_clas
 
 # Specify the default paths if required 
 if soilClassPath == 'default':
-    soilClassPath = make_default_path('parameters/soilclass/2_soil_classes') # outputs a Path()
+    soilClassPath = make_default_path('parameters/soilclass/2_usgs_soil_classes') # outputs a Path()
 else:
     soilClassPath = Path(soilClassPath) # make sure a user-specified path is a Path()
     
