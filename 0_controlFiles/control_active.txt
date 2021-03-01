@@ -42,7 +42,7 @@ forcing_summa_path     | default                # currently unused
 parameter_soil_raw_path     | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/soilclass/1_SOILGRIDS_raw_data'.
 parameter_soil_value        | mean                                        # SOILGRIDS prediction value to download. Must be one of: Q0.05, Q0.5, Q0.95, mean, uncertainty.
 parameter_soil_class_path   | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/soilclass/2_usgs_soil_classes'.
-parameter_soil_mode_path    | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/soilclass/3_mode_soil_class'..
+parameter_soil_mode_path    | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/soilclass/3_mode_soil_class'.
 
 # Parameter settings - land
 parameter_land_raw_path     | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/landclass/1_MODIS_raw_data'.
