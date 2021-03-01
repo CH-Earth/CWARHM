@@ -6,11 +6,16 @@
 
 # Note that ERA5 data should be thought of as being provided for a specific point in space. These points are the lat/lon coordinates found as netcdf dimensions in the data files. Here, these coordinates will act as center points for a grid. Each point is assumed to be representative for an equal-sized area around itself. See: https://confluence.ecmwf.int/display/CKB/ERA5%3A+What+is+the+spatial+reference
 
+# We'll also add the elevation of each ERA5 grid cell for later temperature lapse rates. As per ERA5 docs, geopotential `[m^2 s^-2]` can be divided by `g=9.80665` `[m s^-2]` to obtain ERA5 elevation in `[m]`. Source: https://confluence.ecmwf.int/display/CKB/ERA5%3A+surface+elevation+and+orography#ERA5:surfaceelevationandorography-Howtocalculatesurfacegeopotentialheight
+
+# Acknowledgements
+#The code to generate the shapefile is inspired by a function from the CANDEX toolbox: https://github.com/ShervanGharari/candex. 
 
 # modules
 import os
 import shapefile # listed for install as "PyShp" library
 import numpy as np
+import xarray as xr
 import netCDF4 as nc4
 from pathlib import Path
 from shutil import copyfile
@@ -67,6 +72,7 @@ if mergePath == 'default':
 else: 
     forcingPath = Path(forcingPath) # ensure Path() object     
     
+    
 # --- Find spatial extent of domain
 # Find which locations to download
 coordinates = read_from_control(controlFolder/controlFile,'forcing_raw_space')
@@ -77,6 +83,20 @@ coordinates = coordinates.split('/') # lat_max, lon_min, lat_min, lon_max
 # Re-organize values in the order the rest of the code expects: lat_min, lat_max, lon_min, lon_max
 bounding_box = np.array([coordinates[2], coordinates[0],  coordinates[1],  coordinates[3] ])
 
+
+# --- FInd location of geopotential data file
+# Find file path
+geoPath = read_from_control(controlFolder/controlFile,'forcing_geo_path')
+
+# Specify the default path if required
+if geoPath == 'default':
+    geoPath = make_default_path('forcing/0_geopotential')
+else: 
+    geoPath = Path(geoPath) # ensure Path() object 
+    
+# Specify the filename
+geoName = 'ERA5_geopotential.nc'
+    
 
 # --- Find where the shapefile needs to go
 # Find the path where the new shapefile needs to go
@@ -141,6 +161,37 @@ with shapefile.Writer(shapePath / shapeName) as w:
             w.poly(parts)
             w.record(ID, center_lat, center_lon)
             
+
+# --- Add the geopotential data to the shape
+# Open the geopotential data file
+geo = xr.open_dataset( geoPath / geoName ).isel(time=0)
+
+# Open shapefile
+shp = gpd.read_file( shapePath / shapeName )
+
+# Define the constant
+g = 9.80665
+
+# Add new column to shapefile
+shp = shp.assign(elev_m = -999)  # insert a placeholder value
+
+# For each row in the shapefile, match its ERA5 lat/lon coordinates 
+# with those in the 'geo' file and extract the appropriate geopotential
+for index, row in shp.iterrows():
+       
+    # Find elevation
+    elev = geo['z'].sel(latitude = row['lat'], longitude=row['lon']).values.flatten() / g
+    
+    # Add elevation into shapefile
+    shp.at[index,'elev_m'] = elev[0]
+    
+# Overwrite the existing shapefile
+shp.to_file( shapePath / shapeName )
+
+# close the files
+geo.close()
+shp = []
+
             
 # --- Code provenance
 # Generates a basic log file in the domain folder and copies the control file and itself there.
