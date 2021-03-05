@@ -12,8 +12,11 @@ domain_name            | BowAtBanff                                      # Used 
 # Shapefile settings
 catchment_shp_path     | default                                         # If 'default', uses 'root_path/domain_[name]/shapefiles/catchment'.
 catchment_shp_name     | bow_distributed_elevation_zone.shp              # Name of the catchment shapefile. Requires extension '.shp'.
-catchment_shp_gruid    | ID_source
-
+catchment_shp_gruid    | GRU_ID                                          # Name of the GRU ID column (can be any numeric value, HRU's within a single GRU have the same GRU ID).
+catchment_shp_hruid    | HRU_ID                                          # Name of the HRU ID column (consecutive from 1 to total number of HRUs, must be unique).
+catchment_shp_area     | HRU_area                                        # Name of the catchment area column. Area must be in units [m^2]
+catchment_shp_lat      | center_lat                                      # Name of the latitude column. Should be a value representative for the HRU. Typically the centroid.
+catchment_shp_lon      | center_lon                                      # Name of the longitude column. Should be a value representative for the HRU. Typically the centroid.
 river_network_path     | default                                         # if 'default', uses 'root_path/domain_[name]/shapefiles/river_network'.
 river_network_shp_name | bow_river_network_from_merit_hydro.shp          # Name of the river network shapefile. Requires extension '.shp'.
 
@@ -35,7 +38,18 @@ forcing_geo_path       | default                                         # If 'd
 forcing_merged_path    | default                                         # If 'default', uses 'root_path/domain_[name]/forcing/2_merged_data'.
 forcing_shape_path     | default                                         # If 'default', uses 'root_path/domain_[name]/shapefiles/forcing'.
 forcing_shape_name     | era5_grid.shp                                   # Name of the forcing shapefile. Requires extension '.shp'.
-forcing_summa_path     | default                # currently unused
+forcing_summa_path     | default                                         # If 'default', uses 'root_path/domain_[name]/forcing/3_SUMMA_input'.
+
+
+# Parameter settings - DEM
+parameter_dem_main_url      | http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/distribute/v1.0.1/     # Primary download URL for MERIT Hydro adjusted elevation data. Needs to be appended with filenames.
+parameter_dem_file_template | elv_{}{}.tar                                # Template for download file names.
+parameter_dem_raw_path      | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/dem/1_MERIT_hydro_raw_data'.
+parameter_dem_unpack_path   | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/dem/2_MERIT_hydro_unpacked_data'.
+parameter_dem_vrt1_path     | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/dem/3_vrt'.
+parameter_dem_vrt2_path     | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/dem/4_domain_vrt'.
+parameter_dem_tif_path      | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/dem/5_elevation'.
+parameter_dem_tif_name      | elevation.tif                               # Name of the final DEM for the domain.  Must be in .tif format.
 
 
 # Parameter settings - soil
@@ -43,6 +57,7 @@ parameter_soil_raw_path     | default                                     # If '
 parameter_soil_value        | mean                                        # SOILGRIDS prediction value to download. Must be one of: Q0.05, Q0.5, Q0.95, mean, uncertainty.
 parameter_soil_class_path   | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/soilclass/2_usgs_soil_classes'.
 parameter_soil_mode_path    | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/soilclass/3_mode_soil_class'.
+
 
 # Parameter settings - land
 parameter_land_raw_path     | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/landclass/1_MODIS_raw_data'.
@@ -55,14 +70,18 @@ parameter_land_vrt4_path    | default                                     # Mult
 parameter_land_tif_path     | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/landclass/6_tif_multiband'.  
 parameter_land_mode_path    | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/landclass/7_mode_land_class'. 
 
-# Parameter settings - DEM
-parameter_dem_raw_path      | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/dem/1_MERIT_hydro_raw_data'.
-parameter_dem_main_url      | http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/distribute/v1.0.1/     # Primary download URL for MERIT Hydro adjusted elevation data. Needs to be appended with filenames.
-parameter_dem_file_template | elv_{}{}.tar                                # Template for download file names.
-parameter_dem_unpack_path   | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/dem/2_MERIT_hydro_unpacked_data'.
-parameter_dem_vrt1_path     | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/dem/3_vrt'.
-parameter_dem_vrt2_path     | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/dem/4_domain_vrt'.
-parameter_dem_tif_path      | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/dem/5_elevation'.
+
+# Intersection settings
+intersect_dem_path          | default                                     # If 'default', uses 'root_path/domain_[name]/shapefiles/catchment_intersection/with_dem'.
+intersect_dem_name          | catchment_with_merit_dem.shp                # Name of the shapefile with intersection between catchment and ERA5 grid, stored in column 'elev_mean'.
+intersect_forcing_path      | default                                     # If 'default', uses 'root_path/domain_[name]/shapefiles/catchment_intersection/with_forcing'.
+intersect_forcing_name      | catchment_with_era5.shp                     # Name of the shapefile with intersection between catchment and ERA5 grid.
+intersect_forcing_csv_name  | catchment_with_era5_noGeom.csv              # Name of the .csv file that contains the intersection information but not the shape geometries.
+
+
+# Settings - SUMMA
+settings_summa_path         | default                                     # If 'default', uses 'root_path/domain_[name]/settings/SUMMA'.
+settings_mizu_path          | default                                     # If 'default', uses 'root_path/domain_[name]/settings/mizuRoute'.
 
 
 # Default folder structure
@@ -76,6 +95,7 @@ parameter_dem_tif_path      | default                                     # If '
    |   |_ shapefiles
    |   |   |_ catchment
    |   |   |_ catchment_intersection
+   |   |   |   |_ with_dem
    |   |   |   |_ with_forcing
    |   |   |   |_ with_soil
    |   |   |   |_ with_veg
@@ -111,6 +131,8 @@ parameter_dem_tif_path      | default                                     # If '
    |   |       |_ 5_elevation
    |   |
    |   |_ settings
+   |   |   |_ mizuRoute
+   |   |   |_ SUMMA
    |   |
    |   |_ simulations
    |       |_run1

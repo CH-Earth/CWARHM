@@ -57,8 +57,16 @@ fi
 mkdir -p $dest_path
 
 # --- Filenames
+# Source file
 vrt_file=$(ls $source_path/*.vrt)
-tif_file="${dest_path}/$(basename "$vrt_file" .vrt).tif"
+
+# Find the name of the output file from control file
+name_line=$(grep -m 1 "parameter_dem_tif_name" ../../../0_controlFiles/control_active.txt) # full settings line
+dest_name=$(echo ${name_line##*|})   # removing the leading text up to '|'
+dest_name=$(echo ${dest_name%% #*}) # removing the trailing comments, if any are present
+
+# Make the destination path+name
+tif_file="${dest_path}/${dest_name}
 
 #---------------------------------
 # Create .tif file
