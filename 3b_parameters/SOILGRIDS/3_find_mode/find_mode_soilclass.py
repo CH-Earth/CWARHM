@@ -72,6 +72,9 @@ else:
 # Make the folder if it doesn't exist
 modeSoilClassPath.mkdir(parents=True, exist_ok=True)
 
+# Destination file
+file_dest = read_from_control(controlFolder/controlFile,'parameter_soil_tif_name')
+
 
 # --- Function definition
 # Opens geotif file, extracts data from a single band and computes corner & center coordinates in lat/lon
@@ -133,7 +136,6 @@ soil_variable = read_from_control(controlFolder/controlFile,'parameter_soil_valu
 # File locations
 file_base = 'usda_soilclass_'
 file_end = '_' + soil_variable + '.tif'
-file_dest = 'usda_mode_soilclass'
 
 # Get soil classes for all soil levels
 soilclasses = np.dstack((open_soilgrids_geotif(str(soilClassPath / (file_base + '0-5cm' + file_end)))[0], \
@@ -148,7 +150,7 @@ mode = sc.mode(soilclasses,axis=2)[0].squeeze()
 
 # Store this in a new geotif file
 src_file = str(soilClassPath / (file_base + '0-5cm' + file_end))
-des_file = str(modeSoilClassPath / (file_dest + file_end))
+des_file = str(modeSoilClassPath / file_dest )
 write_geotif_sameDomain(src_file,des_file,mode)
 
 

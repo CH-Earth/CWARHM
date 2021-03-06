@@ -80,7 +80,7 @@ for file in os.listdir(landClassPath):
         source_file = file
 
 # New file
-dest_file = 'MCD12Q1_mode_of_years.tif'
+dest_file = read_from_control(controlFolder/controlFile,'parameter_land_tif_name')
 
 
 # --- Function definition
