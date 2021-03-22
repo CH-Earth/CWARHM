@@ -1,0 +1,44 @@
+! Output control for water balance assessment runs
+! Updated with scalarCosZenith for shortwave radiation check, and lat/lon for output visualization
+! Source: Andy Wood
+! Date: 2020-Mar-16
+!
+! -------------
+!  attributes
+! -------------
+hruId
+latitude
+longitude     
+!
+! -----------
+!  forcings
+! -----------
+pptrate            | 24  | mean
+airtemp            | 24  | mean
+!
+! -----------
+!  sanity check for time stamps: peak of cosine of zenith angle should correspond with peak of solar radiation
+! -----------
+scalarCosZenith | 1 | instant
+!
+! -------------------
+!  model variables 
+! -------------------
+scalarTotalET         | 24  | mean
+scalarSWE           | 24  | instant
+scalarRainPlusMelt      | 24  | mean
+scalarCanopyWat        | 24  | instant
+scalarTotalSoilWat      | 24  | instant
+scalarAquiferStorage     | 24  | instant
+scalarSurfaceRunoff      | 24  | mean
+scalarInfiltration      | 24  | mean
+scalarSoilDrainage      | 24  | mean
+scalarSoilBaseflow      | 24  | mean
+scalarAquiferBaseflow     | 24  | mean 
+scalarTotalRunoff       | 24  | mean
+scalarNetRadiation      | 24  | mean
+scalarLatHeatTotal      | 24  | mean
+scalarSenHeatTotal      | 24  | mean
+
+
+

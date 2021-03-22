@@ -4,6 +4,7 @@
 # Note on path specification
 # If deviating from default paths, a full path must be specified. E.g. '/home/user/non-default/path'
 
+
 # Modeling domain settings
 root_path              | C:\Globus endpoint\summaWorkflow_data            # Root folder where data will be stored.
 domain_name            | BowAtBanff                                       # Used as part of the root folder name for the prepared data.
@@ -78,13 +79,39 @@ parameter_land_tif_name     | land_classes.tif                            # Name
 
 # Intersection settings
 intersect_dem_path          | default                                     # If 'default', uses 'root_path/domain_[name]/shapefiles/catchment_intersection/with_dem'.
-intersect_dem_name          | catchment_with_merit_dem.shp                # Name of the shapefile with intersection between catchment and ERA5 grid, stored in column 'elev_mean'.
+intersect_dem_name          | catchment_with_merit_dem.shp                # Name of the shapefile with intersection between catchment and MERIT Hydro DEM, stored in column 'elev_mean'.
+intersect_soil_path         | default                                     # If 'default', uses 'root_path/domain_[name]/shapefiles/catchment_intersection/with_soilgrids'.
+intersect_soil_name         | catchment_with_soilgrids.shp                # Name of the shapefile with intersection between catchment and SOILGRIDS-derived USDA soil classes, stored in columns 'USDA_{1,...n}'
+intersect_land_path         | default                                     # If 'default', uses 'root_path/domain_[name]/shapefiles/catchment_intersection/with_modis'.
+intersect_land_name         | catchment_with_modis.shp                    # Name of the shapefile with intersection between catchment and MODIS-derived IGBP land classes, stored in columns 'IGBP_{1,...n}'
 intersect_forcing_path      | default                                     # If 'default', uses 'root_path/domain_[name]/shapefiles/catchment_intersection/with_forcing'.
 
 
-# Settings - SUMMA
+# Experiment settings - general
+experiment_id               | run1                                        # Descriptor of the modelling experiment; used as output folder name.
+experiment_time_start       | default                                     # Simulation start. If 'default', constructs this from 'forcing_raw_time' setting and uses all downloaded forcing data; e.g. '1979-01-01 00:00'.
+experiment_time_end         | default                                     # Simulation end. If 'default', constructs this from 'forcing_raw_time' setting and uses all downloaded forcing data; e.g. '1979-12-31 23:00'.
+experiment_output_summa     | default                                     # If 'default', uses 'root_path/domain_[name]/simulations/[experiment_id]/SUMMA'.
+experiment_output_mizuRoute | default                                     # If 'default', uses 'root_path/domain_[name]/simulations/[experiment_id]/mizuRoute'.
+experiment_backup_settings  | yes                                         # Flag to (not) create a copy of the model settings in the output folder; "no" or "yes". Copying settings may be undesirable if files are large.
+
+
+# Experiment settings - SUMMA
 settings_summa_path         | default                                     # If 'default', uses 'root_path/domain_[name]/settings/SUMMA'.
+settings_summa_filemanager  | fileManager.txt                             # Name of the file with the SUMMA inputs
+settings_summa_coldstate    | coldState.nc                                # Name of the file with intial states
+settings_summa_trialParams  | trialParams.nc                              # Name of the file that can contain trial parameter values (note, can be empty of any actual parameter values but must be provided and must contain an 'hruId' variable)
+settings_summa_forcing_list | forcingFileList.txt                         # Name of the file that has the list of forcing files
+settings_summa_attributes   | attributes.nc                               # Name of the attributes file
+settings_summa_connect_HRUs | yes                                         # Attribute setting: "no" or "yes". If no; all HRUs modeled as independent columns. If yes; HRUs within each GRU are connected based on relative HRU elevation (highest = upstream, lowest = outlet)
+
+
+# Experiment settings - mizuRoute
 settings_mizu_path          | default                                     # If 'default', uses 'root_path/domain_[name]/settings/mizuRoute'.
+
+
+
+
 
 
 # Default folder structure
@@ -94,16 +121,6 @@ settings_mizu_path          | default                                     # If '
 - summWorkflow_data
    |
    |_ domain_BowAtBanff
-   |   |
-   |   |_ shapefiles
-   |   |   |_ catchment
-   |   |   |_ catchment_intersection
-   |   |   |   |_ with_dem
-   |   |   |   |_ with_forcing
-   |   |   |   |_ with_soil
-   |   |   |   |_ with_veg
-   |   |   |_ forcing
-   |   |   |_ river_network
    |   |
    |   |_ forcing
    |   |   |_ 0_geopotential
@@ -138,11 +155,25 @@ settings_mizu_path          | default                                     # If '
    |   |   |_ mizuRoute
    |   |   |_ SUMMA
    |   |
+   |   |_ shapefiles
+   |   |   |_ catchment
+   |   |   |_ catchment_intersection
+   |   |   |   |_ with_dem
+   |   |   |   |_ with_forcing
+   |   |   |   |_ with_soil
+   |   |   |   |_ with_veg
+   |   |   |_ forcing
+   |   |   |_ river_network
+   |   |
    |   |_ simulations
    |       |_run1
+   |       |  |_ 0_settings_backup
+   |       |  |   |_ summa
+   |       |  |   |_ mizuRoute
    |       |  |_ 1_summa
    |       |  |_ 2_mizuRoute
    |       |_run2
+   |          |_ ...
    |
    |_ domain_global
    |   |_ ...
