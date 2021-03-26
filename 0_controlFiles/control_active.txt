@@ -53,15 +53,14 @@ parameter_dem_unpack_path   | default                                     # If '
 parameter_dem_vrt1_path     | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/dem/3_vrt'.
 parameter_dem_vrt2_path     | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/dem/4_domain_vrt'.
 parameter_dem_tif_path      | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/dem/5_elevation'.
-parameter_dem_tif_name      | elevation.tif                               # Name of the final DEM for the domain.  Must be in .tif format.
+parameter_dem_tif_name      | elevation.tif                               # Name of the final DEM for the domain. Must be in .tif format.
 
 
 # Parameter settings - soil
-parameter_soil_value        | mean                                        # SOILGRIDS prediction value to download. Must be one of: Q0.05, Q0.5, Q0.95, mean, uncertainty.
-parameter_soil_raw_path     | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/soilclass/1_SOILGRIDS_raw_data'.
-parameter_soil_class_path   | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/soilclass/2_usgs_soil_classes'.
-parameter_soil_mode_path    | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/soilclass/3_mode_soil_class'.
-parameter_soil_tif_name     | soil_classes.tif                            # Name of the final soil class overview for the domain.  Must be in .tif format.
+parameter_soil_hydro_ID     | 1361509511e44adfba814f6950c6e742            # ID of the Hydroshare resource to download. 
+parameter_soil_raw_path     | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/soilclass/1_soil_classes_global'.
+parameter_soil_domain_path  | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/soilclass/2_soil_classes_domain'.
+parameter_soil_tif_name     | soil_classes.tif                            # Name of the final soil class overview for the domain. Must be in .tif format.
 
 
 # Parameter settings - land
@@ -74,7 +73,7 @@ parameter_land_vrt3_path    | default                                     # If '
 parameter_land_vrt4_path    | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/landclass/5_multiband_domain_vrt_epsg_4326'. Multiband cropped virtual dataset. 
 parameter_land_tif_path     | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/landclass/6_tif_multiband'.  
 parameter_land_mode_path    | default                                     # If 'default', uses 'root_path/domain_[name]/parameters/landclass/7_mode_land_class'. 
-parameter_land_tif_name     | land_classes.tif                            # Name of the final landclass overview for the domain.  Must be in .tif format.
+parameter_land_tif_name     | land_classes.tif                            # Name of the final landclass overview for the domain. Must be in .tif format.
 
 
 # Intersection settings
