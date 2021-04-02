@@ -18,7 +18,6 @@ catchment_shp_hruid         | HRU_ID                                      # Name
 catchment_shp_area          | HRU_area                                    # Name of the catchment area column. Area must be in units [m^2]
 catchment_shp_lat           | center_lat                                  # Name of the latitude column. Should be a value representative for the HRU. Typically the centroid.
 catchment_shp_lon           | center_lon                                  # Name of the longitude column. Should be a value representative for the HRU. Typically the centroid.
-# this can be removed: catchment_shp_hru_into_seg  | hru_to_seg                                  # Name of the column that shows which river segment each HRU connects to. Only needed if mizuRoute routing is desired.
 
 
 # Shapefile settings - mizuRoute river network file
@@ -129,6 +128,7 @@ settings_summa_connect_HRUs | yes                                         # Attr
 
 # Experiment settings - mizuRoute
 settings_mizu_path          | default                                     # If 'default', uses 'root_path/domain_[name]/settings/mizuRoute'.
+settings_mizu_parameters    | param.nml.default                           # Name of the routing parameters file. 
 settings_mizu_topology      | topology.nc                                 # Name of the river network topology file.
 settings_mizu_remap         | routing_remap.nc                            # Name of the optional catchment remapping file, for cases when SUMMA uses different catchments than mizuRoute.
 settings_mizu_control_file  | mizuroute.control                           # Name of the control file.
@@ -136,6 +136,7 @@ settings_mizu_routing_var   | averageRoutedRunoff                         # Name
 settings_mizu_routing_units | m/s                                         # Units of the variable to be routed.
 settings_mizu_routing_dt    | 3600                                        # Size of the routing time step [s].
 settings_mizu_output_freq   | annual                                      # Frequency with which mizuRoute generates new output files. Must be one of 'single', 'day', 'month', 'annual'.
+settings_mizu_output_vars   | 0                                           # Routing output. '0' for both KWT and IRF; '1' IRF only; '2' KWT only.
 settings_mizu_within_basin  | 0                                           # '0' (no) or '1' (IRF routing). Flag to enable within-basin routing by mizuRoute. Should be set to 0 if SUMMA is run with "subRouting" decision "timeDlay".
 
 
