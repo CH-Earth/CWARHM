@@ -69,16 +69,20 @@ Path( rootPath / domainFolder ).mkdir(parents=True, exist_ok=True)
 # Find the catchment shapefile folder in 'control_active'
 catchmentShapeFolder = read_from_control(controlFolder/controlFile,'catchment_shp_path')
 networkShapeFolder = read_from_control(controlFolder/controlFile,'river_network_path')
+riverBasinFolder =  read_from_control(controlFolder/controlFile,'river_basin_shp_path')
 
 # Specify the default paths if required
 if catchmentShapeFolder == 'default':
     catchmentShapeFolder = 'shapefiles/catchment'
 if networkShapeFolder == 'default':
     networkShapeFolder = 'shapefiles/river_network'
+if riverBasinFolder == 'default':
+    riverBasinFolder = 'shapefiles/river_basins'
 
 # Try to make the shapefile folders; does nothing if the folder already exists
 Path( rootPath / domainFolder / catchmentShapeFolder ).mkdir(parents=True, exist_ok=True)
 Path( rootPath / domainFolder / networkShapeFolder ).mkdir(parents=True, exist_ok=True)
+Path( rootPath / domainFolder / riverBasinFolder ).mkdir(parents=True, exist_ok=True)
 
 
 # --- Code provenance
