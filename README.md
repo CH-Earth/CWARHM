@@ -33,7 +33,7 @@ Contains scripts that create local clones of the SUMMA and mizuRoute GitHub repo
 A typical application would look as follows:
 
 1. Fork this repository to your own GitHub account and clone your fork into an arbitrary folder on your operating platform (e.g. local machine with Linux capabilities, a high performance cluster). 
-2. Navigate to `summaWorkflow_public/0_controlFiles`. Copy and rename `control_template` to something more descriptive of your modeling domain.
+2. Navigate to `summaWorkflow_public/0_control_files`. Copy and rename `control_template` to something more descriptive of your modeling domain.
 3. Specify the folder where your data downloads etc need to go in your newly made control file.
 4. Navigate to `summaWorkflow_public/1_folderPrep` and run the notebook or Python code there to create the basic layout of your data directory.
 5. Copy your catchment and river network shapefiles (`.shp`) into the newly created `your/data/path/domain_[yourDomain]/shapefiles' folder, placing the shapefiles in the `catchment` and `river_network` folders respectively.
