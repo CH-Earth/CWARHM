@@ -6,7 +6,7 @@
 
 
 # Modeling domain settings
-root_path                   | C:\Globus endpoint\summaWorkflow_data       # Root folder where data will be stored.
+root_path                   | /project/gwf/gwf_cmt/wknoben/summaWorkflow_data       # Root folder where data will be stored.
 domain_name                 | BowAtBanff                                  # Used as part of the root folder name for the prepared data.
 
 
@@ -113,7 +113,7 @@ experiment_time_start       | default                                     # Simu
 experiment_time_end         | default                                     # Simulation end. If 'default', constructs this from 'forcing_raw_time' setting and uses all downloaded forcing data; e.g. '1979-12-31 23:00'.
 experiment_output_summa     | default                                     # If 'default', uses 'root_path/domain_[name]/simulations/[experiment_id]/SUMMA'.
 experiment_output_mizuRoute | default                                     # If 'default', uses 'root_path/domain_[name]/simulations/[experiment_id]/mizuRoute'.
-experiment_log_summa        | default                                     # If 'default', uses 'root_path/domain_[name]/simulations/[experiment_id]/SUMMA_logs'.
+experiment_log_summa        | default                                     # If 'default', uses 'root_path/domain_[name]/simulations/[experiment_id]/SUMMA/SUMMA_logs'.
 experiment_backup_settings  | yes                                         # Flag to (not) create a copy of the model settings in the output folder; "no" or "yes". Copying settings may be undesirable if files are large.
 
 

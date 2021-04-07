@@ -20,7 +20,7 @@ if [ "$summa_path" = "default" ]; then
  root_path=$(echo ${root_path%% #*}) 
  summa_path="${root_path}/installs/summa/bin/"
 fi
-echo $summa_path
+#echo "install = ${summa_path}"
 
 
 # - Find the SUMMA executable
@@ -28,7 +28,8 @@ echo $summa_path
 setting_line=$(grep -m 1 "exe_name_summa" ../0_controlFiles/control_active.txt) 
 summa_exe=$(echo ${setting_line##*|}) 
 summa_exe=$(echo ${summa_exe%% #*}) 
-echo $summa_exe
+#echo "exe = ${summa_exe}"
+
 
 # - Find where the SUMMA settings are
 # -----------------------------------
@@ -46,26 +47,29 @@ if [ "$settings_path" = "default" ]; then
  
  # Get the domain name
  domain_line=$(grep -m 1 "domain_name" ../0_controlFiles/control_active.txt)
- domain_name=$(echo ${root_line##*|}) 
+ domain_name=$(echo ${domain_line##*|}) 
  domain_name=$(echo ${domain_name%% #*})
  
  # Make the default path
  settings_path="${root_path}/domain_${domain_name}/settings/SUMMA/"
 fi
-echo $settings_path
+#echo "Settings = ${settings_path}"
+
 
 # - Find the filemanager name
 # ---------------------------
 setting_line=$(grep -m 1 "settings_summa_filemanager" ../0_controlFiles/control_active.txt) 
 filemanager=$(echo ${setting_line##*|}) 
 filemanager=$(echo ${filemanager%% #*})
-echo $filemanager
+#echo "filemanager = ${filemanager}"
+
 
 # - Find where the SUMMA logs need to go
 # --------------------------------------
 setting_line=$(grep -m 1 "experiment_log_summa" ../0_controlFiles/control_active.txt) 
 summa_log_path=$(echo ${setting_line##*|}) 
 summa_log_path=$(echo ${summa_log_path%% #*})
+summa_log_name="summa_log.txt"
 
 # Specify the default path if needed
 if [ "$summa_log_path" = "default" ]; then
@@ -77,18 +81,19 @@ if [ "$summa_log_path" = "default" ]; then
  
  # Get the domain name
  domain_line=$(grep -m 1 "domain_name" ../0_controlFiles/control_active.txt)
- domain_name=$(echo ${root_line##*|}) 
+ domain_name=$(echo ${domain_line##*|}) 
  domain_name=$(echo ${domain_name%% #*})
  
  # Get the experiment ID
- log_line=$(grep -m 1 "experiment_id" ../0_controlFiles/control_active.txt)
- log_name=$(echo ${exp_line##*|}) 
- log_name=$(echo ${log_name%% #*})
+ exp_line=$(grep -m 1 "experiment_id" ../0_controlFiles/control_active.txt)
+ exp_name=$(echo ${exp_line##*|}) 
+ exp_name=$(echo ${exp_name%% #*})
  
  # Make the default path
- summa_log_path="${root_path}/domain_${domain_name}/simulations/${exp_name}/SUMMA_logs/"
+ summa_log_path="${root_path}/domain_${domain_name}/simulations/${exp_name}/SUMMA/SUMMA_logs/"
 fi
-echo $summa_log_path
+#echo "log = ${summa_log_path}"
+
 
 # - Get the SUMMA output path (for code provenance and possibly settings backup)
 # ------------------------------------------------------------------------------
@@ -106,7 +111,7 @@ if [ "$summa_out_path" = "default" ]; then
  
  # Get the domain name
  domain_line=$(grep -m 1 "domain_name" ../0_controlFiles/control_active.txt)
- domain_name=$(echo ${root_line##*|}) 
+ domain_name=$(echo ${domain_line##*|}) 
  domain_name=$(echo ${domain_name%% #*})
  
  # Get the experiment ID
@@ -117,7 +122,8 @@ if [ "$summa_out_path" = "default" ]; then
  # Make the default path
  summa_out_path="${root_path}/domain_${domain_name}/simulations/${exp_name}/SUMMA/"
 fi
-echo $summa_out_path
+#echo "summa out = ${summa_out_path}"
+
 
 # - Find if we need to backup the settings and find the path if so
 # ----------------------------------------------------------------
@@ -128,23 +134,23 @@ do_backup=$(echo ${do_backup%% #*})
 # Specify the path (inside the experiment output folder)
 if [ "$do_backup" = "yes" ]; then
  # Make the setting backup path
- backup_path="${summa_out_path}/run_settings"
+ backup_path="${summa_out_path}run_settings"
 fi
-echo $backup_path
+#echo "backup = ${backup_path}"
 
 
 # --- Run
 # Do the settings backup if needed
 if [ "$do_backup" = "yes" ]; then
  mkdir -p $backup_path
- copy_command="cp -R ${settings_path}/. ${backup_path}"
- echo $copy_command
+ copy_command="cp -R ${settings_path}. ${backup_path}"
+ $copy_command
 fi
 
 # Run SUMMA
 mkdir -p $summa_log_path
-summa_command="${summa_path}/${summa_exe} -m ${settings_path}/${filemanager}"
-echo $summa_command > $summa_log_path/summa_log.txt
+summa_command="${summa_path}${summa_exe} -m ${settings_path}${filemanager}"
+$summa_command > $summa_log_path$summa_log_name
 
 
 
