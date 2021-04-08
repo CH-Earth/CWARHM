@@ -153,6 +153,9 @@ cndx.save_csv  = False
 # Flag that we currently have no remapping file
 cndx.remap_csv = str(intersect_path / remap_file)
 
+# Enforce that we want our HRUs returned in the order we put them in
+cndx.sort_ID = False
+
 
 # --- Run CANDEX - this can be parallelized for speed ups
 # Loop over the remaining forcing files

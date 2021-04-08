@@ -166,10 +166,10 @@ cndx.source_shp_lat = 'lat'                                 # name of the latitu
 cndx.source_shp_lon = 'lon'                                 # name of the longitude field
 
 # Catchment shapefile and variable names
-cndx.sink_shp = catchment_path/catchment_name
-cndx.sink_shp_ID  = read_from_control(controlFolder/controlFile,'catchment_shp_hruid') # name of the HRU ID field
-cndx.sink_shp_lat = read_from_control(controlFolder/controlFile,'catchment_shp_lat')   # name of the latitude field
-cndx.sink_shp_lon = read_from_control(controlFolder/controlFile,'catchment_shp_lon')   # name of the longitude field
+cndx.target_shp = catchment_path/catchment_name
+cndx.target_shp_ID  = read_from_control(controlFolder/controlFile,'catchment_shp_hruid') # name of the HRU ID field
+cndx.target_shp_lat = read_from_control(controlFolder/controlFile,'catchment_shp_lat')   # name of the latitude field
+cndx.target_shp_lon = read_from_control(controlFolder/controlFile,'catchment_shp_lon')   # name of the longitude field
 
 # ERA5 netcdf file and variable names
 cndx.source_nc = str(forcing_files[0]) # first file in the list; Path() to string
@@ -201,6 +201,9 @@ cndx.save_csv  = False
 
 # Flag that we currently have no remapping file
 cndx.remap_csv = ''  
+
+# Enforce that we want our HRUs returned in the order we put them in
+cndx.sort_ID = False
 
 # Run candex
 # Note on centroid warnings: in this case we use a regular lat/lon grid to represent ERA5 forcing and ...
