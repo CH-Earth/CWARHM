@@ -14,7 +14,7 @@ from hs_restclient import HydroShare, HydroShareAuthBasic
 
 # --- Control file handling
 # Easy access to control file folder
-controlFolder = Path('../../../0_controlFiles')
+controlFolder = Path('../../../0_control_files')
 
 # Store the name of the 'active' file in a variable
 controlFile = 'control_active.txt'
