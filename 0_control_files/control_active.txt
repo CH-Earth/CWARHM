@@ -6,7 +6,7 @@
 
 
 # Modeling domain settings
-root_path                   | C:\Globus endpoint\summaWorkflow_data       # Root folder where data will be stored.
+root_path                   | /project/gwf/gwf_cmt/wknoben/summaWorkflow_data       # Root folder where data will be stored.
 domain_name                 | BowAtBanff                                  # Used as part of the root folder name for the prepared data.
 
 
@@ -44,7 +44,7 @@ river_basin_needs_remap     | yes                                         # 'no'
 github_summa                | https://github.com/ncar/summa               # Replace this with the path to your own fork if you forked the repo.
 github_mizuroute            | https://github.com/ncar/mizuroute           # Replace this with the path to your own fork if you forked the repo.
 install_path_summa          | default                                     # If 'default', clones source code into 'root_path/installs/summa'.
-install_path_mizuroute      | default                                     # If 'default', clones source code into 'root_path/installs/mizuroute'.
+install_path_mizuroute      | default                                     # If 'default', clones source code into 'root_path/installs/mizuRoute'.
 exe_name_summa              | summa.exe                                   # Name of the compiled executable.
 exe_name_mizuroute          | mizuroute.exe                               # Name of the compiled executable.
 
@@ -114,6 +114,7 @@ experiment_time_end         | default                                     # Simu
 experiment_output_summa     | default                                     # If 'default', uses 'root_path/domain_[name]/simulations/[experiment_id]/SUMMA'.
 experiment_output_mizuRoute | default                                     # If 'default', uses 'root_path/domain_[name]/simulations/[experiment_id]/mizuRoute'.
 experiment_log_summa        | default                                     # If 'default', uses 'root_path/domain_[name]/simulations/[experiment_id]/SUMMA/SUMMA_logs'.
+experiment_log_mizuroute    | default                                     # If 'default', uses 'root_path/domain_[name]/simulations/[experiment_id]/mizuRoute/mizuRoute_logs'.
 experiment_backup_settings  | yes                                         # Flag to (not) create a copy of the model settings in the output folder; "no" or "yes". Copying settings may be undesirable if files are large.
 
 
@@ -201,8 +202,12 @@ visualization_folder        | default                                     # If '
    |   |   |  |_ 0_settings_backup
    |   |   |  |   |_ summa
    |   |   |  |   |_ mizuRoute
-   |   |   |  |_ 1_summa
-   |   |   |  |_ 2_mizuRoute
+   |   |   |  |_ summa
+   |   |   |  |   |_run_settings
+   |   |   |  |   |_SUMMA_logs
+   |   |   |  |_ mizuRoute
+   |   |   |  |   |_run_settings
+   |   |   |  |   |_mizuRoute_logs
    |   |   |_run2
    |   |      |_ ...
    |   |
