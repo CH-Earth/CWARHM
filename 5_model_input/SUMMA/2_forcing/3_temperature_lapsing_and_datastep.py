@@ -132,11 +132,8 @@ weights        = 'weight'             # CANDEX feature
 lapse_rate = 0.0065 # [K m-1]
 
 # Calculate weighted lapse values for each HRU 
-# Note that these lapse values need to be SUBTRACTED from ERA5 temperature data
-lapse_values = topo_data[weights] * lapse_rate * ( topo_data[forcing_elev] - topo_data[catchment_elev]) # [K]
-
-# Add lapse values to dataframe
-topo_data['lapse_values'] = lapse_values # [K]
+# Note that these lapse values need to be ADDED to ERA5 temperature data
+topo_data['lapse_values'] = topo_data[weights] * lapse_rate * (topo_data[forcing_elev] - topo_data[catchment_elev]) # [K]
 
 # Find the total lapse value per basin; i.e. sum the individual contributions of each HRU+ERA5-grid overlapping part
 lapse_values = topo_data.groupby([gru_ID,hru_ID]).lapse_values.sum().reset_index()
@@ -163,10 +160,10 @@ for file in forcing_files:
         lapse_values_sorted = lapse_values['lapse_values'].loc[dat['hruId'].values]
     
         # Make a data array of size (nTime,nHru) 
-        subtractThis = xr.DataArray(np.tile(lapse_values_sorted.values, (len(dat['time']),1)), dims=('time','hru')) 
+        addThis = xr.DataArray(np.tile(lapse_values_sorted.values, (len(dat['time']),1)), dims=('time','hru')) 
     
         # Subtract lapse values from existing temperature data
-        dat['airtemp'] = dat['airtemp'] - subtractThis
+        dat['airtemp'] = dat['airtemp'] + addThis
     
         # --- Time step specification 
         dat['data_step'] = data_step
