@@ -140,7 +140,7 @@ with open(filemanager_path / filemanager_name, 'w') as fm:
     fm.write("tmZoneInfo           'utcTime' ! \n")
     
     # Prefix for SUMMA outputs
-    fm.write("outFilePrefix        '{}_' ! \n".format(experiment_id))
+    fm.write("outFilePrefix        '{}' ! \n".format(experiment_id))
     
     # Paths
     fm.write("settingsPath         '{}/' ! \n".format(path_to_settings))
