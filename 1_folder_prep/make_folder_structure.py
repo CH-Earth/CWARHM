@@ -13,7 +13,7 @@ The destination folders are referred to as "domain folders".
 '''
 
 # Specify the control file to use
-sourceFile  = 'control_Bow_at_Banff_copernicus.txt'
+sourceFile  = 'control_Bow_at_Banff.txt'
 
 # --- Do not change below this line.
 
@@ -68,7 +68,7 @@ Path( rootPath / domainFolder ).mkdir(parents=True, exist_ok=True)
 # --- Make the shapefile folders
 # Find the catchment shapefile folder in 'control_active'
 catchmentShapeFolder = read_from_control(controlFolder/controlFile,'catchment_shp_path')
-networkShapeFolder = read_from_control(controlFolder/controlFile,'river_network_path')
+networkShapeFolder = read_from_control(controlFolder/controlFile,'river_network_shp_path')
 riverBasinFolder =  read_from_control(controlFolder/controlFile,'river_basin_shp_path')
 
 # Specify the default paths if required

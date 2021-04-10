@@ -1,22 +1,15 @@
 # SUMMA vegetation parameters
-Based on the soil parameters work, the following questions can be of use in defining the workflow for this part of model set up:
-- How are the Noah-MP vegetation tables that SUMMA uses organized?
-	- Which vegetation classes are used in the NOAH-MP tables?
-	- Which parameters does SUMMA currently use from the NOAH-MP lookup tables?
-- Which data does MODIS Vegetation (or something else provide)?
-- How do we go from MODIS to vegetation classes (if conversion is needed)?
 
 ## Noah-MP in SUMMA
-SUMMA parameters (attributes.nc) include a variable called "vegTypeIndex" (https://summa.readthedocs.io/en/latest/input_output/SUMMA_input/#attribute-and-parameter-files). "vegTypeIndex" relates a representative vegetation index value for the model element to various parameters used in SUMMA. Some Noah-MP documentation can be accessed through UCAR: https://ral.ucar.edu/solutions/products/noah-multiparameterization-land-surface-model-noah-mp-lsm
+SUMMA's approach to vegetation parameters is based on that of the Noah-MP land model and relies on look-up tables. Briefly, the user defines for each model element a representative vegetation type as a numerical value (e.g. "evergreen needleleaf forest" might be encoded as "1", "evergreen broadleaf forests" as "2", etc). SUMMA then navigates the look-up table to extract typical values of vegetation properties for the specified vegetation type and uses these values for further computations. 
 
-Parameters actually used in SUMMA are:
-- Currently difficult to find, because the variable names are short and show many occurrences with grep
+SUMMA currently has several different look-up tables available in the file `TBL_VEGPARM.TBL` (found in the folder `5_model_input/SUMMA/0_base_settings`) This workflow assumes that the MODIFIED_IGBP_MODIS_NOAH table is used to define vegetation type index values (specified below). Vegetation classes are stored as SUMMA parameters in a variable called "vegTypeIndex", kept in "attributes.nc" (https://summa.readthedocs.io/en/latest/input_output/SUMMA_input/#attribute-and-parameter-files). 
 
-## MODIS Vegetation
-### MODIS Land Cover Type Product (MCD12Q1)
-The  MCD12Q1 IGBP land cover classification matches existing SUMMA tables for 17/20 classes. The 3 different tundra classes are missing.
+Further details can be found in the Noah-MP documentation, see e.g.: https://ral.ucar.edu/solutions/products/noah-multiparameterization-land-surface-model-noah-mp-lsm
 
-Provides various different classification schemes. If we can find lookup tables for them we can use these too.
+
+## MODIS Land Cover Type Product (MCD12Q1) 
+MODIS MCD12Q1 data (Friedl et al., 2019) are sattelite data of global land cover classes at 500m resolution and are available for years 2001 to 2018. Raw sattelite data has already been processed into various vegetation classifications. 
 
 Main information page: https://lpdaac.usgs.gov/products/mcd12q1v006/
 
@@ -24,16 +17,8 @@ Land cover classes doc: https://lpdaac.usgs.gov/documents/101/MCD12_User_Guide_V
 
 Current validation status: Stage 2. Product accuracy has been assessed over a widely distributed set of locations and time periods via several ground-truth and validation efforts. (https://lpdaac.usgs.gov/products/mcd12q1v006/, 2020-05-19. Validation definitions: https://landweb.modaps.eosdis.nasa.gov/cgi-bin/QA_WWW/newPage.cgi?fileName=maturity)
 
-#### Description
-Provides global land cover classes based on MODIS Terra and Aqua data:
-
-- Temporal domain: annual between 2001-2018
-- Spatial domain: global at 500m resolution
-
 #### Data use
-Documentation strongly recommends *against* comparing land cover classes between years, due to uncertainty in the land cover determination procedure. Probably best to use the most common land cover class across years 2001 to 2018 as the represntative class for each grid cell.
-
-We'll use the IGBP classification for the moment, because that lets us use the existing lookup table within SUMMA. *NOTE*: current SUMMA IGBP look-up includes three different tundra classes that are not part of theMCD12Q1 data. We might need to revisit this.
+Documentation strongly recommends *against* comparing land cover classes between years, due to uncertainty in the land cover determination procedure. We therefore use the most common land cover class across years 2001 to 2018 as the representative class for each grid cell.
 
 #### Known issues
 From the documentation:
@@ -45,38 +30,16 @@ From the documentation:
 - Some grassland areas are classified as savannas (sparse forest).
 - There is a glacier in Chile that is screened as if it were permanently cloud covered and is partially classified as grassland.
 
-#### Download
-Bulk download via LP DAAC Data Pool and DAAC2DISK. Search and browse via USGS EarthExplorer and NASA Earthdata search.
 
-#### Suggested citation (APA, Chicago)
-Friedl, M., Sulla-Menashe, D. (2019). MCD12Q1 MODIS/Terra+Aqua Land Cover Type Yearly L3 Global 500m SIN Grid V006 [Data set]. NASA EOSDIS Land Processes DAAC. Accessed 2020-05-20 from https://doi.org/10.5067/MODIS/MCD12Q1.006
+## MODIS to SUMMA
+The  MCD12Q1 IGBP land cover classification matches existing SUMMA tables for 17/20 classes. The 3 different tundra classes are missing. See tables below. The workflow code downloads the MODIS data (global domain), subsets these to the modeling domain and finds a representative vegetation class for each model element. The vegetation class for each model element is saved in "attributes.nc", which is part of the SUMMA input files.
 
-Friedl, M., D. Sulla-Menashe. MCD12Q1 MODIS/Terra+Aqua Land Cover Type Yearly L3 Global 500m SIN Grid V006. 2019, distributed by NASA EOSDIS Land Processes DAAC, https://doi.org/10.5067/MODIS/MCD12Q1.006. Accessed 2020-05-20.
 
-### MODIS Land Cover Dynamics (MCD12Q2)
-Provides vegetation dynamics. Might be useful if we want to move beyond lookup tables. 
+## IGBP vegetation classification table
+This section shows the classification table as used for the MODIS data (https://lpdaac.usgs.gov/documents/101/MCD12_User_Guide_V6.pdf) and SUMMA's implementation of the table. Because both tables use the same order of classes, no remapping from one to the other is needed. Because classes are only identified numerically in SUMMA's input files, switching to different look-up tables or input data should be done with care.
 
-Doc: https://landweb.modaps.eosdis.nasa.gov/QA_WWW/forPage/user_guide/MCD12Q2_Collection6_UserGuide.pdf
 
-### MODIS Land Leaf Area Index (MOD15A2h, MYD15A2H; MCD15A2H, MCD15A3H)
-Provides Leaf Area Index values.
-
-Link: https://modis-land.gsfc.nasa.gov/lai.html
-
-# Chris' suggestions for data handling
-My first reaction is I would convert each to a geotiff, and the build [1] a vrt [2] of those tiled geotiffs. You may be able to skip the geotiff, I've never used vrt with anything but and am unsure if that's supported. The VRT skips having to have one comically massive file.
-Then use gdalwarp to extract the area of interest [3]. You can try with a shape cutline [4] but I've found that to be very slow on large DEMs.
-[1] https://gdal.org/programs/gdalbuildvrt.html
-[2] https://gdal.org/drivers/raster/vrt.html
-[3] https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-te
-[4] https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-cutline
-
-This suggests you can wrap the hdf directly with a vrt and then use warp/translate to cut out what you & reproject if needed
-https://jgomezdans.github.io/stitching-together-modis-data.html
-
-## IGBP Table as used in MODIS
-Source: https://lpdaac.usgs.gov/documents/101/MCD12_User_Guide_V6.pdf
-
+### IGBP Table as used in MODIS
 | Name                                  | Value | Description                                                                                              |
 |---------------------------------------|-------|----------------------------------------------------------------------------------------------------------|
 | Evergreen   Needleleaf Forests        | 1     | Dominated by   evergreen conifer trees (canopy>2m). Tree cover>60%.                                      |
@@ -123,4 +86,14 @@ Table name: "MODIFIED_IGBP_MODIS_NAOH"
 | 18    | Wooded Tundra                      |
 | 19    | Mixed Tundra                       |
 | 20    | Barren Tundra                      |
+
+
+
+## References
+Friedl, M., Sulla-Menashe, D. (2019). MCD12Q1 MODIS/Terra+Aqua Land Cover Type Yearly L3 Global 500m SIN Grid V006 [Data set]. NASA EOSDIS Land Processes DAAC. Accessed 2020-05-20 from https://doi.org/10.5067/MODIS/MCD12Q1.006
+
+
+
+
+
 

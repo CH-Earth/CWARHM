@@ -110,8 +110,12 @@ if shapePath == 'default':
 else: 
     forcingPath = Path(forcingPath) # ensure Path() object 
     
-# Find name of the new shapefil
+# Find name of the new shapefile
 shapeName = read_from_control(controlFolder/controlFile,'forcing_shape_name')
+
+# Find the names of the latitude and longitude fields
+field_lat = read_from_control(controlFolder/controlFile,'forcing_shape_lat_name')
+field_lon = read_from_control(controlFolder/controlFile,'forcing_shape_lon_name')
 
 
 # --- Read the source file to find the grid spacing
@@ -139,8 +143,8 @@ half_dlon = abs(lon[1] - lon[0])/2
 with shapefile.Writer(shapePath / shapeName) as w:
     w.autoBalance = 1 # turn on function that keeps file stable if number of shapes and records don't line up
     w.field("ID",'N') # create (N)umerical attribute fields, integer
-    w.field("lat",'F',decimal=4) # float with 4 decimals
-    w.field("lon",'F',decimal=4)
+    w.field(field_lat,'F',decimal=4) # float with 4 decimals
+    w.field(field_lon,'F',decimal=4)
     ID = 0 # start ID counter of empty
     
     for i in range(0,len(lon)):

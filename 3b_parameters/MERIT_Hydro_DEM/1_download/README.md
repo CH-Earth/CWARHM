@@ -1,0 +1,2 @@
+# MERIT-Hydro adjusted elevation download
+Downloads MERIT-Hydro adjusted elevation data. Data is available in blocks of 30x30 degrees in a regular lat/lon projection. The download code downloads the blocks required to cover the domain. Subsetting to the exact domain happens in follow-up steps.

@@ -42,6 +42,17 @@ Summary
 - Data is stored in band 1 in each .tif
 - Data is in regular lat/long (EPSG:4326)
 
+## Download registration
+MERIT Hydro downloads require registration through a Google webform. See: http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/
+
+Store the obtained user details (username and password) in a new file `$HOME/.merit` (Unix/Linux) or `C:\Users\[user]\.merit` (Windows) as follows (replace `[name]` and `[pass]` with your own credentials):
+
+```
+name: [name]
+pass: [pass]
+
+```
+
 ## Source
 http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/
 
