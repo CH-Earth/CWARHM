@@ -3,7 +3,7 @@
 
 # module
 import os
-from osgeo import gdal
+import gdal
 from pathlib import Path
 from shutil import copyfile
 from datetime import datetime

@@ -7,12 +7,7 @@ SUMMA currently has three different look-up tables: STAS, STAS-RUC and ROSETTA. 
 Further details can be found in the Noah-MP documentation, see e.g.: https://ral.ucar.edu/solutions/products/noah-multiparameterization-land-surface-model-noah-mp-lsm
 
 ## SOILGRIDS data
-The SOILGRIDS 250m data set (Hengl et al, 2017) provides values for various soil properties on a global scale. The data set uses machine learning and various local soil products to provide these soil property estimates. The SOILGRIDS native resolution is 250m x 250m, and soil properties are provided at 7 different depths for any given grid cell. Recently, SOILGRIDS v2 has become available which introduces several methodologic advances and also provides uncertainty estimates for each variable. Provided values for a given variable are:
-- 0.05th quantile prediction value of variable
-- 0.50th quantile value 
-- mean value
-- 0.95th quantile value
-- uncertainty estimate given as (Q0.95 - Q0.05) / Q0.50
+The SOILGRIDS 250m data set (Hengl et al, 2017) provides values for various soil properties on a global scale. The data set uses machine learning and various local soil products to provide these soil property estimates. The SOILGRIDS native resolution is 250m x 250m, and soil properties are provided at 7 different depths for any given grid cell. 
 
 
 ## SOILGRIDS to SUMMA
@@ -27,7 +22,7 @@ The following steps are part of the workflow used to integrate SOILGRIDS data in
 5. Insert the representative soil class for the model domain into the SUMMA input file (note; this is done in the "experiment setup" section)
 
 ## ROSETTA soil parameter table
-This section records the ROSETTA soil parameter table that was used to define soil classes. Note that soil class numbering is arbitrary and the assigned soil classes thus only make sense in the context of how the classes were defined initially. In other words, this workflow assumes soil classes follow the numbering as given in this table. Other tables of soil properties might call "sand" class 12 instead of 1, and thus switching between soil tables needs to be done with care.
+This section records the ROSETTA soil parameter table that was used to define soil classes. Note that soil class numbering is arbitrary and the assigned soil classes thus only make sense in the context of how the classes were defined initially. In other words, this workflow assumes soil classes follow the numbering as given in this table. Other tables of soil properties might call "sand" class 12 instead of 1, and thus switching between soil tables needs to be done with care. This table is part of the parameter file `TBL_VEGPARM.TBL`.
 
 | index | 'theta_res | theta_sat | vGn_alpha | vGn_n | k_soil   | BB   | DRYSMC | HC   | MAXSMC | REFSMC | SATPSI | SATDK    | SATDW    | WLTSMC | QTZ  | class           |
 |-------|------------|-----------|-----------|-------|----------|------|--------|------|--------|--------|--------|----------|----------|--------|------|-----------------|
