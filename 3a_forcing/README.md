@@ -2,7 +2,6 @@
 The ERA5 product is a reanalysis data set. See documentation (link below) for details about which observations are used and how they are combined in the reanalysis. ERA5's forcing variables (called parameters in the ERA5 documentation) can be either instantaneous or time-step averages (see the data documentation). They are provided at various heights: surface and single level for every of the 137 air layers that ERA5 uses. 
 
 ## Forcing needed to run SUMMA
-
 SUMMA needs the following forcing variables (https://summa.readthedocs.io/en/master/input_output/SUMMA_input/#meteorological-forcing-files):
 - Precipitation rate [kg m-2 s-1]
 - Downward shortwave radiation at the upper boundary [W m-2]
@@ -24,6 +23,12 @@ ERA5 data preparation includes interactions between an atmospheric model and a l
 - ERA5 hourly data on pressure levels from 1970 to present (https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-pressure-levels?tab=overview)
 
 
+## Download requirements
+Downloading ERA5 data requires:
+- Registration: https://cds.climate.copernicus.eu/user/register?destination=%2F%23!%2Fhome
+- Setup of the `cdsapi`: https://cds.climate.copernicus.eu/api-how-to
+
+
 ## Workflow description
 - 1_download: contains notebooks/scripts to download the necessary variables from ERA5's surface level and pressure level data sets;
 - 2_merge: contains notebooks/scripts to merge the pressure and surface level data into a single file, and convert `u` and `v` wind components into a single vector;
@@ -31,7 +36,6 @@ ERA5 data preparation includes interactions between an atmospheric model and a l
 
 
 ### Surface-level variable downloads
-
 We need the following ERA5 variables at the surface:
 - Mean total precipitation rate [kg m-2 s-1]
 - Mean surface downward short-wave radiation flux [W m-2]
@@ -42,7 +46,6 @@ These variables can be downloaded straight through the CDS API (see template_ERA
 
 
 ### Pressure-level variable downloads
-
 We need the following variables at the lowest pressure level (L137) of the atmospheric model to run SUMMA:
 - Temperature [K]
 - Wind speed
