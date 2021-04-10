@@ -162,8 +162,8 @@ cndx.case_name = read_from_control(controlFolder/controlFile,'domain_name')
 # ERA5 shapefile and variable names
 # Variable names can be hardcoded because we set them when we generate this shapefile as part of the workflow
 cndx.source_shp     = forcing_shape_path/forcing_shape_name # shapefile
-cndx.source_shp_lat = 'lat'                                 # name of the latitude field
-cndx.source_shp_lon = 'lon'                                 # name of the longitude field
+cndx.source_shp_lat = read_from_control(controlFolder/controlFile,'forcing_shape_lat_name') # name of the latitude field
+cndx.source_shp_lon = read_from_control(controlFolder/controlFile,'forcing_shape_lon_name') # name of the longitude field
 
 # Catchment shapefile and variable names
 cndx.target_shp = catchment_path/catchment_name
