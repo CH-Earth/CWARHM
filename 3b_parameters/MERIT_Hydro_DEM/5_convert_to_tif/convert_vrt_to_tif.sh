@@ -66,7 +66,7 @@ dest_name=$(echo ${name_line##*|})   # removing the leading text up to '|'
 dest_name=$(echo ${dest_name%% #*}) # removing the trailing comments, if any are present
 
 # Make the destination path+name
-tif_file="${dest_path}/${dest_name}
+tif_file="${dest_path}/${dest_name}"
 
 #---------------------------------
 # Create .tif file
