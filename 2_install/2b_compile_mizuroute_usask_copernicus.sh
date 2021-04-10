@@ -47,6 +47,7 @@ export FC_EXE='gfortran' # /cvmfs/soft.computecanada.ca/nix/var/nix/profiles/gcc
 
 # --- Library settings
 # Load the required libraries
+module load nixpkgs/16.09
 module load gcc/7.3.0
 module load netcdf-fortran/4.4.4
 

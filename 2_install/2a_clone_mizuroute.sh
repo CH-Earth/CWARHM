@@ -34,6 +34,7 @@ echo 'cloning ' $github_url ' into ' $mizu_path
 git clone --single-branch  --branch develop "$github_url" "$mizu_path"
 
 # Navigate into the new 'mizuRoute' dir
+owd=$(pwd)
 cd "$mizu_path"
 
 # Set the upstream repo
@@ -41,6 +42,9 @@ git remote add upstream https://github.com/ncar/mizuroute.git
 
 # Fetch latest updates
 git pull upstream develop
+
+# Navigate back to the old working directory where this script is found
+cd "$owd"
 
 
 # --- Code provenance
