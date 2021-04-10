@@ -2,7 +2,7 @@
 ## Noah-MP in SUMMA
 SUMMA's approach to soil parameters is based on that of the Noah-MP land model and relies on look-up tables. Briefly, the user defines for each model element a representative soil class as a numerical value (e.g. "sand" might be encoded as "1", "silty clay" as "11", etc). SUMMA then navigates the look-up table to extract typical values of hydraulic properties for the specified soil class and uses these values for further computations. 
 
-SUMMA currently has three different look-up tables: STAS, STAS-RUC and ROSETTA. This workflow assumes that the ROSETTA table is used to define soil class index values (specified below). Soil classes are stored as SUMMA parameters in a variable called "soilTypeIndex", kept in "attributes.nc" (https://summa.readthedocs.io/en/latest/input_output/SUMMA_input/#attribute-and-parameter-files). 
+SUMMA currently has several different look-up tables available in the file `TBL_SOILPARM.TBL` (found in the folder `5_model_input/SUMMA/0_base_settings`). This workflow assumes that the ROSETTA table is used to define soil class index values (specified below). Soil classes are stored as SUMMA parameters in a variable called "soilTypeIndex", kept in "attributes.nc" (https://summa.readthedocs.io/en/latest/input_output/SUMMA_input/#attribute-and-parameter-files). 
 
 Further details can be found in the Noah-MP documentation, see e.g.: https://ral.ucar.edu/solutions/products/noah-multiparameterization-land-surface-model-noah-mp-lsm
 
@@ -11,15 +11,8 @@ The SOILGRIDS 250m data set (Hengl et al, 2017) provides values for various soil
 
 
 ## SOILGRIDS to SUMMA
-SOILGRIDS does not provide soil classes directly. Instead we rely on the SOILGRIDS data fields that specify each location's sand, silt and clay percentage in the soil. We relate these percentages to soil classes through the USDA soil classification triangle (Benham et al, 2009). The soil class for each model element is saved in "attributes.nc", which is part of the SUMMA input files.
+SOILGRIDS does not provide soil classes directly. Instead we rely on the SOILGRIDS data fields that specify each location's sand, silt and clay percentage in the soil. We relate these percentages to soil classes through the USDA soil classification triangle (Benham et al, 2009). Then we define the most commonly occurring soil class for the 7 depth and choose that class as representative of the soil column at a given pixel. These preprocessing steps have already been completed and stored as a global map of soil classes on the Hydroshare repository. The workflow code downloads this map and finds a representative soil class for each model element. The soil class for each model element is saved in "attributes.nc", which is part of the SUMMA input files.
 
-## Workflow
-The following steps are part of the workflow used to integrate SOILGRIDS data into the SUMMA set up for North America. Each item relates to a sub-folder in this directory that has the same number:
-1. Download the global SOILGRIDS data in .tif format
-2. [OPTIONAL] Specify the sub-domain of interest
-3. Create soil classes for the (sub-)domain, using the ROSETTA numbering and USDA soil triangle definitions
-4. Extract the mode (most common) soil class occurring in the 7 SOILGRID depths for all grid cells in the (sub-)domain
-5. Insert the representative soil class for the model domain into the SUMMA input file (note; this is done in the "experiment setup" section)
 
 ## ROSETTA soil parameter table
 This section records the ROSETTA soil parameter table that was used to define soil classes. Note that soil class numbering is arbitrary and the assigned soil classes thus only make sense in the context of how the classes were defined initially. In other words, this workflow assumes soil classes follow the numbering as given in this table. Other tables of soil properties might call "sand" class 12 instead of 1, and thus switching between soil tables needs to be done with care. This table is part of the parameter file `TBL_VEGPARM.TBL`.
