@@ -58,8 +58,6 @@ forcing_time_step_size      | 3600                                        # Size
 forcing_measurement_height  | 3                                           # Reference height for forcing measurements [m].
 forcing_shape_path          | default                                     # If 'default', uses 'root_path/domain_[name]/shapefiles/forcing'.
 forcing_shape_name          | era5_grid.shp                               # Name of the forcing shapefile. Requires extension '.shp'.
-forcing_shape_lat_name      | lat                                         # Name of the latitude field that contains the latitude of ERA5 data points.
-forcing_shape_lon_name      | lon                                         # Name of the longitude field that contains the latitude of ERA5 data points.
 forcing_geo_path            | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/0_geopotential'.
 forcing_raw_path            | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/1_raw_data'.
 forcing_merged_path         | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/2_merged_data'.
