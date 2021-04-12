@@ -69,6 +69,12 @@ A typical application would look as follows:
 < Copy this from the paper >
 
 
+## Note on deprecation warnings in Python packages
+At the time of writing (12-04-2021) `numpy` issues warnings about a deprecated feature. `netCDF4` uses this feature and as a result any script that uses `netCDF4` currently floods the screen with warnings. These are safe to ignore. See:
+- https://github.com/numpy/numpy/issues/18281
+- https://github.com/Unidata/netcdf4-python/commit/d50b949ea3982a6281c6bce25d335736ad067b64
+
+
 ## References
 Clark, M. P., B. Nijssen, J. D. Lundquist, D. Kavetski, D. E. Rupp, R. A. Woods, J. E. Freer, E. D. Gutmann, A. W. Wood, L. D. Brekke, J. R. Arnold, D. J. Gochis, R. M. Rasmussen, 2015a: A unified approach for process-based hydrologic modeling: Part 1. Modeling concept. Water Resources Research, doi:10.1002/2015WR017198
 

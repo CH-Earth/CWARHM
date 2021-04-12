@@ -8,8 +8,8 @@
 # | Variable       | Value |
 # |:---------------|:------|
 # | hruId          | taken from the shapefile index values |
-# | gruId          | same as hruId, because in this setup HRU and GRU map 1:1 |
-# | hru2gruId      | same as hruId |
+# | gruId          | taken from the shapefile index values |
+# | hru2gruId      | taken from the shapefile index values |
 # | downHRUindex   | 0, each HRU is independent column |
 # | longitude      | taken from the shapefile geometry |
 # | latitude       | taken from the shapefile geometry |
