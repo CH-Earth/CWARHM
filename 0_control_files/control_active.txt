@@ -63,8 +63,8 @@ forcing_shape_lon_name      | lon                                         # Name
 forcing_geo_path            | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/0_geopotential'.
 forcing_raw_path            | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/1_raw_data'.
 forcing_merged_path         | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/2_merged_data'.
-forcing_candex_path         | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/3a_temp_candex'.
-forcing_basin_avg_path      | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/3b_basin_averaged_data'.
+forcing_candex_path         | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/3_temp_candex'.
+forcing_basin_avg_path      | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/3_basin_averaged_data'.
 forcing_summa_path          | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/4_SUMMA_input'.
 
 
