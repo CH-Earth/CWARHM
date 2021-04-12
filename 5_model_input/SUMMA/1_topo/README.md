@@ -30,3 +30,7 @@ python 3_find_HRU_land_classes.py
 ```
 
 The scripts can easily be adapted to interact with a local QGIS install by specifying the plugin path before the `import processing` line (as shown in the link above). 
+
+
+## Assumptions not included in `control_active.txt`
+Code assumes we're after a zonal histogram (soil and land classes) or a zonal mean (DEM). Changes to the code are needed to change these functions to something else if desired. 

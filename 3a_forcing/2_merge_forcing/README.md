@@ -2,7 +2,7 @@
 Creates a single monthly `.nc` file with SUMMA-ready variables for further processing. Combines ERA5's `u` and `v` wind components into a single directionless wind vector. 
 
 ## Description
-We downloaded separate ERA5 data at pressure level 137 and the surface. We want all the forcing aggregated into a single file and to be in the right units for SUMMA (units are already OK):
+We downloaded separate ERA5 data at pressure level 137 and the surface. We want all the forcing aggregated into a single file and to be in the right units for SUMMA (ERA5 units are already OK for use in SUMMA):
 - Precipitation as 'pptrate' in [kg m\*\*-2 s**-1]
 - Air pressure at measurement height (assumed to be equivalent to air pressure at the surface) as 'airpres' in [Pa]
 - Downward shortwave radiation as 'SWRadAtm' in [W m**-2]
