@@ -1,0 +1,2 @@
+# Make forcing file list
+Finds names of all the prepared forcing files and stores these in the experiment's settings folder. See: https://summa.readthedocs.io/en/latest/input_output/SUMMA_input/#list-of-forcing-files-file
