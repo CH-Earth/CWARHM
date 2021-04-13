@@ -55,6 +55,8 @@ We need the following variables at the lowest pressure level (L137) of the atmos
 
 This is not directly available through the CDS API and must come from MARS instead (see template_ERA5_pressureLevel.py; https://confluence.ecmwf.int/display/CKB/How+to+download+ERA5#).
 
+## Suggested citation
+Copernicus Climate Change Service (C3S) (2017): ERA5: Fifth generation of ECMWF atmospheric reanalyses of the global climate. Copernicus Climate Change Service Climate Data Store (CDS), 2020-03-26. https://cds.climate.copernicus.eu/cdsapp#!/home
 
 ## Reference pages
 - General description (last access 8-01-2020): https://www.ecmwf.int/en/forecasts/datasets/reanalysis-datasets/era5
