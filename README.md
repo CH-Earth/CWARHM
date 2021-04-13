@@ -1,119 +1,129 @@
 # SUMMA workflow
 This repository contains scripts to install, set up and run the Structure for Unifying Multiple Modeling Alternatives (SUMMA, Clark et al., 2015a,b) and mizuRoute (Mizukami et al., 2016) to generate hydrologic simulations for a given domain. The workflow uses open-source data with global coverage to determine model parameters and forcing, thus enabling transparent and efficient hydrologic science.
 
+
+## Scope
+
 A basic SUMMA+mizuRoute setup requires:
 - Compiled executables for SUMMA and mizuRoute;
-- A shapefile that discretizes the modelling domain into Grouped Responses Units (GRUs) and Hydrological Response Units (HRUs)
-- A shapefile that discretizes the river network connecting the GRUs
+- A shapefile that discretizes the modelling domain into Grouped Responses Units (GRUs) and Hydrological Response Units (HRUs) for use by SUMMA;
+- A shapefile that discretizes the river network that connects the GRUs and, optionally, a shapefile that discretizes the routing basins if these are not the same as the SUMMA GRUs for use by mizuRoute;
 - Time series of forcing data for each HRU
-- A `.nc` file with parameter values for each HRU; the `attributes.nc` file;
-- A `.nc` file with initial conditions for each HRU; the `coldState.nc` file;
-- A `.nc` file that can be used to trial new parameter values without changing `attributes.nc` or any of the other parameter `.txt` files; the `trialParams.nc` file;
+- Various settings files for SUMMA and mizuRoute that provide parameter values, initial conditions and runtime settings.
 
-This workflow requires the user to provide the catchment and river network shapefiles with certain required contents (see the relevant readme's for details). The scripts in the repository provide all the necessary code to download and pre-process forcing and parameter data, create SUMMA's and mizuRoute's required input files, and run hydrologic and routing simulations. 
+This workflow requires the user to provide the catchment and river network shapefiles with certain required contents (see the relevant readme's for details). The scripts in the repository provide all the necessary code to download and pre-process forcing and parameter data, create SUMMA's and mizuRoute's required input files, and run hydrologic and routing simulations. This generates a basic SUMMA + mizuRoute setup, upon which the user can improve by, for example, swapping global datasets for higher quality local ones or connecting the model setup to a calibration algorithm. 
 
 
-## Repository structure
-This section gives a brief description of the contents and purpose of each folder.
+## Data coverage
 
-### 0_controlFiles
-Contains control files in which the user can specify folder locations for data downloads, model setting files and model simulations. Scripts in the `summaWorkflow_public` repository will look for the file 'control_active.txt' by default.
+The workflow uses the following data sources:
+- ERA5 forcing data (Copernicus Climate Change Service, 2017), available globally from 1970 to current minus five days;
+- SOILGRIDS-derived (Benham et al., 2009; Hengl et al., 2017; Knoben, 2021) maps of global soil classes;
+- MODIS maps (Friedl et al., 2019) of global vegetation types.
 
-### 1_folderPrep
-Contains code to set up the basic folder structure in the data directory specified in the control file. In particular, this generates the folders where shapefiles of the catchment(s) and river network need to go.
-
-### 2_install
-Contains scripts that create local clones of the SUMMA and mizuRoute GitHub repositories. Also contains scripts that show how both were compiled on the Unviersity of Saskatchewan's HPC cluster "Copernicus".
+The workflow can thus generate model setups with global coverage and for the past half century.
 
 
+## Shapefile requirements
 
+The workflow assumes the user can provide shapefiles that delineate the (sub-)catchments used by SUMMA and the river network used by mizuRoute. These shapefiles should include certain additional info. The folder `0_example` contains example shapefiles that can be used to create a model setup for the Bow at Banff, Canada. This folder also contains a detailed description of shapefile requirements.
 
 
 ## Typical workflow
+
 A typical application would look as follows:
 
 1. Fork this repository to your own GitHub account and clone your fork into an arbitrary folder on your operating platform (e.g. local machine with Linux capabilities, a high performance cluster). 
 2. Navigate to `summaWorkflow_public/0_control_files`. Copy and rename `control_template` to something more descriptive of your modeling domain.
-3. Specify the folder where your data downloads etc need to go in your newly made control file.
+3. Update all relevant settings in your newly made control file. Initially, this is mainly:
+	- The path to your own data directory;
+	- The names of your shapefiles and the names of the columns in your shapefile;
+	- The spatial extent of your modelling domain;
+	- The temporal extent of your period of interest. 
 4. Navigate to `summaWorkflow_public/1_folderPrep` and run the notebook or Python code there to create the basic layout of your data directory.
 5. Copy your catchment and river network shapefiles (`.shp`) into the newly created `your/data/path/domain_[yourDomain]/shapefiles' folder, placing the shapefiles in the `catchment` and `river_network` folders respectively.
+6. Run through the various scripts in order.
 
+#### Note on updating the control file
 
-
-
-- Define the domain
-	- Generate an HRU mask for the domain and assign HRU IDs
-		- Specify lat/lon as part of the mask
-		- Specify area as part of the mask
-- Forcing
-	- Download forcing data for the requested time period and spatial extent
-	- Intersect forcing grid with HRU mask and create SUMMA-ready forcing files 
-- Parameter data
-	- Download and pre-process SOILGRIDS data
-	- Download and pre-process MODIS XXX data
-	- Download and pre-process MERIT Hydro DEM
-- Create attributes.nc
-	- Intersect elevation data with HRU mask
-	- Intersect soilgrids data with HRU mask
-	- Intersect modis veg data with HRU mask
-	- Insert lat/long data from HRU mask
-	- Insert hru_area from HRU mask
-	- Set mHeight depending on the data (10m)
-	- (Assuming HRU == GRU), set downHRUidx (0), hru2grudid (hru_id), hru_id (from HRU mask), gru_id (hru_id) 
-	- (Assuming relevant parametrizations are not used) set slopeTypeId (1), contourLength (30m), tan_slope (0.1)
-- Create coldstate.nc
-- Create trialParams.nc
+We strongly recommend to first use the provided shapefiles and control file to create your own setup for the Bow river at Banff. This domain is relatively small and the control file only specifies 1 year of data, which limits the download requirements. Run the scripts in order and try to trace which information each script needs and how it obtains this from the control file. Understanding how the workflow operates will make it much easier to create your own control file.
 
 
 ## Requirements
-< Copy this from the paper >
 
+The workflow uses a combination of Python and Bash. This section lists how to setup your system to use this workflow. We recommend you contact your system administrator if none of this makes sense.
+
+#### Python
+
+The Python code requires various packages as specified in the file `requirements.txt`. It is typically good practice to create a clean (virtual) environment and install the required packages through a package manager.
+
+Pip:
+```
+cd /path/to/summaWorkflow_public
+virtualenv summa-venv
+source summa-venv/bin/activate
+pip install -r requirements.txt
+```
+
+Conda:
+```
+conda --name summa-env
+conda activate summa-env
+cd /path/to/summaWorkflow_public
+conda install --file requirements.txt
+```
+
+The scripts used for geospatial analysis use several functions from QGIS. Depending on your system, you may be able to get `QGIS` as a Conda package (https://anaconda.org/conda-forge/qgis) or require a stand-alone install of QGIS (https://qgis.org/en/site/). The provided notebooks in folder `/summaWorkflow_public/5_model_input/SUMMA/1_topo/` are designed to use `QGIS` as a Conda package; the scripts in this folder show how to use a standalone install.
+
+
+#### Bash
+
+The Bash code requires various libraries and command line utilities. These are:
+
+- Libraries
+	- `GCC` compiler: https://gcc.gnu.org/
+	- `openblas` library: https://www.openblas.net/
+	- `netcdf-fortran` library: https://www.unidata.ucar.edu/software/netcdf/fortran/docs/
+- CMD utilities
+	- `gdal`: https://gdal.org/
+	- [optional] `GNU Parallel`: https://www.gnu.org/software/parallel/
+	- [optional] `netCDF Operators`: http://nco.sourceforge.net/
+	
 
 ## Note on deprecation warnings in Python packages
+
 At the time of writing (12-04-2021) `numpy` issues warnings about a deprecated feature. `netCDF4` uses this feature and as a result any script that uses `netCDF4` currently floods the screen with warnings. These are safe to ignore. See:
 - https://github.com/numpy/numpy/issues/18281
 - https://github.com/Unidata/netcdf4-python/commit/d50b949ea3982a6281c6bce25d335736ad067b64
 
 
+## Disclaimer
+
+This workflow (“the program”) is licensed under the GNU GPL v3.0 license. You should have received a copy of the GNU General Public License along with this program. If not, see https://www.gnu.org/licenses/. Please take note of the following:
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+In practical terms, this means that:
+1. The developers do not and cannot warrant that the program meets your requirements or that the program is error free or bug free, nor that these errors or bugs can be corrected;
+2. You install and use the program at your own risk;
+3. The developers do not accept responsibility for the accuracy of the results obtained from using the program. In using the program, you are expected to make the final evaluation of any results in the context of your own problem.
+
+
 ## References
+
+Benham, E., Ahrens, R. J., & Nettleton, W. D. (2009). Clarification of Soil Texture Class Boundaries. United States Department of Agriculture. https://www.nrcs.usda.gov/wps/portal/nrcs/detail/ks/soils/?cid=nrcs142p2_033171
+
 Clark, M. P., B. Nijssen, J. D. Lundquist, D. Kavetski, D. E. Rupp, R. A. Woods, J. E. Freer, E. D. Gutmann, A. W. Wood, L. D. Brekke, J. R. Arnold, D. J. Gochis, R. M. Rasmussen, 2015a: A unified approach for process-based hydrologic modeling: Part 1. Modeling concept. Water Resources Research, doi:10.1002/2015WR017198
 
 Clark, M. P., B. Nijssen, J. D. Lundquist, D. Kavetski, D. E. Rupp, R. A. Woods, J. E. Freer, E. D. Gutmann, A. W. Wood, D. J. Gochis, R. M. Rasmussen, D. G. Tarboton, V. Mahat, G. N. Flerchinger, D. G. Marks, 2015b: A unified approach for process-based hydrologic modeling: Part 2. Model implementation and case studies. Water Resources Research, doi:10.1002/2015WR017200
 
 Clark, M. P., B. Nijssen, J. D. Lundquist, D. Kavetski, D. E. Rupp, R. A. Woods, J. E. Freer, E. D. Gutmann, A. W. Wood, L. D. Brekke, J. R. Arnold, D. J. Gochis, R. M. Rasmussen, D. G. Tarboton, V. Mahat, G. N. Flerchinger, D. G. Marks, 2015c: The structure for unifying multiple modeling alternatives (SUMMA), Version 1.0: Technical Description. NCAR Technical Note NCAR/TN-514+STR, 50 pp., doi:10.5065/D6WQ01TD
 
+Copernicus Climate Change Service (C3S) (2017): ERA5: Fifth generation of ECMWF atmospheric reanalyses of the global climate. Copernicus Climate Change Service Climate Data Store (CDS), 2020-03-26. https://cds.climate.copernicus.eu/cdsapp#!/home
+
+Friedl, M., Sulla-Menashe, D. (2019). MCD12Q1 MODIS/Terra+Aqua Land Cover Type Yearly L3 Global 500m SIN Grid V006 [Data set]. NASA EOSDIS Land Processes DAAC. Accessed 2020-05-20 from https://doi.org/10.5067/MODIS/MCD12Q1.006
+
+Hengl T, Mendes de Jesus J, Heuvelink GBM, Ruiperez Gonzalez M, Kilibarda M, Blagotić A, et al. (2017) SoilGrids250m: Global gridded soil information based on machine learning. PLoS ONE 12(2): e0169748. https://doi.org/10.1371/journal.pone.0169748
+
+Knoben, W. J. M. (2021). Global USDA-NRCS soil texture class map, HydroShare, https://doi.org/10.4211/hs.1361509511e44adfba814f6950c6e742 	
+
 Mizukami, N., Clark, M. P., Sampson, K., Nijssen, B., Mao, Y., McMillan, H., Viger, R. J., Markstrom, S. L., Hay, L. E., Woods, R., Arnold, J. R., and Brekke, L. D., 2016: mizuRoute version 1: a river network routing tool for a continental domain water resources applications, Geosci. Model Dev., 9, 2223–2238, https://doi.org/10.5194/gmd-9-2223-2016
-
-## --- ##
-
-## Repository structure
-The repo is split between Model Agnostic (MA) steps and Model Specific (MS) steps. MA steps are general pre- and postprocessing steps that are independent of the model choice and thus can easily be integrated into the workflow of other models. Examples are download and quality control of input data.
-
-MS steps are specific towards using SUMMA and are thus less generally applicable. Examples are downloading SUMMA source code and converting general forcing files into the specific configuration required by SUMMA.
-
-The repository has the following folders:
-- 0_MA_domain_specification: shapefiles for various domains or the code to generate them
-- 0_MA_forcing: code to obtain and pre-process forcing data
-- 0_MA_parameters: code to obtain and pre-process parameter data (soils, topography, land use)
-- 0_MA_tools: generally useful code snippets
-- 1_MS_summa_setup: code to download and compile SUMMA source code
-- 2_MS_experiment_setup: code to prepare the necessary files for experiments with SUMMA
-- 3_MS_model_runs: code to run the experiments
-- 4_MA_output_evaluation: code to model outputs
-
-
-
-# Temp stuff
-## Temporary note on possible process-based evaluation structure
-- Level 0 (sanity checks/laugh tests): do fluxes and states behave in a way that could feasibly be realistic?
-  - Method: diagnostic plots
-- Level 1 (model realism): does the model show behaviour that hydrologic theory tells us should be there?
-  - Method: literature on snow/SWE; definition of theory-based metrics; calculation of said metrics for SNOTEL sites
-- Level 2a (model performance comparison - lower benchmark): now we have realism-metrics, to what extent does our model outperform existing modelling efforts and/or simpler models?
-  - Method: collect earlier modeling efforts; define baseline models (e.g. inter-annual monthly SWE mean); compare SUMMA simulations against both
-- Level 2b (model performance comparison - upper benchmark): now we have realism-metrics, to what extent can our model still be improved in terms of input/output information content?
-  - Method: use some form of ML approach to wrangle as much info as we can from the data; compare SUMMA to this
-
-
-
-
