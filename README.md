@@ -41,7 +41,7 @@ A typical application would look as follows:
 	- The spatial extent of your modelling domain;
 	- The temporal extent of your period of interest. 
 4. Navigate to `summaWorkflow_public/1_folderPrep` and run the notebook or Python code there to create the basic layout of your data directory.
-5. Copy your catchment and river network shapefiles (`.shp`) into the newly created `your/data/path/domain_[yourDomain]/shapefiles' folder, placing the shapefiles in the `catchment` and `river_network` folders respectively.
+5. Copy your catchment and river network shapefiles (`.shp`) into the newly created `your/data/path/domain_[yourDomain]/shapefiles` folder, placing the shapefiles in the `catchment` and `river_network` folders respectively.
 6. Run through the various scripts in order.
 
 #### Note on updating the control file
