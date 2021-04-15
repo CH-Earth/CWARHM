@@ -11,7 +11,7 @@ The SOILGRIDS 250m data set (Hengl et al, 2017) provides values for various soil
 
 
 ## SOILGRIDS to SUMMA
-SOILGRIDS does not provide soil classes directly. Instead we rely on the SOILGRIDS data fields that specify each location's sand, silt and clay percentage in the soil. We relate these percentages to soil classes through the USDA soil classification triangle (Benham et al, 2009). Then we define the most commonly occurring soil class for the 7 depth and choose that class as representative of the soil column at a given pixel. These preprocessing steps have already been completed and stored as a global map of soil classes on the Hydroshare repository. The workflow code downloads this map and finds a representative soil class for each model element. The soil class for each model element is saved in "attributes.nc", which is part of the SUMMA input files.
+SOILGRIDS does not provide soil classes directly. Instead we rely on the SOILGRIDS data fields that specify each location's sand, silt and clay percentage in the soil. We relate these percentages to soil classes through the USDA soil classification triangle (Benham et al, 2009). Then we define the most commonly occurring soil class for the 7 depth and choose that class as representative of the soil column at a given pixel. These preprocessing steps have already been completed and stored as a global map of soil classes on the Hydroshare repository (Knoben, 2021). The workflow code downloads this map and finds a representative soil class for each model element. The soil class for each model element is saved in "attributes.nc", which is part of the SUMMA input files.
 
 
 ## ROSETTA soil parameter table
@@ -36,3 +36,6 @@ This section records the ROSETTA soil parameter table that was used to define so
 Benham, E., Ahrens, R. J., & Nettleton, W. D. (2009). Clarification of Soil Texture Class Boundaries. United States Department of Agriculture. https://www.nrcs.usda.gov/wps/portal/nrcs/detail/ks/soils/?cid=nrcs142p2_033171
 
 Hengl T, Mendes de Jesus J, Heuvelink GBM, Ruiperez Gonzalez M, Kilibarda M, Blagotić A, et al. (2017) SoilGrids250m: Global gridded soil information based on machine learning. PLoS ONE 12(2): e0169748. doi:10.1371/journal.pone.0169748
+
+
+Knoben, W. J. M. (2021). Global USDA-NRCS soil texture class map, HydroShare, https://doi.org/10.4211/hs.1361509511e44adfba814f6950c6e742 	
