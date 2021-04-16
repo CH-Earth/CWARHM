@@ -1,8 +1,8 @@
 # Tools
 Contains a selection of potentially useful code snippets that support but are not a critical part of the main workflow.
 
-## 1. ERA5 download coordinates
-The ERA5 download scripts require specification on the coordinates to be downloaded in regular lat/lon format. This script loads the user-provided shapefile as specified in the control file, determines the bounding box of the shapefile and rounds these coordinates down (for minimum latitude and longitude) and up (for maximum latitude and longitude) to ERA5's 0.25 degree resolution. 
+## 1. Shapefile bounding box coordinates
+The ERA5 download scripts and several others related to downloading and processing parameter fields need to know the spatial extent of the domain in regular lat/lon format. This script loads the user-provided shapefile as specified in the control file, determines the bounding box of the shapefile and rounds these coordinates slightly down (for minimum latitude and longitude) and up (for maximum latitude and longitude). This ensures that downloads and cutouts based on these coordinates are slightly larger than the modelling domain.
 
 This procedure is not integrated in the main workflow scripts because it is not always necessary (if the user has another way to determine the bounding box) and potentially quite slow for larger domains. 
 

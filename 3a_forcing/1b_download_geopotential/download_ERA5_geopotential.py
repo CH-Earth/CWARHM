@@ -5,6 +5,7 @@
 import cdsapi    # copernicus connection
 import calendar  # to find days per month
 import os        # to check if file already exists
+import math
 from pathlib import Path
 from shutil import copyfile
 from datetime import datetime
@@ -70,8 +71,43 @@ geoPath.mkdir(parents=True, exist_ok=True)
 
 # --- Find spatial domain from control file
 
-# Find which locations to download
-coordinates = read_from_control(controlFolder/controlFile,'forcing_raw_space')
+# Find the spatial extent the data needs to cover
+bounding_box = read_from_control(controlFolder/controlFile,'forcing_raw_space') 
+bounding_box = bounding_box.split('/') # split string
+bounding_box = [float(value) for value in bounding_box] # string to array
+
+# function to round coordinates of a bounding box to ERA5s 0.25 degree resolution
+def round_coords_to_ERA5(coords):
+    
+    '''Assumes coodinates are an array: [lon_min,lat_min,lon_max,lat_max].
+    Returns separate lat and lon vectors.'''
+    
+    # Extract values
+    lon = [coords[1],coords[3]]
+    lat = [coords[2],coords[0]]
+    
+    # Round to ERA5 0.25 degree resolution
+    rounded_lon = [math.floor(lon[0]*4)/4, math.ceil(lon[1]*4)/4]
+    rounded_lat = [math.floor(lat[0]*4)/4, math.ceil(lat[1]*4)/4]
+    
+    # Find if we are still in the representative area of a different ERA5 grid cell
+    if lat[0] > rounded_lat[0]+0.125:
+        rounded_lat[0] += 0.25
+    if lon[0] > rounded_lon[0]+0.125:
+        rounded_lon[0] += 0.25
+    if lat[1] < rounded_lat[1]-0.125:
+        rounded_lat[1] -= 0.25
+    if lon[1] < rounded_lon[1]-0.125:
+        rounded_lon[1] -= 0.25
+    
+    # Make a download string
+    dl_string = '{}/{}/{}/{}'.format(rounded_lat[1],rounded_lon[0],rounded_lat[0],rounded_lon[1])
+    
+    return dl_string, rounded_lat, rounded_lon
+
+# Find the rounded bounding box
+coordinates,_,_ = round_coords_to_ERA5(bounding_box)
+
 
 # --- Specify date to download
 
