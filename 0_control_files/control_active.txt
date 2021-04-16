@@ -39,7 +39,7 @@ river_basin_shp_hru_to_seg  | hru_to_seg                                  # Name
 
 
 # Shapefile settings - SUMMA-to-mizuRoute 
-river_basin_needs_remap     | yes                                         # 'no' if routing basins map 1:1 onto model GRUs. 'yes' if river segments span multiple GRUs or if multiple segments are inside a single GRU.
+river_basin_needs_remap     | no                                          # 'no' if routing basins map 1:1 onto model GRUs. 'yes' if river segments span multiple GRUs or if multiple segments are inside a single GRU.
 
 
 # Install settings
@@ -129,7 +129,7 @@ settings_summa_coldstate    | coldState.nc                                # Name
 settings_summa_trialParams  | trialParams.nc                              # Name of the file that can contain trial parameter values (note, can be empty of any actual parameter values but must be provided and must contain an 'hruId' variable).
 settings_summa_forcing_list | forcingFileList.txt                         # Name of the file that has the list of forcing files.
 settings_summa_attributes   | attributes.nc                               # Name of the attributes file.
-settings_summa_connect_HRUs | yes                                         # Attribute setting: "no" or "yes". If no; all HRUs modeled as independent columns. If yes; HRUs within each GRU are connected based on relative HRU elevation (highest = upstream, lowest = outlet).
+settings_summa_connect_HRUs | no                                          # Attribute setting: "no" or "yes". Tricky concept, see README in ./5_model_input/SUMMA/3f_attributes. If no; all HRUs modeled as independent columns (downHRUindex = 0). If yes; HRUs within each GRU are connected based on relative HRU elevation (highest = upstream, lowest = outlet). 
 
 
 # Experiment settings - mizuRoute
