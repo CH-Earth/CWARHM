@@ -6,7 +6,7 @@
 
 
 # Modeling domain settings
-root_path                   | /project/gwf/gwf_cmt/wknoben/summaWorkflow_data       # Root folder where data will be stored.
+root_path                   | C:\Globus endpoint\summaWorkflow_data       # Root folder where data will be stored.
 domain_name                 | BowAtBanff                                  # Used as part of the root folder name for the prepared data.
 
 
@@ -53,7 +53,7 @@ exe_name_mizuroute          | mizuroute.exe                               # Name
 
 # Forcing settings
 forcing_raw_time            | 2008,2013                                   # Years to download: Jan-[from],Dec-[to].
-forcing_raw_space           | 51.75/-116.50/51.00/-115.50                 # ERA5 coordinates to download: lat_max/lon_min/lat_min/lon_max. Should cover the shapefile completely. Order and use of '/' to separate values is required for cdsapi to work.
+forcing_raw_space           | 51.74/-116.55/50.95/-115.52                 # Bounding box of the shapefile: lat_max/lon_min/lat_min/lon_max. Will be converted to ERA5 download coordinates in script. Order and use of '/' to separate values is mandatory.
 forcing_time_step_size      | 3600                                        # Size of the forcing time step in [s]. Must be constant.
 forcing_measurement_height  | 3                                           # Reference height for forcing measurements [m].
 forcing_shape_path          | default                                     # If 'default', uses 'root_path/domain_[name]/shapefiles/forcing'.

@@ -3,6 +3,7 @@ import cdsapi    # copernicus connection
 import calendar  # to find days per month
 import os        # to check if file already exists
 import sys       # to handle command line arguments (sys.argv[0] = name of this file, sys.argv[1] = arg1, ...)
+import math
 from pathlib import Path
 from shutil import copyfile
 from datetime import datetime
@@ -16,12 +17,47 @@ Usage: python download_ERA5_surfaceLevel_annual.py <year> <coordinates> <path/to
 year = int(sys.argv[1]) # arguments are string by default; string to integer
 
 # Get the spatial coordinates as the second command line argument
-coordinates = sys.argv[2] # string
+bounding_box = sys.argv[2] # string
+bounding_box = bounding_box.split('/') # split string
+bounding_box = [float(value) for value in bounding_box] # string to array
 
 # Get the path as the second command line argument
 forcingPath = Path(sys.argv[3]) # string to Path()
 
-# Start the month loop
+# --- Convert the bounding box to download coordinates
+# function to round coordinates of a bounding box to ERA5s 0.25 degree resolution
+def round_coords_to_ERA5(coords):
+    
+    '''Assumes coodinates are an array: [lon_min,lat_min,lon_max,lat_max].
+    Returns separate lat and lon vectors.'''
+    
+    # Extract values
+    lon = [coords[1],coords[3]]
+    lat = [coords[2],coords[0]]
+    
+    # Round to ERA5 0.25 degree resolution
+    rounded_lon = [math.floor(lon[0]*4)/4, math.ceil(lon[1]*4)/4]
+    rounded_lat = [math.floor(lat[0]*4)/4, math.ceil(lat[1]*4)/4]
+    
+    # Find if we are still in the representative area of a different ERA5 grid cell
+    if lat[0] > rounded_lat[0]+0.125:
+        rounded_lat[0] += 0.25
+    if lon[0] > rounded_lon[0]+0.125:
+        rounded_lon[0] += 0.25
+    if lat[1] < rounded_lat[1]-0.125:
+        rounded_lat[1] -= 0.25
+    if lon[1] < rounded_lon[1]-0.125:
+        rounded_lon[1] -= 0.25
+    
+    # Make a download string
+    dl_string = '{}/{}/{}/{}'.format(rounded_lat[1],rounded_lon[0],rounded_lat[0],rounded_lon[1])
+    
+    return dl_string, rounded_lat, rounded_lon
+
+# Find the rounded bounding box
+coordinates,_,_ = round_coords_to_ERA5(bounding_box)
+
+# --- Start the month loop
 for month in range (1,13): # this loops through numbers 1 to 12
        
     # find the number of days in this month
