@@ -49,13 +49,13 @@ A typical application would look as follows:
 We strongly recommend to first use the provided shapefiles and control file to create your own setup for the Bow river at Banff. This domain is relatively small and the control file only specifies 1 year of data, which limits the download requirements. Run the scripts in order and try to trace which information each script needs and how it obtains this from the control file. Understanding how the workflow operates will make it much easier to create your own control file.
 
 
-## Requirements
+## Software requirements
 
 The workflow uses a combination of Python and Bash. This section lists how to setup your system to use this workflow. We recommend you contact your system administrator if none of this makes sense.
 
 #### Python
 
-The Python code requires various packages as specified in the file `requirements.txt`. It is typically good practice to create a clean (virtual) environment and install the required packages through a package manager.
+The Python code requires various packages as specified in the file `requirements.txt`. It is typically good practice to create a clean (virtual) environment and install the required packages through a package manager. Certain Python scripts also require a local install of the `GDAL` library. The `requirements.txt` assumes this is already locally available.
 
 Pip:
 ```
@@ -84,8 +84,8 @@ The Bash code requires various libraries and command line utilities. These are:
 	- `GCC` compiler: https://gcc.gnu.org/
 	- `openblas` library: https://www.openblas.net/
 	- `netcdf-fortran` library: https://www.unidata.ucar.edu/software/netcdf/fortran/docs/
-- CMD utilities
 	- `gdal`: https://gdal.org/
+- CMD utilities
 	- [optional] `GNU Parallel`: https://www.gnu.org/software/parallel/
 	- [optional] `netCDF Operators`: http://nco.sourceforge.net/
 	
