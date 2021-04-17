@@ -3,20 +3,20 @@
 # 1. Intersect the ERA5 shape with the user's catchment shape to find the overlap between a given (sub) catchment and the forcing grid;
 # 2. Create an area-weighted, catchment-averaged forcing time series.
 #
-# The CANDEX package (https://github.com/ShervanGharari/candex_newgen) provides the necessary functionality to do this. CANDEX performs the GIS step (1, shapefile intersection) and the area-weighting step (2, create new forcing `.nc` files) as part of a single `run_candex()` call. To allow for parallelization, CANDEX can save the output from the GIS step into a restart `.csv` file which can be used to skip the GIS step. This allows (manual) parallelization of area-weighted forcing file generation after the GIS procedures have been run once. The full workflow here is thus:
-# 1. [This script] Call `run_candex()` with ERA5 and user's shapefile, and one ERA5 forcing `.nc` file;
-#    - CANDEX performs intersection of both shapefiles;
-#    - CANDEX saves the outcomes of this intersection to a `.csv` file;
-#    - CANDEX creates an area-weighted forcing file from a single provided ERA5 source `.nc` file
-# 2. [Follow-up script] Call `run_candex()` with intersection `.csv` file and all other forcing `.nc` files.
+# The EASYMORE package (https://github.com/ShervanGharari/EASYMORE_newgen) provides the necessary functionality to do this. EASYMORE performs the GIS step (1, shapefile intersection) and the area-weighting step (2, create new forcing `.nc` files) as part of a single `run_EASYMORE()` call. To allow for parallelization, EASYMORE can save the output from the GIS step into a restart `.csv` file which can be used to skip the GIS step. This allows (manual) parallelization of area-weighted forcing file generation after the GIS procedures have been run once. The full workflow here is thus:
+# 1. [This script] Call `run_EASYMORE()` with ERA5 and user's shapefile, and one ERA5 forcing `.nc` file;
+#    - EASYMORE performs intersection of both shapefiles;
+#    - EASYMORE saves the outcomes of this intersection to a `.csv` file;
+#    - EASYMORE creates an area-weighted forcing file from a single provided ERA5 source `.nc` file
+# 2. [Follow-up script] Call `run_EASYMORE()` with intersection `.csv` file and all other forcing `.nc` files.
 # 3. [Follow-up script] Apply lapse rates to temperature variable.
 #
-# Parallelization of step 2 (2nd `run_candex()` call) requires an external loop that sends (batches of) the remaining ERA5 raw forcing files to individual processors. As with other steps that may be parallelized, creating code that does this is left to the user.
+# Parallelization of step 2 (2nd `run_EASYMORE()` call) requires an external loop that sends (batches of) the remaining ERA5 raw forcing files to individual processors. As with other steps that may be parallelized, creating code that does this is left to the user.
 
 # modules
 import os
 import glob
-import candex
+import easymore
 from pathlib import Path
 from shutil import rmtree
 from shutil import copyfile
@@ -88,7 +88,7 @@ else:
     
     
 # --- Find where the intersection needs to go
-# Intersected shapefile path. Name is set by CANDEX as [prefix]_intersected_shapefile.shp
+# Intersected shapefile path. Name is set by EASYMORE as [prefix]_intersected_shapefile.shp
 intersect_path = read_from_control(controlFolder/controlFile,'intersect_forcing_path')
 
 # Specify default path if needed
@@ -118,22 +118,22 @@ forcing_files = [forcing_merged_path/file for file in os.listdir(forcing_merged_
 forcing_files.sort()
 
 
-# --- Find where the temporary CANDEX files need to go
-# Location for CANDEX temporary storage
-forcing_candex_path = read_from_control(controlFolder/controlFile,'forcing_candex_path')
+# --- Find where the temporary EASYMORE files need to go
+# Location for EASYMORE temporary storage
+forcing_easymore_path = read_from_control(controlFolder/controlFile,'forcing_easymore_path')
 
 # Specify default path if needed
-if forcing_candex_path == 'default':
-    forcing_candex_path = make_default_path('forcing/3_temp_candex') # outputs a Path()
+if forcing_easymore_path == 'default':
+    forcing_easymore_path = make_default_path('forcing/3_temp_easymore') # outputs a Path()
 else:
-    forcing_candex_path = Path(forcing_candex_path) # make sure a user-specified path is a Path()
+    forcing_easymore_path = Path(forcing_easymore_path) # make sure a user-specified path is a Path()
     
 # Make the folder if it doesn't exist
-forcing_candex_path.mkdir(parents=True, exist_ok=True)
+forcing_easymore_path.mkdir(parents=True, exist_ok=True)
 
 
 # --- Find where the area-weighted forcing needs to go
-# Location for CANDEX forcing output
+# Location for EASYMORE forcing output
 forcing_basin_path = read_from_control(controlFolder/controlFile,'forcing_basin_avg_path')
 
 # Specify default path if needed
@@ -146,84 +146,84 @@ else:
 forcing_basin_path.mkdir(parents=True, exist_ok=True)
 
 
-# --- CANDEX
-# Initialize a CANDEX object
-cndx = candex.candex()
+# --- EASYMORE
+# Initialize an EASYMORE object
+esmr = easymore.easymore()
 
 # Author name
-cndx.author_name = 'SUMMA public workflow scripts'
+esmr.author_name = 'SUMMA public workflow scripts'
 
 # Data license
-cndx.license = 'Copernicus data use license: https://cds.climate.copernicus.eu/api/v2/terms/static/licence-to-use-copernicus-products.pdf'
+esmr.license = 'Copernicus data use license: https://cds.climate.copernicus.eu/api/v2/terms/static/licence-to-use-copernicus-products.pdf'
 
-# Case name, used in CANDEX-generated file naes
-cndx.case_name = read_from_control(controlFolder/controlFile,'domain_name')
+# Case name, used in EASYMORE-generated file naes
+esmr.case_name = read_from_control(controlFolder/controlFile,'domain_name')
 
 # ERA5 shapefile and variable names
 # Variable names can be hardcoded because we set them when we generate this shapefile as part of the workflow
-cndx.source_shp     = forcing_shape_path/forcing_shape_name # shapefile
-cndx.source_shp_lat = read_from_control(controlFolder/controlFile,'forcing_shape_lat_name') # name of the latitude field
-cndx.source_shp_lon = read_from_control(controlFolder/controlFile,'forcing_shape_lon_name') # name of the longitude field
+esmr.source_shp     = forcing_shape_path/forcing_shape_name # shapefile
+esmr.source_shp_lat = read_from_control(controlFolder/controlFile,'forcing_shape_lat_name') # name of the latitude field
+esmr.source_shp_lon = read_from_control(controlFolder/controlFile,'forcing_shape_lon_name') # name of the longitude field
 
 # Catchment shapefile and variable names
-cndx.target_shp = catchment_path/catchment_name
-cndx.target_shp_ID  = read_from_control(controlFolder/controlFile,'catchment_shp_hruid') # name of the HRU ID field
-cndx.target_shp_lat = read_from_control(controlFolder/controlFile,'catchment_shp_lat')   # name of the latitude field
-cndx.target_shp_lon = read_from_control(controlFolder/controlFile,'catchment_shp_lon')   # name of the longitude field
+esmr.target_shp = catchment_path/catchment_name
+esmr.target_shp_ID  = read_from_control(controlFolder/controlFile,'catchment_shp_hruid') # name of the HRU ID field
+esmr.target_shp_lat = read_from_control(controlFolder/controlFile,'catchment_shp_lat')   # name of the latitude field
+esmr.target_shp_lon = read_from_control(controlFolder/controlFile,'catchment_shp_lon')   # name of the longitude field
 
 # ERA5 netcdf file and variable names
-cndx.source_nc = str(forcing_files[0]) # first file in the list; Path() to string
-cndx.var_names = ['airpres',
+esmr.source_nc = str(forcing_files[0]) # first file in the list; Path() to string
+esmr.var_names = ['airpres',
                   'LWRadAtm',
                   'SWRadAtm',
                   'pptrate',
                   'airtemp',
                   'spechum',
                   'windspd'] # variable names of forcing data - hardcoded because we prescribe them during ERA5 merging
-cndx.var_lat   = 'latitude'  # name of the latitude dimensions
-cndx.var_lon   = 'longitude' # name of the longitude dimension
-cndx.var_time  = 'time'      # name of the time dimension
+esmr.var_lat   = 'latitude'  # name of the latitude dimensions
+esmr.var_lon   = 'longitude' # name of the longitude dimension
+esmr.var_time  = 'time'      # name of the time dimension
 
-# Temporary folder where the CANDEX-generated GIS files and remapping file will be saved
-cndx.temp_dir = str(forcing_candex_path) + '/' # Path() to string; ensure the trailing '/' CANDEX wants
+# Temporary folder where the EASYMORE-generated GIS files and remapping file will be saved
+esmr.temp_dir = str(forcing_easymore_path) + '/' # Path() to string; ensure the trailing '/' EASYMORE wants
 
 # Output folder where the catchment-averaged forcing will be saved
-cndx.output_dir = str(forcing_basin_path) + '/' # Path() to string; ensure the trailing '/' CANDEX wants
+esmr.output_dir = str(forcing_basin_path) + '/' # Path() to string; ensure the trailing '/' EASYMORE wants
 
 # Netcdf settings
-cndx.remapped_dim_id = 'hru'     # name of the non-time dimension; prescribed by SUMMA
-cndx.remapped_var_id = 'hruId'   # name of the variable associated with the non-time dimension
-cndx.format_list     = ['f4']    # variable type to save forcing as. Single entry here will be used for all variables
-cndx.fill_value_list = ['-9999'] # fill value
+esmr.remapped_dim_id = 'hru'     # name of the non-time dimension; prescribed by SUMMA
+esmr.remapped_var_id = 'hruId'   # name of the variable associated with the non-time dimension
+esmr.format_list     = ['f4']    # variable type to save forcing as. Single entry here will be used for all variables
+esmr.fill_value_list = ['-9999'] # fill value
 
 # Flag that we do not want the data stored in .csv in addition to .nc
-cndx.save_csv  = False
+esmr.save_csv  = False
 
 # Flag that we currently have no remapping file
-cndx.remap_csv = ''  
+esmr.remap_csv = ''  
 
 # Enforce that we want our HRUs returned in the order we put them in
-cndx.sort_ID = False
+esmr.sort_ID = False
 
-# Run candex
+# Run EASYMORE
 # Note on centroid warnings: in this case we use a regular lat/lon grid to represent ERA5 forcing and ...
 #     centroid estimates without reprojecting are therefore acceptable.
-# Note on deprecation warnings: this is a CANDEX issue that cannot be resolved here. Does not affect current use.
-cndx.run_candex()
+# Note on deprecation warnings: this is a EASYMORE issue that cannot be resolved here. Does not affect current use.
+esmr.nc_remapper()
 
 
 # --- Move files to prescribed locations
 # Remapping file 
-remap_file = cndx.case_name + '_remapping.csv'
-copyfile( cndx.temp_dir + remap_file, intersect_path / remap_file);
+remap_file = esmr.case_name + '_remapping.csv'
+copyfile( esmr.temp_dir + remap_file, intersect_path / remap_file);
 
 # Intersected shapefile
-for file in glob.glob(cndx.temp_dir + cndx.case_name + '_intersected_shapefile.*'):
+for file in glob.glob(esmr.temp_dir + esmr.case_name + '_intersected_shapefile.*'):
     copyfile( file, intersect_path / os.path.basename(file));
     
-# Remove the temporary CANDEX directory to save space
+# Remove the temporary EASYMORE directory to save space
 try:
-    rmtree(cndx.temp_dir)
+    rmtree(esmr.temp_dir)
 except OSError as e:
     print ("Error: %s - %s." % (e.filename, e.strerror))  
     

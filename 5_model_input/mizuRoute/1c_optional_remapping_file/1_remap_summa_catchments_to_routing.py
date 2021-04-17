@@ -10,7 +10,7 @@ import netCDF4 as nc4
 import geopandas as gpd
 from pathlib import Path
 from shutil import copyfile
-import candex.candex as cndx
+import easymore.easymore as esmr
 from datetime import datetime
 
 
@@ -97,7 +97,7 @@ rm_shp_hru_id = read_from_control(controlFolder/controlFile,'river_basin_shp_rm_
 
 
 # --- Find where the intersection needs to go
-# Intersected shapefile path. Name is set by CANDEX as [prefix]_intersected_shapefile.shp
+# Intersected shapefile path. Name is set by EASYMORE as [prefix]_intersected_shapefile.shp
 intersect_path = read_from_control(controlFolder/controlFile,'intersect_routing_path')
 intersect_name = read_from_control(controlFolder/controlFile,'intersect_routing_name')
 
@@ -126,20 +126,20 @@ else:
 remap_path.mkdir(parents=True, exist_ok=True)
 
 
-# --- Call CANDEX to do the intersection
+# --- Call EASYMORE to do the intersection
 # Load both shapefiles
 hm_shape = gpd.read_file(hm_catchment_path/hm_catchment_name)
 rm_shape = gpd.read_file(rm_catchment_path/rm_catchment_name)
 
-# Create a CANDEX object
-candex_caller = cndx()
+# Create a EASYMORE object
+esmr_caller = esmr()
 
 # Project both shapes to equal area
 hm_shape = hm_shape.to_crs('EPSG:6933')
 rm_shape = rm_shape.to_crs('EPSG:6933')
 
 # Run the intersection
-intersected_shape = cndx.intersection_shp(candex_caller,rm_shape,hm_shape)
+intersected_shape = esmr.intersection_shp(esmr_called,rm_shape,hm_shape)
 
 # Reproject the intersection to WSG84
 intersected_shape = intersected_shape.to_crs('EPSG:4326')
