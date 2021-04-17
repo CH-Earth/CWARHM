@@ -75,18 +75,7 @@ else:
     forcingPath = Path(forcingPath) # ensure Path() object     
     
     
-# --- Find spatial extent of domain
-# Find which locations to download
-coordinates = read_from_control(controlFolder/controlFile,'forcing_raw_space')
-
-# Extract values
-coordinates = coordinates.split('/') # lat_max, lon_min, lat_min, lon_max
-
-# Re-organize values in the order the rest of the code expects: lat_min, lat_max, lon_min, lon_max
-bounding_box = np.array([coordinates[2], coordinates[0],  coordinates[1],  coordinates[3] ])
-
-
-# --- FInd location of geopotential data file
+# --- Find location of geopotential data file
 # Find file path
 geoPath = read_from_control(controlFolder/controlFile,'forcing_geo_path')
 
@@ -129,7 +118,7 @@ for file in os.listdir(mergePath):
 source_name_lat = "latitude"
 source_name_lon = "longitude"
 
-# Open the file and get the dimensions
+# Open the file and get the dimensions  and thus the spatial extent of the domain
 with nc4.Dataset(mergePath / forcing_file) as src:
     lat = src.variables[source_name_lat][:]
     lon = src.variables[source_name_lon][:]
