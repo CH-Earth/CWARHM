@@ -61,7 +61,7 @@ def make_default_path(suffix):
     
 
 # --- Find location of intersection file
-# Intersected shapefile path. Name is set by CANDEX as [prefix]_intersected_shapefile.shp
+# Intersected shapefile path. Name is set by EASYMORE as [prefix]_intersected_shapefile.shp
 intersect_path = read_from_control(controlFolder/controlFile,'intersect_forcing_path')
 
 # Specify default path if needed
@@ -75,18 +75,18 @@ domain = read_from_control(controlFolder/controlFile,'domain_name')
 intersect_name = domain + '_intersected_shapefile.csv' # can also be .shp, but using the .csv is easier on memory
 
 
-# --- Find where the CANDEX-prepared forcing files are
-# Forcing files as produced by CANDEX
-forcing_candex_path = read_from_control(controlFolder/controlFile,'forcing_basin_avg_path')
+# --- Find where the EASYMORE-prepared forcing files are
+# Forcing files as produced by EASYMORE
+forcing_easymore_path = read_from_control(controlFolder/controlFile,'forcing_basin_avg_path')
 
 # Specify default path if needed
-if forcing_candex_path == 'default':
-    forcing_candex_path = make_default_path('forcing/3_basin_averaged_data') # outputs a Path()
+if forcing_easymore_path == 'default':
+    forcing_easymore_path = make_default_path('forcing/3_basin_averaged_data') # outputs a Path()
 else:
-    forcing_candex_path = Path(forcing_candex_path) # make sure a user-specified path is a Path()
+    forcing_easymore_path = Path(forcing_easymore_path) # make sure a user-specified path is a Path()
     
 # Find the files
-_,_,forcing_files = next(os.walk(forcing_candex_path))
+_,_,forcing_files = next(os.walk(forcing_easymore_path))
 
 
 # --- Find the time step size of the forcing data
@@ -121,12 +121,12 @@ gru_ID_name = read_from_control(controlFolder/controlFile,'catchment_shp_gruid')
 
 # Specify the column names
 # Note that column names are truncated at 10 characters in the ESRI shapefile, but NOT in the .csv we use here
-gru_ID         = 'S_1_' + gru_ID_name # CANDEX prefix + user's hruId name
-hru_ID         = 'S_1_' + hru_ID_name # CANDEX prefix + user's hruId name
-forcing_ID     = 'S_2_ID'             # fixed name assigned by CANDEX
-catchment_elev = 'S_1_elev_mean'      # CANDEX prefix + name used in catchment+DEM intersection step
-forcing_elev   = 'S_2_elev_m'         # CANDEX prefix + name used in ERA5 shapefile generation
-weights        = 'weight'             # CANDEX feature
+gru_ID         = 'S_1_' + gru_ID_name # EASYMORE prefix + user's hruId name
+hru_ID         = 'S_1_' + hru_ID_name # EASYMORE prefix + user's hruId name
+forcing_ID     = 'S_2_ID'             # fixed name assigned by EASYMORE
+catchment_elev = 'S_1_elev_mean'      # EASYMORE prefix + name used in catchment+DEM intersection step
+forcing_elev   = 'S_2_elev_m'         # EASYMORE prefix + name used in ERA5 shapefile generation
+weights        = 'weight'             # EASYMORE feature
 
 # Define the lapse rate
 lapse_rate = 0.0065 # [K m-1]
@@ -153,7 +153,7 @@ for file in forcing_files:
     print('Starting on ' + file)
     
     # load the data
-    with xr.open_dataset(forcing_candex_path / file) as dat:
+    with xr.open_dataset(forcing_easymore_path / file) as dat:
     
         # --- Temperature lapse rates
         # Find the lapse rates by matching the HRU order in the forcing file with that in 'lapse_values'

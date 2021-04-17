@@ -3,11 +3,11 @@
 # 1. Intersect the ERA5 shape with the user's catchment shape to find the overlap between a given (sub) catchment and the forcing grid;
 # 2. Create an area-weighted, catchment-averaged forcing time series.
 #
-# The CANDEX package (https://github.com/ShervanGharari/candex_newgen) provides the necessary functionality to do this. CANDEX performs the GIS step (1, shapefile intersection) and the area-weighting step (2, create new forcing `.nc` files) as part of a single `run_candex()` call. To allow for parallelization, CANDEX can save the output from the GIS step into a restart `.csv` file which can be used to skip the GIS step. This allows (manual) parallelization of area-weighted forcing file generation after the GIS procedures have been run once. The full workflow is thus:
+# The EASYMORE package (https://github.com/ShervanGharari/candex_newgen) provides the necessary functionality to do this. EASYMORE performs the GIS step (1, shapefile intersection) and the area-weighting step (2, create new forcing `.nc` files) as part of a single `run_candex()` call. To allow for parallelization, EASYMORE can save the output from the GIS step into a restart `.csv` file which can be used to skip the GIS step. This allows (manual) parallelization of area-weighted forcing file generation after the GIS procedures have been run once. The full workflow is thus:
 # 1. [Previous script] Call `run_candex()` with ERA5 and user's shapefile, and one ERA5 forcing `.nc` file;
-#    - CANDEX performs intersection of both shapefiles;
-#    - CANDEX saves the outcomes of this intersection to a `.csv` file;
-#    - CANDEX creates an area-weighted forcing file from a single provided ERA5 source `.nc` file
+#    - EASYMORE performs intersection of both shapefiles;
+#    - EASYMORE saves the outcomes of this intersection to a `.csv` file;
+#    - EASYMORE creates an area-weighted forcing file from a single provided ERA5 source `.nc` file
 # 2. [This script] Call `run_candex()` with intersection `.csv` file and all other forcing `.nc` files.
 # 3. [Follow-up script] Apply lapse rates to temperature variable.
 #
@@ -15,7 +15,7 @@
 
 # modules
 import os
-import candex
+import easymore
 from pathlib import Path
 from shutil import rmtree
 from shutil import copyfile
@@ -64,8 +64,8 @@ def make_default_path(suffix):
     return defaultPath
     
     
-# --- Find where the CANDEX restart file is
-# Intersected shapefile path. Name is set by CANDEX as [prefix]_intersected_shapefile.shp
+# --- Find where the EASYMORE restart file is
+# Intersected shapefile path. Name is set by EASYMORE as [prefix]_intersected_shapefile.shp
 intersect_path = read_from_control(controlFolder/controlFile,'intersect_forcing_path')
 
 # Specify default path if needed
@@ -110,64 +110,64 @@ else:
 forcing_basin_path.mkdir(parents=True, exist_ok=True)
 
 
-# --- CANDEX
-# Initialize a CANDEX object
-cndx = candex.candex()
+# --- EASYMORE
+# Initialize an EASYMORE object
+esmr = easymore.easymore()
 
 # Author name
-cndx.author_name = 'SUMMA public workflow scripts'
+esmr.author_name = 'SUMMA public workflow scripts'
 
 # Data license
-cndx.license = 'Copernicus data use license: https://cds.climate.copernicus.eu/api/v2/terms/static/licence-to-use-copernicus-products.pdf'
+esmr.license = 'Copernicus data use license: https://cds.climate.copernicus.eu/api/v2/terms/static/licence-to-use-copernicus-products.pdf'
 
-# Case name, used in CANDEX-generated file naes
-cndx.case_name = read_from_control(controlFolder/controlFile,'domain_name')
+# Case name, used in EASYMORE-generated file naes
+esmr.case_name = read_from_control(controlFolder/controlFile,'domain_name')
 
 # ERA5 netcdf variable names
-cndx.var_names = ['airpres',
+esmr.var_names = ['airpres',
                   'LWRadAtm',
                   'SWRadAtm',
                   'pptrate',
                   'airtemp',
                   'spechum',
                   'windspd'] # variable names of forcing data - hardcoded because we prescribe them during ERA5 merging
-cndx.var_lat   = 'latitude'  # name of the latitude dimensions
-cndx.var_lon   = 'longitude' # name of the longitude dimension
-cndx.var_time  = 'time'      # name of the time dimension
+esmr.var_lat   = 'latitude'  # name of the latitude dimensions
+esmr.var_lon   = 'longitude' # name of the longitude dimension
+esmr.var_time  = 'time'      # name of the time dimension
 
-# Temporary folder where the CANDEX-generated GIS files and remapping file will be saved
-cndx.temp_dir = '' # Force this to be empty
+# Temporary folder where the EASYMORE-generated GIS files and remapping file will be saved
+esmr.temp_dir = '' # Force this to be empty
 
 # Output folder where the catchment-averaged forcing will be saved
-cndx.output_dir = str(forcing_basin_path) + '/' # Path() to string; ensure the trailing '/' CANDEX wants
+esmr.output_dir = str(forcing_basin_path) + '/' # Path() to string; ensure the trailing '/' EASYMORE wants
 
 # Netcdf settings
-cndx.remapped_dim_id = 'hru'     # name of the non-time dimension; prescribed by SUMMA
-cndx.remapped_var_id = 'hruId'   # name of the variable associated with the non-time dimension
-cndx.format_list     = ['f4']    # variable type to save forcing as. Single entry here will be used for all variables
-cndx.fill_value_list = ['-9999'] # fill value
+esmr.remapped_dim_id = 'hru'     # name of the non-time dimension; prescribed by SUMMA
+esmr.remapped_var_id = 'hruId'   # name of the variable associated with the non-time dimension
+esmr.format_list     = ['f4']    # variable type to save forcing as. Single entry here will be used for all variables
+esmr.fill_value_list = ['-9999'] # fill value
 
 # Flag that we do not want the data stored in .csv in addition to .nc
-cndx.save_csv  = False
+esmr.save_csv  = False
 
 # Flag that we currently have no remapping file
-cndx.remap_csv = str(intersect_path / remap_file)
+esmr.remap_csv = str(intersect_path / remap_file)
 
 # Enforce that we want our HRUs returned in the order we put them in
-cndx.sort_ID = False
+esmr.sort_ID = False
 
 
-# --- Run CANDEX - this can be parallelized for speed ups
+# --- Run EASYMORE - this can be parallelized for speed ups
 # Loop over the remaining forcing files
 for file in forcing_files[1:]: # skip the first one, as we completed that in the previous script
     
     # ERA5 forcing files to use
-    cndx.source_nc = str(file) # Path() to string
+    esmr.source_nc = str(file) # Path() to string
     
     # Note on centroid warnings: in this case we use a regular lat/lon grid to represent ERA5 forcing and ...
     #     centroid estimates without reprojecting are therefore acceptable.
-    # Note on deprecation warnings: this is a CANDEX issue that cannot be resolved here. Does not affect current use.
-    cndx.run_candex()
+    # Note on deprecation warnings: this is an EASYMORE issue that cannot be resolved here. Does not affect current use.
+    esmr.nc_remapper()
     
     
 # --- Code provenance
