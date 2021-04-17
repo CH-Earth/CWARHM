@@ -97,8 +97,6 @@ intersect_path.mkdir(parents=True, exist_ok=True)
 # --- Initialize QGIS connection
 qgis_path = which('qgis') # find the QGIS install location
 QgsApplication.setPrefixPath(qgis_path, True) # supply path to qgis install location
-qgs = QgsApplication([], False) # create a reference to the QgsApplication, GUI = False
-qgs.initQgis() # load providers
 
 # Now import the processing toolbox
 import processing # QGIS algorithm runner
