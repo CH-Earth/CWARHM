@@ -89,6 +89,9 @@ shp = gpd.read_file(intersect_path/intersect_name)
 
 
 # --- Define downHRUindex values if requested
+# Create a field with downHRUindex = 0, that we wil potentially overwrite
+shp['downHRUindex'] = 0
+
 # Find if this is requested by the user
 do_downHRUindex = read_from_control(controlFolder/controlFile,'settings_summa_connect_HRUs')
 
@@ -97,9 +100,6 @@ if do_downHRUindex.lower() == 'yes':
     
     # Find the unique GRU IDs
     gru_ids = shp[intersect_gruId_var].unique()
-    
-    # Create a temporary field we'll fill
-    shp['downHRUindex'] = 0
     
     # Make hruId the index
     shp.set_index(intersect_hruId_var, inplace=True)
