@@ -51,7 +51,7 @@ We strongly recommend to first use the provided shapefiles and control file to c
 
 ## Software requirements
 
-The workflow uses a combination of Python and Bash. This section lists how to setup your system to use this workflow. We recommend you contact your system administrator if none of this makes sense.
+The workflow uses a combination of Python and Bash. This section lists how to setup your system to use this workflow. We recommend you contact your system administrator if none of this makes sense. **Note** that this section is a work in progress. 
 
 #### Python
 

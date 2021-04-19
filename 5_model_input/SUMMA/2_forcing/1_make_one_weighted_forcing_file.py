@@ -3,15 +3,15 @@
 # 1. Intersect the ERA5 shape with the user's catchment shape to find the overlap between a given (sub) catchment and the forcing grid;
 # 2. Create an area-weighted, catchment-averaged forcing time series.
 #
-# The EASYMORE package (https://github.com/ShervanGharari/EASYMORE_newgen) provides the necessary functionality to do this. EASYMORE performs the GIS step (1, shapefile intersection) and the area-weighting step (2, create new forcing `.nc` files) as part of a single `run_EASYMORE()` call. To allow for parallelization, EASYMORE can save the output from the GIS step into a restart `.csv` file which can be used to skip the GIS step. This allows (manual) parallelization of area-weighted forcing file generation after the GIS procedures have been run once. The full workflow here is thus:
-# 1. [This script] Call `run_EASYMORE()` with ERA5 and user's shapefile, and one ERA5 forcing `.nc` file;
+# The EASYMORE package (https://github.com/ShervanGharari/EASYMORE) provides the necessary functionality to do this. EASYMORE performs the GIS step (1, shapefile intersection) and the area-weighting step (2, create new forcing `.nc` files) as part of a single `nc_remapper()` call. To allow for parallelization, EASYMORE can save the output from the GIS step into a restart `.csv` file which can be used to skip the GIS step. This allows (manual) parallelization of area-weighted forcing file generation after the GIS procedures have been run once. The full workflow here is thus:
+# 1. [This script] Call `nc_remapper()` with ERA5 and user's shapefile, and one ERA5 forcing `.nc` file;
 #    - EASYMORE performs intersection of both shapefiles;
 #    - EASYMORE saves the outcomes of this intersection to a `.csv` file;
 #    - EASYMORE creates an area-weighted forcing file from a single provided ERA5 source `.nc` file
-# 2. [Follow-up script] Call `run_EASYMORE()` with intersection `.csv` file and all other forcing `.nc` files.
+# 2. [Follow-up script] Call `nc_remapper()` with intersection `.csv` file and all other forcing `.nc` files.
 # 3. [Follow-up script] Apply lapse rates to temperature variable.
 #
-# Parallelization of step 2 (2nd `run_EASYMORE()` call) requires an external loop that sends (batches of) the remaining ERA5 raw forcing files to individual processors. As with other steps that may be parallelized, creating code that does this is left to the user.
+# Parallelization of step 2 (2nd `nc_remapper()` call) requires an external loop that sends (batches of) the remaining ERA5 raw forcing files to individual processors. As with other steps that may be parallelized, creating code that does this is left to the user.
 
 # modules
 import os
