@@ -27,7 +27,7 @@ river_network_shp_segid     | COMID                                       # Name
 river_network_shp_downsegid | NextDownID                                  # Name of the downstream segment ID column.
 river_network_shp_slope     | slope                                       # Name of the slope column. Slope must be in in units [length/length].
 river_network_shp_length    | length                                      # Name of the segment length column. Length must be in units [m].
-river_network_shp_outlet_id | 71028585                                    # ID of the most downstream segment in the river network (river network shapefile).
+river_network_shp_outlet_id | 71028585                                    # ID of the most downstream segment in the river network (river network shapefile). Note that this specifies a single segment ID value. It is not a column in the shapefile.
 
 
 # Shapefile settings - mizuRoute catchment file

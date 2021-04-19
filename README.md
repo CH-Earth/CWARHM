@@ -29,31 +29,32 @@ The workflow can thus generate model setups with global coverage and for the pas
 The workflow assumes the user can provide shapefiles that delineate the (sub-)catchments used by SUMMA and the river network used by mizuRoute. These shapefiles should include certain additional info. The folder `0_example` contains example shapefiles that can be used to create a model setup for the Bow at Banff, Canada. This folder also contains a detailed description of shapefile requirements.
 
 
+## Getting started
+
+Example shapefiles and a control file for the Bow river at Banff, AB, Canada, are provided as part of this repository. Shapefiles can be found in the folder `0_example`. The control file can be found in `0_control_files`. We strongly recommend to first use the provided shapefiles and control file to create your own setup for the Bow river at Banff. This domain is relatively small and the control file only specifies 1 year of data, which limits the download requirements. Run the scripts in order and try to trace which information each script needs and how it obtains this from the control file. Understanding how the workflow operates will make it much easier to create your own control file.
+
+
 ## Typical workflow
 
 A typical application would look as follows:
 
 1. Fork this repository to your own GitHub account and clone your fork into an arbitrary folder on your operating platform (e.g. local machine with Linux capabilities, a high performance cluster). 
-2. Navigate to `summaWorkflow_public/0_control_files`. Copy and rename `control_template` to something more descriptive of your modeling domain.
+2. Navigate to `summaWorkflow_public/0_control_files`. Copy and rename `control_BowAtBanff.txt` to something more descriptive of your modeling domain.
 3. Update all relevant settings in your newly made control file. Initially, this is mainly:
 	- The path to your own data directory;
-	- The names of your shapefiles and the names of the columns in your shapefile;
+	- The names of your shapefiles and the names of the columns in your shapefiles;
 	- The spatial extent of your modelling domain;
 	- The temporal extent of your period of interest. 
 4. Navigate to `summaWorkflow_public/1_folderPrep` and run the notebook or Python code there to create the basic layout of your data directory.
-5. Copy your catchment and river network shapefiles (`.shp`) into the newly created `your/data/path/domain_[yourDomain]/shapefiles` folder, placing the shapefiles in the `catchment` and `river_network` folders respectively.
+5. Copy your catchment, river network and routing basin shapefiles (`.shp`) into the newly created `your/data/path/domain_[yourDomain]/shapefiles` folder, placing the shapefiles in the `catchment` and `river_network` folders respectively.
 6. Run through the various scripts in order.
-
-#### Note on updating the control file
-
-We strongly recommend to first use the provided shapefiles and control file to create your own setup for the Bow river at Banff. This domain is relatively small and the control file only specifies 1 year of data, which limits the download requirements. Run the scripts in order and try to trace which information each script needs and how it obtains this from the control file. Understanding how the workflow operates will make it much easier to create your own control file.
 
 
 ## Software requirements
 
 The workflow uses a combination of Python and Bash. This section lists how to setup your system to use this workflow. We recommend you contact your system administrator if none of this makes sense. **Note** that this section is a work in progress. 
 
-#### Python
+### Python
 
 The Python code requires various packages as specified in the file `requirements.txt`. It is typically good practice to create a clean (virtual) environment and install the required packages through a package manager. Certain Python scripts also require a local install of the `GDAL` library. The `requirements.txt` assumes this is already locally available.
 
@@ -76,7 +77,7 @@ conda install --file requirements.txt
 The scripts used for geospatial analysis use several functions from QGIS. Depending on your system, you may be able to get `QGIS` as a Conda package (https://anaconda.org/conda-forge/qgis) or require a stand-alone install of QGIS (https://qgis.org/en/site/). The provided notebooks in folder `/summaWorkflow_public/5_model_input/SUMMA/1_topo/` are designed to use `QGIS` as a Conda package; the scripts in this folder show how to use a standalone install.
 
 
-#### Bash
+### Bash
 
 The Bash code requires various libraries and command line utilities. These are:
 
