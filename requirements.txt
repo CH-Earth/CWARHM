@@ -10,7 +10,7 @@ cligj==0.7.1
 cycler==0.10.0
 DateTime==4.3
 decorator==4.4.2
-git+https://github.com/ShervanGharari/EASYMORE/@EASYMORE
+easymore==0.0.0
 Fiona==1.8.13.post1
 GDAL==3.0.4
 geojson==2.5.0

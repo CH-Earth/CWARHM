@@ -109,6 +109,13 @@ In practical terms, this means that:
 3. The developers do not accept responsibility for the accuracy of the results obtained from using the program. In using the program, you are expected to make the final evaluation of any results in the context of your own problem.
 
 
+## Acknowledgements
+
+Our thanks to those who have contributed to improving this repository. List of honorary bug hunters:
+
+- Dave Casson
+
+
 ## References
 
 Benham, E., Ahrens, R. J., & Nettleton, W. D. (2009). Clarification of Soil Texture Class Boundaries. United States Department of Agriculture. https://www.nrcs.usda.gov/wps/portal/nrcs/detail/ks/soils/?cid=nrcs142p2_033171
