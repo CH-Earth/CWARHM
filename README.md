@@ -36,12 +36,14 @@ Example shapefiles and a control file for the Bow river at Banff, AB, Canada, ar
 
 ## Typical workflow
 
+The workflow is organized around the idea that the code that generates data (i.e. the scripts that form this repo) is kept in a separate directory from the data that is downloaded and created. The connection between repository scripts and data directory is given in the `control_file` as control setting `root_path`. We strongly recommend to **_not_** put the data directory specified in `root_path` inside any of the repository folders, but to use a dedicated and separate location for the data instead. Note that the size requirement of the data directory depends on the size of the domain and the length and number of simulations.
+
 A typical application would look as follows:
 
 1. Fork this repository to your own GitHub account and clone your fork into an arbitrary folder on your operating platform (e.g. local machine with Linux capabilities, a high performance cluster). 
 2. Navigate to `summaWorkflow_public/0_control_files`. Copy and rename `control_BowAtBanff.txt` to something more descriptive of your modeling domain.
 3. Update all relevant settings in your newly made control file. Initially, this is mainly:
-	- The path to your own data directory;
+	- The path to your own data directory, sepcified by setting `root_path`;
 	- The names of your shapefiles and the names of the columns in your shapefiles;
 	- The spatial extent of your modelling domain;
 	- The temporal extent of your period of interest. 
