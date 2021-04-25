@@ -8,6 +8,20 @@ SUMMA currently has several different look-up tables available in the file `TBL_
 Further details can be found in the Noah-MP documentation, see e.g.: https://ral.ucar.edu/solutions/products/noah-multiparameterization-land-surface-model-noah-mp-lsm
 
 
+## Download setup instructions
+The downloads require registration through NASA's EarthData website. See: https://urs.earthdata.nasa.gov/
+
+Authentication is handled through Python's `requests` package. Store  user details (username and password) in a new file `$HOME/.netrc` (Unix/Linux) or `C:\Users\[user]\.netrc` (Windows) as follows (replace `[name]` and `[pass]` with your own credentials):
+
+```
+name: [name]
+pass: [pass]
+
+```
+
+**_Note: given that these passwords are stored as plain text, it is strongly recommended to use a unique password that is different from any other passwords you currently have in use._**
+
+
 ## MODIS Land Cover Type Product (MCD12Q1) 
 MODIS MCD12Q1 data (Friedl et al., 2019) are sattelite data of global land cover classes at 500m resolution and are available for years 2001 to 2018. Raw sattelite data has already been processed into various vegetation classifications. 
 

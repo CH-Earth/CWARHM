@@ -1,6 +1,12 @@
 # Forcing data: ERA5 
 The ERA5 product is a reanalysis data set. See documentation (link below) for details about which observations are used and how they are combined in the reanalysis. ERA5's forcing variables (called parameters in the ERA5 documentation) can be either instantaneous or time-step averages (see the data documentation). They are provided at various heights: surface and single level for every of the 137 air layers that ERA5 uses. 
 
+## Download setup instructions
+Downloading ERA5 data requires:
+- Registration: https://cds.climate.copernicus.eu/user/register?destination=%2F%23!%2Fhome
+- Setup of the `cdsapi`: https://cds.climate.copernicus.eu/api-how-to
+
+
 ## Forcing needed to run SUMMA
 SUMMA needs the following forcing variables (https://summa.readthedocs.io/en/master/input_output/SUMMA_input/#meteorological-forcing-files):
 - Precipitation rate [kg m-2 s-1]
@@ -21,12 +27,6 @@ ERA5 data preparation includes interactions between an atmospheric model and a l
 
 - ERA5 hourly data on single levels from 1970 to present (https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview)
 - ERA5 hourly data on pressure levels from 1970 to present (https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-pressure-levels?tab=overview)
-
-
-## Download requirements
-Downloading ERA5 data requires:
-- Registration: https://cds.climate.copernicus.eu/user/register?destination=%2F%23!%2Fhome
-- Setup of the `cdsapi`: https://cds.climate.copernicus.eu/api-how-to
 
 
 ## Workflow description

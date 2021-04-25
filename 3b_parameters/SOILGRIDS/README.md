@@ -6,6 +6,21 @@ SUMMA currently has several different look-up tables available in the file `TBL_
 
 Further details can be found in the Noah-MP documentation, see e.g.: https://ral.ucar.edu/solutions/products/noah-multiparameterization-land-surface-model-noah-mp-lsm
 
+
+## Download registration
+Hydroshare downloads require registration through the Hydroshare website. See: https://www.hydroshare.org/sign-up/?next=
+
+Hydroshare downloads use the Python package `hs_restclient`. Downloads require authentication through the client. Store  user details (username and password) in a new file `$HOME/.hydroshare` (Unix/Linux) or `C:\Users\[user]\.hydroshare` (Windows) as follows (replace `[name]` and `[pass]` with your own credentials):
+
+```
+name: [name]
+pass: [pass]
+
+```
+
+**_Note: given that these passwords are stored as plain text, it is strongly recommended to use a unique password that is different from any other passwords you currently have in use._**
+
+
 ## SOILGRIDS data
 The SOILGRIDS 250m data set (Hengl et al, 2017) provides values for various soil properties on a global scale. The data set uses machine learning and various local soil products to provide these soil property estimates. The SOILGRIDS native resolution is 250m x 250m, and soil properties are provided at 7 different depths for any given grid cell. 
 
