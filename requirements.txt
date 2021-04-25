@@ -12,10 +12,10 @@ DateTime==4.3
 decorator==4.4.2
 easymore==0.0.0
 Fiona==1.8.13.post1
-GDAL==3.0.4
 geojson==2.5.0
 geopandas==0.8.2
 geovoronoi==0.3.0
+hs-restclient==1.3.7
 idna==2.10
 imageio==2.9.0
 json5==0.9.5
@@ -25,6 +25,7 @@ munch==2.5.0
 netCDF4==1.5.4
 networkx==2.5.1
 numpy==1.20.2
+oauthlib==3.1.0
 osgeo==0.0.0
 pandas==1.2.3
 Pillow==8.1.2
@@ -37,6 +38,8 @@ pytz==2021.1
 PyWavelets==1.1.1
 rasterio==1.1.8
 requests==2.25.1
+requests-oauthlib==1.3.0
+requests-toolbelt==0.9.1
 Rtree==0.9.4
 scikit-image==0.18.1
 scipy==1.6.0
