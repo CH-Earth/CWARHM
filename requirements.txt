@@ -12,6 +12,7 @@ DateTime==4.3
 decorator==4.4.2
 easymore==0.0.0
 Fiona==1.8.13.post1
+GDAL==3.0.4
 geojson==2.5.0
 geopandas==0.8.2
 geovoronoi==0.3.0
