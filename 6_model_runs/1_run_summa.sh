@@ -9,7 +9,7 @@ setting_line=$(grep -m 1 "install_path_summa" ../0_control_files/control_active.
 
 # Extract the path
 summa_path=$(echo ${setting_line##*|}) # remove the part that ends at "|"
-summa_path=$(echo ${summa_path%% #*}) # remove the part starting at '#'; does nothing if no '#' is present
+summa_path=$(echo ${summa_path%%#*}) # remove the part starting at '#'; does nothing if no '#' is present
 
 # Specify the default path if needed
 if [ "$summa_path" = "default" ]; then
@@ -17,7 +17,7 @@ if [ "$summa_path" = "default" ]; then
  # Get the root path
  root_line=$(grep -m 1 "root_path" ../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
- root_path=$(echo ${root_path%% #*}) 
+ root_path=$(echo ${root_path%%#*}) 
  summa_path="${root_path}/installs/summa/bin/"
 fi
 #echo "install = ${summa_path}"
@@ -27,7 +27,7 @@ fi
 # ---------------------------
 setting_line=$(grep -m 1 "exe_name_summa" ../0_control_files/control_active.txt) 
 summa_exe=$(echo ${setting_line##*|}) 
-summa_exe=$(echo ${summa_exe%% #*}) 
+summa_exe=$(echo ${summa_exe%%#*}) 
 #echo "exe = ${summa_exe}"
 
 
@@ -35,7 +35,7 @@ summa_exe=$(echo ${summa_exe%% #*})
 # -----------------------------------
 setting_line=$(grep -m 1 "settings_summa_path" ../0_control_files/control_active.txt) 
 settings_path=$(echo ${setting_line##*|}) 
-settings_path=$(echo ${settings_path%% #*}) 
+settings_path=$(echo ${settings_path%%#*}) 
 
 # Specify the default path if needed
 if [ "$settings_path" = "default" ]; then
@@ -43,12 +43,12 @@ if [ "$settings_path" = "default" ]; then
  # Get the root path
  root_line=$(grep -m 1 "root_path" ../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
- root_path=$(echo ${root_path%% #*}) 
+ root_path=$(echo ${root_path%%#*}) 
  
  # Get the domain name
  domain_line=$(grep -m 1 "domain_name" ../0_control_files/control_active.txt)
  domain_name=$(echo ${domain_line##*|}) 
- domain_name=$(echo ${domain_name%% #*})
+ domain_name=$(echo ${domain_name%%#*})
  
  # Make the default path
  settings_path="${root_path}/domain_${domain_name}/settings/SUMMA/"
@@ -60,7 +60,7 @@ fi
 # ---------------------------
 setting_line=$(grep -m 1 "settings_summa_filemanager" ../0_control_files/control_active.txt) 
 filemanager=$(echo ${setting_line##*|}) 
-filemanager=$(echo ${filemanager%% #*})
+filemanager=$(echo ${filemanager%%#*})
 #echo "filemanager = ${filemanager}"
 
 
@@ -68,7 +68,7 @@ filemanager=$(echo ${filemanager%% #*})
 # --------------------------------------
 setting_line=$(grep -m 1 "experiment_log_summa" ../0_control_files/control_active.txt) 
 summa_log_path=$(echo ${setting_line##*|}) 
-summa_log_path=$(echo ${summa_log_path%% #*})
+summa_log_path=$(echo ${summa_log_path%%#*})
 summa_log_name="summa_log.txt"
 
 # Specify the default path if needed
@@ -77,17 +77,17 @@ if [ "$summa_log_path" = "default" ]; then
  # Get the root path
  root_line=$(grep -m 1 "root_path" ../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
- root_path=$(echo ${root_path%% #*}) 
+ root_path=$(echo ${root_path%%#*}) 
  
  # Get the domain name
  domain_line=$(grep -m 1 "domain_name" ../0_control_files/control_active.txt)
  domain_name=$(echo ${domain_line##*|}) 
- domain_name=$(echo ${domain_name%% #*})
+ domain_name=$(echo ${domain_name%%#*})
  
  # Get the experiment ID
  exp_line=$(grep -m 1 "experiment_id" ../0_control_files/control_active.txt)
  exp_name=$(echo ${exp_line##*|}) 
- exp_name=$(echo ${exp_name%% #*})
+ exp_name=$(echo ${exp_name%%#*})
  
  # Make the default path
  summa_log_path="${root_path}/domain_${domain_name}/simulations/${exp_name}/SUMMA/SUMMA_logs/"
@@ -99,7 +99,7 @@ fi
 # ------------------------------------------------------------------------------
 summa_out_line=$(grep -m 1 "settings_summa_path" ../0_control_files/control_active.txt)
 summa_out_path=$(echo ${summa_out_line##*|}) 
-summa_out_path=$(echo ${summa_out_path%% #*})
+summa_out_path=$(echo ${summa_out_path%%#*})
 
 # Specify the default path if needed
 if [ "$summa_out_path" = "default" ]; then
@@ -107,17 +107,17 @@ if [ "$summa_out_path" = "default" ]; then
  # Get the root path
  root_line=$(grep -m 1 "root_path" ../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
- root_path=$(echo ${root_path%% #*}) 
+ root_path=$(echo ${root_path%%#*}) 
  
  # Get the domain name
  domain_line=$(grep -m 1 "domain_name" ../0_control_files/control_active.txt)
  domain_name=$(echo ${domain_line##*|}) 
- domain_name=$(echo ${domain_name%% #*})
+ domain_name=$(echo ${domain_name%%#*})
  
  # Get the experiment ID
  exp_line=$(grep -m 1 "experiment_id" ../0_control_files/control_active.txt)
  exp_name=$(echo ${exp_line##*|}) 
- exp_name=$(echo ${exp_name%% #*})
+ exp_name=$(echo ${exp_name%%#*})
  
  # Make the default path
  summa_out_path="${root_path}/domain_${domain_name}/simulations/${exp_name}/SUMMA/"
@@ -129,7 +129,7 @@ fi
 # ----------------------------------------------------------------
 setting_line=$(grep -m 1 "experiment_backup_settings" ../0_control_files/control_active.txt) 
 do_backup=$(echo ${setting_line##*|}) 
-do_backup=$(echo ${do_backup%% #*}) 
+do_backup=$(echo ${do_backup%%#*}) 
 
 # Specify the path (inside the experiment output folder)
 if [ "$do_backup" = "yes" ]; then
