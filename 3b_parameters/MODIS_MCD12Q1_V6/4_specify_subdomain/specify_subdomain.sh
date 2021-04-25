@@ -14,7 +14,7 @@ module load nixpkgs/16.09  gcc/5.4.0 gdal/2.1.3
 # --- Location of source VRT data
 dest_line=$(grep -m 1 "parameter_land_vrt2_path" ../../../0_control_files/control_active.txt) # full settings line
 source_path=$(echo ${dest_line##*|})   # removing the leading text up to '|'
-source_path=$(echo ${source_path%% #*}) # removing the trailing comments, if any are present
+source_path=$(echo ${source_path%%#*}) # removing the trailing comments, if any are present
 
 # Specify the default path if needed
 if [ "$source_path" = "default" ]; then
@@ -22,12 +22,12 @@ if [ "$source_path" = "default" ]; then
  # Get the root path and append the appropriate install directories
  root_line=$(grep -m 1 "root_path" ../../../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
- root_path=$(echo ${root_path%% #*})
+ root_path=$(echo ${root_path%%#*})
 
  # domain name
  domain_line==$(grep -m 1 "domain_name" ../../../0_control_files/control_active.txt)
  domain_name=$(echo ${domain_line##*|}) 
- domain_name=$(echo ${domain_name%% #*})
+ domain_name=$(echo ${domain_name%%#*})
  
  # source path
  source_path="${root_path}/domain_${domain_name}/parameters/landclass/3_vrt_epsg_4326"
@@ -37,7 +37,7 @@ fi
 # --- Location where cropped VRT needs to go
 dest_line=$(grep -m 1 "parameter_land_vrt3_path" ../../../0_control_files/control_active.txt) # full settings line
 dest_path=$(echo ${dest_line##*|})   # removing the leading text up to '|'
-dest_path=$(echo ${dest_path%% #*}) # removing the trailing comments, if any are present
+dest_path=$(echo ${dest_path%%#*}) # removing the trailing comments, if any are present
 
 # Specify the default path if needed
 if [ "$dest_path" = "default" ]; then
@@ -45,12 +45,12 @@ if [ "$dest_path" = "default" ]; then
  # Get the root path and append the appropriate install directories
  root_line=$(grep -m 1 "root_path" ../../../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
- root_path=$(echo ${root_path%% #*})
+ root_path=$(echo ${root_path%%#*})
 
  # domain name
  domain_line==$(grep -m 1 "domain_name" ../../../0_control_files/control_active.txt)
  domain_name=$(echo ${domain_line##*|}) 
- domain_name=$(echo ${domain_name%% #*})
+ domain_name=$(echo ${domain_name%%#*})
  
  # destination path
  dest_path="${root_path}/domain_${domain_name}/parameters/landclass/4_domain_vrt_epsg_4326"
@@ -62,7 +62,7 @@ mkdir -p $dest_path
 # --- Find dimensions of modeling domain
 domain_line=$(grep -m 1 "forcing_raw_space" ../../../0_control_files/control_active.txt) # full settings line
 domain_full=$(echo ${domain_line##*|})   # removing the leading text up to '|'
-domain_full=$(echo ${domain_full%% #*}) # removing the trailing comments, if any are present
+domain_full=$(echo ${domain_full%%#*}) # removing the trailing comments, if any are present
 
 # Separate the values into an array
 while IFS='/' read -ra domain_array; do

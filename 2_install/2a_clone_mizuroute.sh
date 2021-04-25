@@ -8,14 +8,14 @@ setting_line=$(grep -m 1 "github_mizuroute" ../0_control_files/control_active.tx
 
 # Extract the url
 github_url=$(echo ${setting_line##*|}) # remove the part that ends at "|"
-github_url=$(echo ${github_url%% #*}) # remove the part starting at '#'; does nothing if no '#' is present
+github_url=$(echo ${github_url%%#*}) # remove the part starting at '#'; does nothing if no '#' is present
 
 # Find the line with the destination path
 dest_line=$(grep -m 1 "install_path_mizuroute" ../0_control_files/control_active.txt) 
 
 # Extract the path
 mizu_path=$(echo ${dest_line##*|}) 
-mizu_path=$(echo ${mizu_path%% #*}) 
+mizu_path=$(echo ${mizu_path%%#*}) 
 
 
 # Specify the default path if needed
@@ -24,7 +24,7 @@ if [ "$mizu_path" = "default" ]; then
  # Get the root path
  root_line=$(grep -m 1 "root_path" ../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
- root_path=$(echo ${root_path%% #*}) 
+ root_path=$(echo ${root_path%%#*}) 
  mizu_path="${root_path}/installs/mizuRoute"
 fi
 

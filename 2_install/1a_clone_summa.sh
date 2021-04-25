@@ -7,14 +7,14 @@ setting_line=$(grep -m 1 "github_summa" ../0_control_files/control_active.txt) #
 
 # Extract the url
 github_url=$(echo ${setting_line##*|}) # remove the part that ends at "|"
-github_url=$(echo ${github_url%% #*}) # remove the part starting at '#'; does nothing if no '#' is present
+github_url=$(echo ${github_url%%#*}) # remove the part starting at '#'; does nothing if no '#' is present
 
 # Find the line with the destination path
 dest_line=$(grep -m 1 "install_path_summa" ../0_control_files/control_active.txt) 
 
 # Extract the path
 summa_path=$(echo ${dest_line##*|}) 
-summa_path=$(echo ${summa_path%% #*}) 
+summa_path=$(echo ${summa_path%%#*}) 
 
 
 # Specify the default path if needed
@@ -23,13 +23,13 @@ if [ "$summa_path" = "default" ]; then
  # Get the root path
  root_line=$(grep -m 1 "root_path" ../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
- root_path=$(echo ${root_path%% #*}) 
+ root_path=$(echo ${root_path%%#*}) 
  summa_path="${root_path}/installs/summa/"
 fi
 
 # --- Clone
 # Clone the 'develop' branch of the specified SUMMA repository
-echo 'cloning ' $github_url ' into ' $summa_path
+echo "cloning ${github_url} into ${summa_path}"
 git clone --single-branch --branch develop "$github_url" "$summa_path"
 
 # Navigate into the new 'summa' dir

@@ -9,7 +9,7 @@
 # Find the path to the source code in 'control_active.txt'
 dest_line=$(grep -m 1 "install_path_mizuroute" ../0_control_files/control_active.txt)  # full settings line
 mizu_path=$(echo ${dest_line##*|})   # removing the leading text up to '|' 
-mizu_path=$(echo ${mizu_path%% #*})  # removing the trailing comments, if any are present
+mizu_path=$(echo ${mizu_path%%#*})  # removing the trailing comments, if any are present
 
 # Specify the default path if needed
 if [ "$mizu_path" = "default" ]; then
@@ -17,7 +17,7 @@ if [ "$mizu_path" = "default" ]; then
  # Get the root path and append appropriate install directories
  root_line=$(grep -m 1 "root_path" ../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
- root_path=$(echo ${root_path%% #*}) 
+ root_path=$(echo ${root_path%%#*}) 
  mizu_path="${root_path}/installs/mizuRoute/route/" # note: NEEDS a trailing '/'
 
 # With custom path, we still need to specify the /route directory for compilation
@@ -33,7 +33,7 @@ export F_MASTER=$mizu_path
 # Find the desired executable name in 'control_active.txt'
 exe_line=$(grep -m 1 "exe_name_mizuroute" ../0_control_files/control_active.txt) 
 mizu_exe=$(echo ${exe_line##*|}) 
-mizu_exe=$(echo ${mizu_exe%% #*}) 
+mizu_exe=$(echo ${mizu_exe%%#*}) 
 export EXE=$mizu_exe
 
 
