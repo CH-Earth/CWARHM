@@ -3,6 +3,13 @@ Downloads various auxiliary data, such as land mask and geopotential for ERA5 da
 
 Source: https://confluence.ecmwf.int/display/CKB/ERA5%3A+data+documentation#ERA5:datadocumentation-Parameterlistings
 
+
+## Download setup instructions
+Downloading ERA5 data requires:
+- Registration: https://cds.climate.copernicus.eu/user/register?destination=%2F%23!%2Fhome
+- Setup of the `cdsapi`: https://cds.climate.copernicus.eu/api-how-to
+
+
 ## Levels
 These variables are available to surface and pressure levels. We need them to set up SUMMA so we'll use the surface level variables, because those correspond to ground surface.
 

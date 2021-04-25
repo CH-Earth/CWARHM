@@ -1,6 +1,17 @@
 # MERIT-Hydro 
 Note that the MERIT DEM (http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_DEM/) has been superceded by MERIT Hydro DEM (http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/).
 
+## Download setup instructions
+MERIT Hydro downloads require registration through a Google webform. See: http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/
+
+Store the obtained user details (username and password) in a new file `$HOME/.merit` (Unix/Linux) or `C:\Users\[user]\.merit` (Windows) as follows (replace `[name]` and `[pass]` with your own credentials):
+
+```
+name: [name]
+pass: [pass]
+
+```
+
 ## Description
 Adjusted elevation is reprepared in 4-byte float (float32). The elevations are adjusted to satisfy the condition 'downstream is not higher than its upstream' while minimizing the required modifications from the original DEM. The elevation above EGM96 geoid is represented in meter, and the vertical increment is set to 10cm. The undefined pixels (oceans) are represented by the value -9999 (MERIT webpage, accessed 2020-07-05).
 
@@ -42,16 +53,7 @@ Summary
 - Data is stored in band 1 in each .tif
 - Data is in regular lat/long (EPSG:4326)
 
-## Download registration
-MERIT Hydro downloads require registration through a Google webform. See: http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/
 
-Store the obtained user details (username and password) in a new file `$HOME/.merit` (Unix/Linux) or `C:\Users\[user]\.merit` (Windows) as follows (replace `[name]` and `[pass]` with your own credentials):
-
-```
-name: [name]
-pass: [pass]
-
-```
 
 ## Source
 http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/
