@@ -7,6 +7,8 @@ import os
 import time
 import shutil
 import requests
+import concurrent
+from concurrent.futures.thread import ThreadPoolExecutor
 from netrc import netrc
 from pathlib import Path
 from shutil import copyfile
@@ -53,8 +55,20 @@ def make_default_path(suffix):
     defaultPath = rootPath / domainFolder / suffix
     
     return defaultPath
-    
-    
+
+#Function to request and download data
+def request_get(file_url,output_file, usr, pwd):
+    res = requests.get(file_url, verify=True, stream=True, auth=(usr, pwd))
+
+    # Decode the response
+    res.raw.decode_content = True
+    content = res.raw
+
+    # Write to file
+    with open(output_file, 'wb') as data:
+        shutil.copyfileobj(content, data)
+
+    return None
 # --- Get the download settings
 # Path and name of file with download links
 links_path = read_from_control(controlFolder/controlFile,'parameter_land_list_path')
@@ -90,51 +104,22 @@ netrc_folder = os.path.expanduser("~/.netrc")
 usr = netrc(netrc_folder).authenticators(url)[0]
 pwd = netrc(netrc_folder).authenticators(url)[2]
 
-
 # --- Do the downloads
 # Get the download links from file
 file_list = open(links_file, 'r').readlines()
 
-# Retry settings: connection can be unstable, so specify a number of retries
-retries_max = 100 
+# Download needed files with threading
+with ThreadPoolExecutor() as executor:
+    futures = []
+    for file_url_raw in file_list:
 
-# Loop over the download files
-for file_url in file_list:
-    
-    # Make the file name
-    file_name = file_url.split('/')[-1].strip() # Get the last part of the url, strip whitespace and characters
-    
-    # Check if file already exists (i.e. interupted earlier download) and move to next file if so
-    if (modis_path / file_name).is_file():
-        continue 
-        
-    # Make sure the connection is re-tried if it fails
-    retries_cur = 1
-    while retries_cur <= retries_max:
-        try:
-            # Send a HTTP request to the server and save the HTTP response in a response object called resp
-            # 'stream = True' ensures that only response headers are downloaded initially (and not all file contents too, which are 2GB+)
-            with requests.get(file_url.strip(), verify=True, stream=True, auth=(usr,pwd)) as response:
-        
-                # Decode the response
-                response.raw.decode_content = True
-                content = response.raw        
-        
-                # Write to file
-                with open(modis_path / file_name, 'wb') as data:
-                    shutil.copyfileobj(content, data)
-            
-                # Progress
-                print('Successfully downloaded: {}'.format(file_name))
-                time.sleep(3) # sleep for a bit so we don't overwhelm the server
-                
-        except:
-            print('Error downloading ' + file_name + ' on try ' + str(retries_cur))
-            retries_cur += 1
-            continue
-        else:
-            break  
-        
+        file_url = file_url_raw.strip()
+
+        file_name = file_url.split('/')[-1].strip()  # Get the last part of the url, strip whitespace and characters
+        output_file = os.path.join(modis_path, file_name)
+        print(f'Downloading file: {file_name} from: {file_url}')
+        futures.append(executor.submit(request_get, file_url,output_file, usr, pwd))
+
 
 # --- Code provenance
 # Generates a basic log file in the domain folder and copies the control file and itself there.
