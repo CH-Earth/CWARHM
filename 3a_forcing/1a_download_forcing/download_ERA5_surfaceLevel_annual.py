@@ -107,8 +107,9 @@ for month in range (1,13): # this loops through numbers 1 to 12
                 # track progress
                 print('Successfully downloaded ' + str(file))
 
-            except:
+            except Exception as e:
                 print('Error downloading ' + str(file) + ' on try ' + str(retries_cur))
+                print(str(e))
                 retries_cur += 1
                 continue
             else:

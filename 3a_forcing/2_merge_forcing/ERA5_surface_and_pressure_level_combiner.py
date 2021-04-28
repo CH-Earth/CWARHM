@@ -96,7 +96,7 @@ for year in range(years[0],years[1]+1):
         # Define file names 
         data_pres = 'ERA5_pressureLevel137_' + str(year) + str(month).zfill(2) + '.nc'
         data_surf = 'ERA5_surface_' + str(year) + str(month).zfill(2) + '.nc'
-        data_dest = 'ERA5_NA_' + str(year) + str(month).zfill(2) + '.nc'
+        data_dest = 'ERA5_merged_' + str(year) + str(month).zfill(2) + '.nc'
 
         # Step 1: convert lat/lon in the pressure level file to range [-180,180], [-90,90]
         # Extract the variables we need for the similarity check in a way that closes the files implicitly
