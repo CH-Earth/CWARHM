@@ -58,7 +58,7 @@ The workflow uses a combination of Python and Bash. This section lists how to se
 
 ### Python
 
-The Python code requires various packages as specified in the file `requirements.txt`. It is typically good practice to create a clean (virtual) environment and install the required packages through a package manager. Certain Python scripts also require a local install of the `GDAL` library. The `requirements.txt` assumes this is already locally available.
+The Python code requires various packages as specified in the file `requirements.txt`. It is typically good practice to create a clean (virtual) environment and install the required packages through a package manager. Certain Python scripts also require a local install of the `GDAL` library. The `requirements.txt` assumes this is already locally available. The workflow was developed on Python 3.7.7.
 
 Pip:
 ```
