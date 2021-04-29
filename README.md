@@ -81,16 +81,16 @@ The scripts used for geospatial analysis use several functions from QGIS. Depend
 
 ### Bash
 
-The Bash code requires various libraries and command line utilities. These are:
+The Bash code requires various libraries and command line utilities. These are (tested versions in brackets):
 
 - Libraries
-	- `GCC` compiler: https://gcc.gnu.org/
-	- `openblas` library: https://www.openblas.net/
-	- `netcdf-fortran` library: https://www.unidata.ucar.edu/software/netcdf/fortran/docs/
-	- `gdal`: https://gdal.org/
+	- `GCC (7.3.0)`  compiler: https://gcc.gnu.org/
+	- `openblas (0.3.4)` library: https://www.openblas.net/
+	- `netcdf-fortran (4.4.4)` library: https://www.unidata.ucar.edu/software/netcdf/fortran/docs/
+	- `gdal (2.1.3)`: https://gdal.org/
 - CMD utilities
-	- [optional] `GNU Parallel`: https://www.gnu.org/software/parallel/
-	- [optional] `netCDF Operators`: http://nco.sourceforge.net/
+	- [optional] `GNU Parallel (20180122)`: https://www.gnu.org/software/parallel/
+	- [optional] `netCDF Operators (4.9.5)`: http://nco.sourceforge.net/
 	
 
 ## Note on deprecation warnings in Python packages
