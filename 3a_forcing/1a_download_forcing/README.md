@@ -3,11 +3,13 @@ Downloads ERA5 forcing data for the domain specified in the control file. Notebo
 
 Note that downloads of surface level and pressure level data are retrieved from two different types of data storage on the ECMWF side. Different restrictions may apply to both storage types at any given time and downloads of surface and pressure level data are typically not equally fast. 
 
-
 ## Download setup instructions
 Downloading ERA5 data requires:
 - Registration: https://cds.climate.copernicus.eu/user/register?destination=%2F%23!%2Fhome
 - Setup of the `cdsapi`: https://cds.climate.copernicus.eu/api-how-to
+
+## Download run instructions
+Execute the download script and keep the terminal or notebook open until the downloads fully complete. No manual interaction with the https://cds.climate.copernicus.eu/ website is required.
 
 
 ## Download workflow

@@ -11,3 +11,6 @@ name: [name]
 pass: [pass]
 
 ```
+
+## Download run instructions
+Execute the download script and keep the terminal or notebook open until the downloads fully complete. No manual interaction with the http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/ website is required.
