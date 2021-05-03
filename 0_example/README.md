@@ -3,9 +3,9 @@ This folder contains example shapefiles that can be used to reproduce the Bow at
 
 ## Shapefiles used for Bow at Banff
 The following shapefiles are the basis of the Bow at Banff setup:
-1. For SUMMA: a shapefile outlining the subcatchments (GRUs) of the Bow River up to Banff, and how these GRUs are subdivided into Hydrologic Response Units (HRUs) by elevation bands;
-2. For mizuRoute: a shapefile that shows the routing basins. In this case these are identical to the SUMMA GRUs. This means that no routing remapping file is needed (see mizuRoute setup code for details about the remapping file). This also means that the IDs of the routing basins **_must be identical_** to the IDs assigned to the SUMMA GRUs. If these are not identical, mizuRoute will not be able to find the data for each routing basin in the SUMMA output files.
-3. For mizuRoute: a shapefile that shows the river network that connects the routing basins. 
+1. For SUMMA (`./shapefiles/catchment/`): a shapefile outlining the subcatchments (GRUs) of the Bow River up to Banff, and how these GRUs are subdivided into Hydrologic Response Units (HRUs) by elevation bands;
+2. For mizuRoute (`./shapefiles/river_basins/`): a shapefile that shows the routing basins. In this case these are identical to the SUMMA GRUs. This means that no routing remapping file is needed (see mizuRoute setup code for details about the remapping file). This also means that the IDs of the routing basins **_must be identical_** to the IDs assigned to the SUMMA GRUs. If these are not identical, mizuRoute will not be able to find the data for each routing basin in the SUMMA output files.
+3. For mizuRoute (`./shapefiles/river_network/`): a shapefile that shows the river network that connects the routing basins. 
 
 
 ## Shapefile requirements

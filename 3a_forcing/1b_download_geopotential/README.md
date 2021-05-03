@@ -9,6 +9,8 @@ Downloading ERA5 data requires:
 - Registration: https://cds.climate.copernicus.eu/user/register?destination=%2F%23!%2Fhome
 - Setup of the `cdsapi`: https://cds.climate.copernicus.eu/api-how-to
 
+## Download run instructions
+Execute the download script and keep the terminal or notebook open until the downloads fully complete. No manual interaction with the https://cds.climate.copernicus.eu/ website is required.
 
 ## Levels
 These variables are available to surface and pressure levels. We need them to set up SUMMA so we'll use the surface level variables, because those correspond to ground surface.

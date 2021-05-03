@@ -1,14 +1,32 @@
 # Sort catchment shape
-SUMMA makes certain assumptions about GRU and HRU order in its input files. It expects the gruId and hruId variables to have identical orders in the forcing, attributes, coldState and trialParameter `.nc` files. In cases where each GRU contains exactly one HRU, no action is needed beyond ensuring that these files use the same order of IDs. In cases where a GRU contains multiple HRUs, additional action is needed. An example of SUMMA's internal reasoning is shown below.
+SUMMA makes certain assumptions about GRU and HRU order in its input files:
+1. It expects the gruId and hruId variables to have identical orders in the forcing, attributes, coldState and trialParameter `.nc` files. In cases where each GRU contains exactly one HRU, no action is needed beyond ensuring that these files use the same order of IDs. 
+2. In cases where a GRU contains multiple HRUs, additional action is needed. In a multiple-HRU-per-GRU case, the catchment shapefile needs to be sorted by GRU ID first and HRU ID second, so that the order of HRUs in the shapefile matches SUMMA's expectations.
+
+An example of correct and incorrect GRU & HRU sorting is provided below. 
 
 ## Example
-Imagine a case where 2 GRUs are each divided into 2 HRUs. For some reason, the IDs are as follows:
+Imagine a case where 2 GRUs are each divided into 2 HRUs. The GRU IDs are 1 and 2, and the HRU IDs are 1-4.
+
+### Incorrect sorting
+This example is sorted by HRU IDs first, and GRU IDs second. This does not match SUMMA's input requirements.
+
 - GRU 1, HRU 1
 - GRU 2, HRU 2
 - GRU 1, HRU 3
 - GRU 2, HRU 4
 
-From this, SUMMA creates a data structure that looks as follows:
+### Correct sorting
+This example is sorted by GRU IDs first, and HRU IDs second. This matches SUMMA's input requirements.
+
+- GRU 1, HRU 1
+- GRU 1, HRU 3
+- GRU 2, HRU 2
+- GRU 2, HRU 4
+
+
+## Explanation
+SUMMA checks its input files for consistency when the model is first initialized. It first builds a data structure of GRU and HRU IDs as follows:
 - GRU 1
 	* HRU 1
 	* HRU 3
@@ -20,21 +38,20 @@ Next, SUMMA checks the order of HRU IDs in all other netcdf files, to ensure the
 
 ``` 
 idx = 1
-for gru in GRUs:
-	for hru in HRUs:
+for gru in all_GRUs:
+	for hru in HRUs_in_this_GRU:
 		check if hruId_in_nc_file(idx) == hru
 		idx += 1
 	end
 end
 ```
 
-Thus, it expects the HRUs in all other netcdf files to occur in this order at a given index (expectation > actual order in file):
-- index 1, HRU 1 > HRU 1 (match)
-- index 2, HRU 3 > HRU 2 (error)
-- index 3, HRU 2 > HRU 3 (error)
-- index 4, HRU 4 > HRU 4 (match)
-
-Therefore, even if HRUs are in identical order in the separate `.nc` files, SUMMA might exit with a warning that HRU orders do not match due to the implicit assumption that all HRUs in a given GRU are at subsequent indices. 
-
-## Solution
-In a multiple-HRU-per-GRU case, the catchment shapefile thus needs to be sorted by GRU ID first and HRU ID second, so that the order of HRUs in the shapefile matches SUMMA's expectations.
+Therefore, it assumes the HRUs can be found at the following indices in each `.nc` file:
+- GRU 1
+	* HRU 1: expected at index 1
+	* HRU 3: expected at index 2
+- GRU 2
+	* HRU 2: expected at index 3
+	* HRU 4: expected at index 4
+	
+The sorting ensures that this expectation is met.
