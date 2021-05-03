@@ -68,7 +68,7 @@ source summa-env/bin/activate
 pip install -r requirements.txt
 ```
 
-Conda (includes notebook install):
+Conda (includes notebook install and QGIS package):
 ```
 cd /path/to/summaWorkflow_public
 conda env create -f environment.yml
@@ -81,7 +81,7 @@ python -m ipykernel install --name summa-env
 ```
 
 
-The scripts used for geospatial analysis use several functions from QGIS. Depending on your system, you may be able to get `QGIS` as a Conda package (https://anaconda.org/conda-forge/qgis) or require a stand-alone install of QGIS (https://qgis.org/en/site/). The provided notebooks in folder `/summaWorkflow_public/5_model_input/SUMMA/1_topo/` are designed to use `QGIS` as a Conda package; the scripts in this folder show how to use a standalone install.
+The scripts used for geospatial analysis use several functions from QGIS. Depending on your system, you may be able to get `QGIS` as a Conda package (https://anaconda.org/conda-forge/qgis) or require a stand-alone install of QGIS (https://qgis.org/en/site/). The provided notebooks in folder `/summaWorkflow_public/5_model_input/SUMMA/1_topo/` are designed to use `QGIS` as a Conda package; the Python scripts in this folder show how to use a standalone install.
 
 
 ### Bash
@@ -118,9 +118,10 @@ In practical terms, this means that:
 
 ## Acknowledgements
 
-Our thanks to those who have contributed to improving this repository. List of honorary bug hunters:
+Our thanks to those who have contributed to improving this repository (in order of first reports):
 
 - Dave Casson
+- Hongli Liu
 
 
 ## References
