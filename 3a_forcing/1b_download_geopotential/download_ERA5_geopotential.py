@@ -27,7 +27,7 @@ def read_from_control( file, setting ):
         for line in contents:
             
             # ... find the line with the requested setting
-            if setting in line:
+            if setting in line and not line.startswith('#'):
                 break
     
     # Extract the setting's value

@@ -5,7 +5,7 @@
 
 # - Find the mizuRoute install dir 
 # --------------------------------
-setting_line=$(grep -m 1 "install_path_mizuroute" ../0_control_files/control_active.txt) # -m 1 ensures we only return the top-most result. This is needed because variable names are sometimes used in comments in later lines
+setting_line=$(grep -m 1 "^install_path_mizuroute" ../0_control_files/control_active.txt) # -m 1 ensures we only return the top-most result. This is needed because variable names are sometimes used in comments in later lines
 
 # Extract the path
 mizu_path=$(echo ${setting_line##*|}) # remove the part that ends at "|"
@@ -15,7 +15,7 @@ mizu_path=$(echo ${mizu_path%%#*}) # remove the part starting at '#'; does nothi
 if [ "$mizu_path" = "default" ]; then
   
  # Get the root path
- root_line=$(grep -m 1 "root_path" ../0_control_files/control_active.txt)
+ root_line=$(grep -m 1 "^root_path" ../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
  root_path=$(echo ${root_path%%#*}) 
  mizu_path="${root_path}/installs/mizuRoute/route/bin/"
@@ -25,7 +25,7 @@ echo "install  = ${mizu_path}"
 
 # - Find the mizuRoute executable
 # -------------------------------
-setting_line=$(grep -m 1 "exe_name_mizuroute" ../0_control_files/control_active.txt) 
+setting_line=$(grep -m 1 "^exe_name_mizuroute" ../0_control_files/control_active.txt) 
 mizu_exe=$(echo ${setting_line##*|}) 
 mizu_exe=$(echo ${mizu_exe%%#*}) 
 echo "exe      = ${mizu_exe}"
@@ -33,7 +33,7 @@ echo "exe      = ${mizu_exe}"
 
 # - Find where the mizuRoute settings are
 # ---------------------------------------
-setting_line=$(grep -m 1 "settings_mizu_path" ../0_control_files/control_active.txt) 
+setting_line=$(grep -m 1 "^settings_mizu_path" ../0_control_files/control_active.txt) 
 settings_path=$(echo ${setting_line##*|}) 
 settings_path=$(echo ${settings_path%%#*}) 
 
@@ -41,12 +41,12 @@ settings_path=$(echo ${settings_path%%#*})
 if [ "$settings_path" = "default" ]; then
   
  # Get the root path
- root_line=$(grep -m 1 "root_path" ../0_control_files/control_active.txt)
+ root_line=$(grep -m 1 "^root_path" ../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
  root_path=$(echo ${root_path%%#*}) 
  
  # Get the domain name
- domain_line=$(grep -m 1 "domain_name" ../0_control_files/control_active.txt)
+ domain_line=$(grep -m 1 "^domain_name" ../0_control_files/control_active.txt)
  domain_name=$(echo ${domain_line##*|}) 
  domain_name=$(echo ${domain_name%%#*})
  
@@ -58,7 +58,7 @@ echo "Settings = ${settings_path}"
 
 # - Find the .control filename
 # ----------------------------
-setting_line=$(grep -m 1 "settings_mizu_control_file" ../0_control_files/control_active.txt) 
+setting_line=$(grep -m 1 "^settings_mizu_control_file" ../0_control_files/control_active.txt) 
 control_file=$(echo ${setting_line##*|}) 
 control_file=$(echo ${control_file%%#*})
 echo "control  = ${control_file}"
@@ -66,7 +66,7 @@ echo "control  = ${control_file}"
 
 # - Find where the mizuRoute logs need to go
 # ------------------------------------------
-setting_line=$(grep -m 1 "experiment_log_mizuroute" ../0_control_files/control_active.txt) 
+setting_line=$(grep -m 1 "^experiment_log_mizuroute" ../0_control_files/control_active.txt) 
 mizu_log_path=$(echo ${setting_line##*|}) 
 mizu_log_path=$(echo ${mizu_log_path%%#*})
 mizu_log_name="mizuRoute_log.txt"
@@ -75,17 +75,17 @@ mizu_log_name="mizuRoute_log.txt"
 if [ "$mizu_log_path" = "default" ]; then
  
  # Get the root path
- root_line=$(grep -m 1 "root_path" ../0_control_files/control_active.txt)
+ root_line=$(grep -m 1 "^root_path" ../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
  root_path=$(echo ${root_path%%#*}) 
  
  # Get the domain name
- domain_line=$(grep -m 1 "domain_name" ../0_control_files/control_active.txt)
+ domain_line=$(grep -m 1 "^domain_name" ../0_control_files/control_active.txt)
  domain_name=$(echo ${domain_line##*|}) 
  domain_name=$(echo ${domain_name%%#*})
  
  # Get the experiment ID
- exp_line=$(grep -m 1 "experiment_id" ../0_control_files/control_active.txt)
+ exp_line=$(grep -m 1 "^experiment_id" ../0_control_files/control_active.txt)
  exp_name=$(echo ${exp_line##*|}) 
  exp_name=$(echo ${exp_name%%#*})
  
@@ -98,7 +98,7 @@ echo "file     = ${mizu_log_name}"
 
 # - Get the mizuRoute output path (for code provenance and possibly settings backup)
 # ----------------------------------------------------------------------------------
-mizu_out_line=$(grep -m 1 "settings_mizu_path" ../0_control_files/control_active.txt)
+mizu_out_line=$(grep -m 1 "^settings_mizu_path" ../0_control_files/control_active.txt)
 mizu_out_path=$(echo ${mizu_out_line##*|}) 
 mizu_out_path=$(echo ${mizu_out_path%%#*})
 
@@ -106,17 +106,17 @@ mizu_out_path=$(echo ${mizu_out_path%%#*})
 if [ "$mizu_out_path" = "default" ]; then
  
  # Get the root path
- root_line=$(grep -m 1 "root_path" ../0_control_files/control_active.txt)
+ root_line=$(grep -m 1 "^root_path" ../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
  root_path=$(echo ${root_path%%#*}) 
  
  # Get the domain name
- domain_line=$(grep -m 1 "domain_name" ../0_control_files/control_active.txt)
+ domain_line=$(grep -m 1 "^domain_name" ../0_control_files/control_active.txt)
  domain_name=$(echo ${domain_line##*|}) 
  domain_name=$(echo ${domain_name%%#*})
  
  # Get the experiment ID
- exp_line=$(grep -m 1 "experiment_id" ../0_control_files/control_active.txt)
+ exp_line=$(grep -m 1 "^experiment_id" ../0_control_files/control_active.txt)
  exp_name=$(echo ${exp_line##*|}) 
  exp_name=$(echo ${exp_name%%#*})
  
@@ -128,7 +128,7 @@ echo "mizu out = ${mizu_out_path}"
 
 # - Find if we need to backup the settings and find the path if so
 # ----------------------------------------------------------------
-setting_line=$(grep -m 1 "experiment_backup_settings" ../0_control_files/control_active.txt) 
+setting_line=$(grep -m 1 "^experiment_backup_settings" ../0_control_files/control_active.txt) 
 do_backup=$(echo ${setting_line##*|}) 
 do_backup=$(echo ${do_backup%%#*}) 
 
