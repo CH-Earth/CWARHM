@@ -6,10 +6,12 @@ The downloads require registration through NASA's EarthData website. See: https:
 Authentication is handled through Python's `requests` package. Store  user details (username and password) in a new file `$HOME/.netrc` (Unix/Linux) or `C:\Users\[user]\.netrc` (Windows) as follows (replace `[name]` and `[pass]` with your own credentials):
 
 ```
-name: [name]
-pass: [pass]
+machine urs.earthdata.nasa.gov
+login <USERNAME>
+password <PASSWORD>
 
 ```
+For details, see: https://lpdaac.usgs.gov/resources/e-learning/how-access-lp-daac-data-command-line/
 
 **_Note: given that these passwords are stored as plain text, it is strongly recommended to use a unique password that is different from any other passwords you currently have in use._**
 

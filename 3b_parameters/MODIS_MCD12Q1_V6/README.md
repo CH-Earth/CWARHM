@@ -3,7 +3,7 @@
 ## Noah-MP in SUMMA
 SUMMA's approach to vegetation parameters is based on that of the Noah-MP land model and relies on look-up tables. Briefly, the user defines for each model element a representative vegetation type as a numerical value (e.g. "evergreen needleleaf forest" might be encoded as "1", "evergreen broadleaf forests" as "2", etc). SUMMA then navigates the look-up table to extract typical values of vegetation properties for the specified vegetation type and uses these values for further computations. 
 
-SUMMA currently has several different look-up tables available in the file `TBL_VEGPARM.TBL` (found in the folder `5_model_input/SUMMA/0_base_settings`) This workflow assumes that the MODIFIED_IGBP_MODIS_NOAH table is used to define vegetation type index values (specified below). Vegetation classes are stored as SUMMA parameters in a variable called "vegTypeIndex", kept in "attributes.nc" (https://summa.readthedocs.io/en/latest/input_output/SUMMA_input/#attribute-and-parameter-files). 
+SUMMA currently has several different look-up tables available in the file `TBL_VEGPARM.TBL` (found in the folder `5_model_input/SUMMA/0_base_settings`). This workflow assumes that the MODIFIED_IGBP_MODIS_NOAH table is used to define vegetation type index values (specified below). Vegetation classes are stored as SUMMA parameters in a variable called "vegTypeIndex", kept in "attributes.nc" (https://summa.readthedocs.io/en/latest/input_output/SUMMA_input/#attribute-and-parameter-files). 
 
 Further details can be found in the Noah-MP documentation, see e.g.: https://ral.ucar.edu/solutions/products/noah-multiparameterization-land-surface-model-noah-mp-lsm
 
@@ -14,16 +14,18 @@ The downloads require registration through NASA's EarthData website. See: https:
 Authentication is handled through Python's `requests` package. Store  user details (username and password) in a new file `$HOME/.netrc` (Unix/Linux) or `C:\Users\[user]\.netrc` (Windows) as follows (replace `[name]` and `[pass]` with your own credentials):
 
 ```
-name: [name]
-pass: [pass]
+machine urs.earthdata.nasa.gov
+login <USERNAME>
+password <PASSWORD>
 
 ```
+For details, see: https://lpdaac.usgs.gov/resources/e-learning/how-access-lp-daac-data-command-line/
 
 **_Note: given that these passwords are stored as plain text, it is strongly recommended to use a unique password that is different from any other passwords you currently have in use._**
 
 
 ## MODIS Land Cover Type Product (MCD12Q1) 
-MODIS MCD12Q1 data (Friedl et al., 2019) are sattelite data of global land cover classes at 500m resolution and are available for years 2001 to 2018. Raw sattelite data has already been processed into various vegetation classifications. 
+MODIS MCD12Q1 data (Friedl et al., 2019) are satellite data of global land cover classes at 500m resolution and are available for years 2001 to 2018. Raw satellite data has already been processed into various vegetation classifications. 
 
 Main information page: https://lpdaac.usgs.gov/products/mcd12q1v006/
 
@@ -38,9 +40,10 @@ Documentation strongly recommends *against* comparing land cover classes between
 From the documentation:
 
 - The "units" field is missing in the metadata, however, this information can be found in the table above or on page 5 of the User Guide.
-- Areas of permanent sea ice are mapped as water if they are identifed as water according to the C6Land/Water  mask  (Carroll  et  al.,  2009).   Some  land  areas,  for  example  glaciers  within  permanenttopographic shadows, were mapped as water according to this mask, which introduces isolated errorsin the product.•Wetlands are under-represented.
-- In  areas  of  the  tropics  where  cropland  field  sizes  tend  to  be  much  smaller  than  a  MODIS  pixel,agriculture is sometimes underrepresented (i.e., labeled as natural vegetation).
-- Areas of temperate evergreen needleleaf forests are misclassified as broadleaf evergreen forests in Japan,the Pacific Northwest of North America, and Chile.  Similarly, areas of evergreen broadleaf forests aremisclassified as evergreen needleleaf forests in Australia and parts of South America.
+- Areas of permanent sea ice are mapped as water if they are identifed as water according to the C6 Land/Water  mask  (Carroll  et  al.,  2009).   Some  land  areas,  for  example  glaciers  within  permanent topographic shadows, were mapped as water according to this mask, which introduces isolated errors in the product.
+- Wetlands are under-represented.
+- In  areas  of  the  tropics  where  cropland  field  sizes  tend  to  be  much  smaller  than  a  MODIS  pixel, agriculture is sometimes underrepresented (i.e., labeled as natural vegetation).
+- Areas of temperate evergreen needleleaf forests are misclassified as broadleaf evergreen forests in Japan, the Pacific Northwest of North America, and Chile.  Similarly, areas of evergreen broadleaf forests are misclassified as evergreen needleleaf forests in Australia and parts of South America.
 - Some grassland areas are classified as savannas (sparse forest).
 - There is a glacier in Chile that is screened as if it were permanently cloud covered and is partially classified as grassland.
 
