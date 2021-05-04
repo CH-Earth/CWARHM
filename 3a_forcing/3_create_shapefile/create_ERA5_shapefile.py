@@ -129,7 +129,7 @@ half_dlon = abs(lon[1] - lon[0])/2
 
 
 # --- Create the new shape
-with shapefile.Writer(shapePath / shapeName) as w:
+with shapefile.Writer(str(shapePath / shapeName)) as w:
     w.autoBalance = 1 # turn on function that keeps file stable if number of shapes and records don't line up
     w.field("ID",'N') # create (N)umerical attribute fields, integer
     w.field(field_lat,'F',decimal=4) # float with 4 decimals
