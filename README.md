@@ -58,9 +58,11 @@ The workflow uses a combination of Python and Bash. This section lists how to se
 
 ### Python
 
-The Python code requires various packages as specified in the file `requirements.txt`. It is typically good practice to create a clean (virtual) environment and install the required packages through a package manager. Certain Python scripts also require a local install of the `GDAL` library. The `requirements.txt` assumes this is already locally available. The workflow was developed on Python 3.7.7.
+The Python code requires various packages, which may be installed through either `pip` or `conda`. It is typically good practice to create a clean (virtual) environment and install the required packages through a package manager. The workflow was developed on Python 3.7.7. and successfully tested on Python 3.8.8. 
 
 Pip:
+Package requirements specified in `requirements.txt`. Assumes a local install of the `GDAL` library is available. Scripts for topographic analysis are set up to interact with a stand-alone install of QGIS (see below). Basic instructions to create a new virtual environment:
+
 ```
 cd /path/to/summaWorkflow_public
 virtualenv summa-env
@@ -68,7 +70,9 @@ source summa-env/bin/activate
 pip install -r requirements.txt
 ```
 
-Conda (includes notebook install and QGIS package):
+Conda:
+Package requirements specified in `environment.yml`. Installs `GDAL` as a Conda package. Scripts for topographic analysis are set up to use the Conda `QGIS` package (see below). Basic instructions to create a new virtual environment:
+
 ```
 cd /path/to/summaWorkflow_public
 conda env create -f environment.yml
@@ -80,7 +84,7 @@ If `summa-env` is not automatically added as a kernel, close the notebook, run t
 python -m ipykernel install --name summa-env
 ```
 
-
+#### Interaction with QGIS
 The scripts used for geospatial analysis use several functions from QGIS. Depending on your system, you may be able to get `QGIS` as a Conda package (https://anaconda.org/conda-forge/qgis) or require a stand-alone install of QGIS (https://qgis.org/en/site/). The provided notebooks in folder `/summaWorkflow_public/5_model_input/SUMMA/1_topo/` are designed to use `QGIS` as a Conda package; the Python scripts in this folder show how to use a standalone install.
 
 
