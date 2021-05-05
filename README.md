@@ -35,7 +35,9 @@ Example shapefiles and a control file for the Bow river at Banff, AB, Canada, ar
 1. Obtain a copy of the repository code;
 2. Ensure your computational environment has the correct packages and modules installed (see below);
 3. Modify the setting `root_path` in the file `control_BowAtBanff.txt` to point to your desired data directory location;
-4. Run the scripts in order, starting with the one in folder `./1_folder_prep` and try to trace which information each script needs and how it obtains this from the control file. Understanding how the workflow operates will make it much easier to create your own control file.
+4. Run the scripts in order, starting with the one in folder `./1_folder_prep`. This creates a basic folder structure in your specified data directory.
+5. Copy the Bow at Banff shapefiles from the `./0_examples/shapefiles` folder in this repo into the newly generated basic folder structure in your data directory. The remaining scripts in the workflow will look for the shapefiles there.
+6. Run the remaining scripts in the workflow in order and try to trace which information each script needs and how it obtains this from the control file. Understanding how the workflow operates will make it much easier to create your own control file.
 
 
 ## Typical workflow
