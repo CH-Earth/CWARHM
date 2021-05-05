@@ -32,8 +32,10 @@ The workflow assumes the user can provide shapefiles that delineate the (sub-)ca
 ## Getting started
 
 Example shapefiles and a control file for the Bow river at Banff, AB, Canada, are provided as part of this repository. Shapefiles can be found in the folder `0_example`. The control file can be found in `0_control_files`. We strongly recommend to first use the provided shapefiles and control file to create your own setup for the Bow river at Banff. This domain is relatively small and the control file only specifies 1 year of data, which limits the download requirements. Instructions:
-1. Modify the setting `root_path` in the file `control_BowAtBanff.txt` to point to your desired data directory location;
-2. Run the scripts in order, starting with the one in folder `./1_folder_prep` and try to trace which information each script needs and how it obtains this from the control file. Understanding how the workflow operates will make it much easier to create your own control file.
+1. Obtain a copy of the repository code;
+2. Ensure your computational environment has the correct packages and modules installed (see below);
+3. Modify the setting `root_path` in the file `control_BowAtBanff.txt` to point to your desired data directory location;
+4. Run the scripts in order, starting with the one in folder `./1_folder_prep` and try to trace which information each script needs and how it obtains this from the control file. Understanding how the workflow operates will make it much easier to create your own control file.
 
 
 ## Typical workflow
