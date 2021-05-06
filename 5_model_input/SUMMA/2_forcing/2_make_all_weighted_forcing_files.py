@@ -90,7 +90,7 @@ else:
     forcing_merged_path = Path(forcing_merged_path) # make sure a user-specified path is a Path()
     
 # Find files in folder
-forcing_files = [forcing_merged_path/file for file in os.listdir(forcing_merged_path) if os.path.isfile(forcing_merged_path/file)]
+forcing_files = [forcing_merged_path/file for file in os.listdir(forcing_merged_path) if os.path.isfile(forcing_merged_path/file) and file.endswith('.nc')]
 
 # Sort the files
 forcing_files.sort()

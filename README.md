@@ -31,7 +31,13 @@ The workflow assumes the user can provide shapefiles that delineate the (sub-)ca
 
 ## Getting started
 
-Example shapefiles and a control file for the Bow river at Banff, AB, Canada, are provided as part of this repository. Shapefiles can be found in the folder `0_example`. The control file can be found in `0_control_files`. We strongly recommend to first use the provided shapefiles and control file to create your own setup for the Bow river at Banff. This domain is relatively small and the control file only specifies 1 year of data, which limits the download requirements. Run the scripts in order and try to trace which information each script needs and how it obtains this from the control file. Understanding how the workflow operates will make it much easier to create your own control file.
+Example shapefiles and a control file for the Bow river at Banff, AB, Canada, are provided as part of this repository. Shapefiles can be found in the folder `0_example`. The control file can be found in `0_control_files`. We strongly recommend to first use the provided shapefiles and control file to create your own setup for the Bow river at Banff. This domain is relatively small and the control file only specifies 1 year of data, which limits the download requirements. Instructions:
+1. Obtain a copy of the repository code;
+2. Ensure your computational environment has the correct packages and modules installed (see below);
+3. Modify the setting `root_path` in the file `control_BowAtBanff.txt` to point to your desired data directory location;
+4. Run the scripts in order, starting with the one in folder `./1_folder_prep`. This creates a basic folder structure in your specified data directory.
+5. Copy the Bow at Banff shapefiles from the `./0_examples/shapefiles` folder in this repo into the newly generated basic folder structure in your data directory. The remaining scripts in the workflow will look for the shapefiles there.
+6. Run the remaining scripts in the workflow in order and try to trace which information each script needs and how it obtains this from the control file. Understanding how the workflow operates will make it much easier to create your own control file.
 
 
 ## Typical workflow
@@ -58,9 +64,11 @@ The workflow uses a combination of Python and Bash. This section lists how to se
 
 ### Python
 
-The Python code requires various packages as specified in the file `requirements.txt`. It is typically good practice to create a clean (virtual) environment and install the required packages through a package manager. Certain Python scripts also require a local install of the `GDAL` library. The `requirements.txt` assumes this is already locally available. The workflow was developed on Python 3.7.7.
+The Python code requires various packages, which may be installed through either `pip` or `conda`. It is typically good practice to create a clean (virtual) environment and install the required packages through a package manager. The workflow was developed on Python 3.7.7. and successfully tested on Python 3.8.8. 
 
 Pip:
+Package requirements specified in `requirements.txt`. Assumes a local install of the `GDAL` library is available. Scripts for topographic analysis are set up to interact with a stand-alone install of QGIS (see below). Basic instructions to create a new virtual environment:
+
 ```
 cd /path/to/summaWorkflow_public
 virtualenv summa-env
@@ -68,7 +76,9 @@ source summa-env/bin/activate
 pip install -r requirements.txt
 ```
 
-Conda (includes notebook install and QGIS package):
+Conda:
+Package requirements specified in `environment.yml`. Installs `GDAL` as a Conda package. Scripts for topographic analysis are set up to use the Conda `QGIS` package (see below). Basic instructions to create a new virtual environment:
+
 ```
 cd /path/to/summaWorkflow_public
 conda env create -f environment.yml
@@ -80,7 +90,7 @@ If `summa-env` is not automatically added as a kernel, close the notebook, run t
 python -m ipykernel install --name summa-env
 ```
 
-
+#### Interaction with QGIS
 The scripts used for geospatial analysis use several functions from QGIS. Depending on your system, you may be able to get `QGIS` as a Conda package (https://anaconda.org/conda-forge/qgis) or require a stand-alone install of QGIS (https://qgis.org/en/site/). The provided notebooks in folder `/summaWorkflow_public/5_model_input/SUMMA/1_topo/` are designed to use `QGIS` as a Conda package; the Python scripts in this folder show how to use a standalone install.
 
 
