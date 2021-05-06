@@ -102,10 +102,10 @@ for year in range(years[0],years[1]+1):
         # Extract the variables we need for the similarity check in a way that closes the files implicitly
         with nc4.Dataset(forcingPath / data_pres) as src1, nc4.Dataset(forcingPath / data_surf) as src2:
             pres_lat = src1.variables['latitude'][:]
-            pres_lon = src1.variables['latitude'][:]
+            pres_lon = src1.variables['longitude'][:]
             pres_time = src1.variables['time'][:]
             surf_lat = src2.variables['latitude'][:]
-            surf_lon = src2.variables['latitude'][:]
+            surf_lon = src2.variables['longitude'][:]
             surf_time = src2.variables['time'][:]
 
         # Update the pressure level coordinates
