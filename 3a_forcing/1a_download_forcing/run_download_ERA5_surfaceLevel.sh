@@ -12,7 +12,7 @@ setting_line=$(grep -m 1 "^forcing_raw_path" ../../0_control_files/control_activ
 
 # Extract the path
 forcing_path=$(echo ${setting_line##*|}) # remove the part that ends at "|"
-forcing_path=$(echo ${forcing_path%% #*}) # remove the part starting at '#'; does nothing if no '#' is present
+forcing_path=$(echo ${forcing_path%%#*}) # remove the part starting at '#'; does nothing if no '#' is present
 
 # Specify the default path if needed
 if [ "$forcing_path" = "default" ]; then
@@ -20,12 +20,12 @@ if [ "$forcing_path" = "default" ]; then
  # Get the root path
  root_line=$(grep -m 1 "^root_path" ../../0_control_files/control_active.txt)
  root_path=$(echo ${root_line##*|}) 
- root_path=$(echo ${root_path%% #*}) 
+ root_path=$(echo ${root_path%%#*}) 
  
  # Get the domain path
  domain_line=$(grep -m 1 "^domain_name" ../../0_control_files/control_active.txt)
  domain_name=$(echo ${domain_line##*|}) 
- domain_name=$(echo ${domain_name%% #*})  
+ domain_name=$(echo ${domain_name%%#*})  
  
  forcing_path="${root_path}/domain_${domain_name}/forcing/1_ERA5_raw_data/"
 fi
@@ -37,13 +37,13 @@ mkdir -p $forcing_path
 # - time
 setting_line=$(grep -m 1 "^forcing_raw_time" ../../0_control_files/control_active.txt)
 years=$(echo ${setting_line##*|}) 
-years=$(echo ${years%% #*}) 
+years=$(echo ${years%%#*}) 
 arrayYears=(${years//,/ }) # split string into array for later use, based on delimiter ','
 
 # - space
 setting_line=$(grep -m 1 "^forcing_raw_space" ../../0_control_files/control_active.txt)
 coordinates=$(echo ${setting_line##*|}) 
-coordinates=$(echo ${coordinates%% #*})
+coordinates=$(echo ${coordinates%%#*})
 
 
 # --- Parallel runs
