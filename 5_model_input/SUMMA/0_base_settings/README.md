@@ -2,11 +2,11 @@
 Recall that a SUMMA Grouped Response Unit (GRU) contains at least one but possibly more Hydrologic Response Units (HRUs).
 
 #### basinParamInfo.txt
-GRU)-level parameters. These control the properties of the aquifer that the HRUs share in certain model setups and the settings for within-GRU routing. The shared aquifer is disabled if all HRUs are modeled as independent soil columns; see setting "settings_summa_connect_HRUs" in the control file. Within-GRU routing is controlled by the model decision `subRouting`. In the default setup in this workflow, this decision is set to `timeDlay` which means that within-GRU routing is active. Note that this means that the mizuRoute setting `doesBasinRoute` should be set to `0` to avoid the water inside a given GRU being routed twice. See:
+GRU-level parameters. These control the properties of the aquifer that the HRUs share in certain model setups and the settings for within-GRU routing. The shared aquifer is disabled if all HRUs are modeled as independent soil columns; see setting "settings_summa_connect_HRUs" in the control file. Within-GRU routing is controlled by the model decision `subRouting`. In the default setup in this workflow, this decision is set to `timeDlay` which means that within-GRU routing is active. Note that this means that the mizuRoute setting `doesBasinRoute` should be set to `0` to avoid the water inside a given GRU being routed twice. See:
 - https://summa.readthedocs.io/en/latest/input_output/SUMMA_input/#attribute-and-parameter-files
 
 #### localParamInfo.txt
-HRU-level parameters. First column is the default value. Second and third column provide plausible ranges that are currently not used by SUMMA (but must be provided regardless). These columns may be used in the future for built-in parameter sampling or sensitivity analysis. See:
+HRU-level parameters. First column is the default value. Second and third columns provide plausible ranges that are currently not used by SUMMA (but must be provided regardless). These columns may be used in the future for built-in parameter sampling or sensitivity analysis. See:
 - https://summa.readthedocs.io/en/latest/input_output/SUMMA_input/#attribute-and-parameter-files
 
 #### modelDecisions.txt

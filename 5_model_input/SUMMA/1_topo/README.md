@@ -1,10 +1,11 @@
 # Topographic analysis
 
 ## Geospatial remapping
-Pre-processing steps have prepared maps of doamin-wide elevation, soil classes and vegetation types in `.tif` format. Here this data is mapped onto the Hydrologic Response Units SUMMA wil use.
+Pre-processing steps have prepared maps of domain-wide elevation, soil classes and vegetation types in `.tif` format. Here this data is mapped onto the Hydrologic Response Units SUMMA wil use.
 1. Script 1 maps the MERIT Hydro DEM to HRUs through a zonal mean, resulting in the mean elevation of each HRU.
 2. Script 2 maps the SOILGRIDS-derived USGS soil classes to HRUs through a zonal histogram, resulting in an occurrence count of each soil class in each HRU.
 3. Script 3 maps the MODIS IGBP vegetation types to HRUs through a zonal histogram, resulting in an occurrence count of each vegetation type in each HRU.
+
 These scripts result in new intersection files between the catchment and each of the three data sets. This information is needed to populate certain fields in SUMMA's attribute `.nc` file.
 
 
