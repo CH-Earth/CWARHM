@@ -24,6 +24,13 @@ For details, see: https://lpdaac.usgs.gov/resources/e-learning/how-access-lp-daa
 **_Note: given that these passwords are stored as plain text, it is strongly recommended to use a unique password that is different from any other passwords you currently have in use._**
 
 
+## GDAL requirements
+MODIS data is provided in the HDF4 format. This format is not supported by certain GDAL distributions. Ensure your local GDAL install can work with HDF4. See e.g.:
+- linux: https://gis.stackexchange.com/questions/135867/gdal-hdf4-driver-on-linux-system
+- mac: https://stackoverflow.com/questions/45598772/binding-gdal-with-r-on-osx-mac-cant-open-explore-h4-files-in-r
+
+
+
 ## MODIS Land Cover Type Product (MCD12Q1) 
 MODIS MCD12Q1 data (Friedl et al., 2019) are satellite data of global land cover classes at 500m resolution and are available for years 2001 to 2018. Raw satellite data has already been processed into various vegetation classifications. 
 

@@ -61,6 +61,14 @@ fi
 # Make destination directory 
 mkdir -p "${dest_path}/filelists"
 
+# ---------------------------
+# Check if GDAL supports HDF4
+# ---------------------------
+hdf4_check=$(gdalinfo --formats | grep 'HDF4')
+if [[ $hdf4_check != *'HDF4'* ]]; then
+ echo No HDF4 support found in GDAL module. Check GDAL distribution.
+ exit 1
+fi
 
 #---------------------------------
 # Make the VRTs
