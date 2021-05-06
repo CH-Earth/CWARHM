@@ -11,7 +11,7 @@ A basic SUMMA+mizuRoute setup requires:
 - Time series of forcing data for each HRU
 - Various settings files for SUMMA and mizuRoute that provide parameter values, initial conditions and runtime settings.
 
-This workflow requires the user to provide the catchment and river network shapefiles with certain required contents (see the relevant readme's for details). The scripts in the repository provide all the necessary code to download and pre-process forcing and parameter data, create SUMMA's and mizuRoute's required input files, and run hydrologic and routing simulations. This generates a basic SUMMA + mizuRoute setup, upon which the user can improve by, for example, swapping global datasets for higher quality local ones or connecting the model setup to a calibration algorithm. 
+This workflow requires the user to provide the catchment and river network shapefiles with certain required contents (see the relevant readme's for details). The scripts in the repository provide all the necessary code to download and pre-process forcing and parameter data, create SUMMA's and mizuRoute's required input files, and run hydrologic and routing simulations. This generates a basic SUMMA + mizuRoute setup upon which the user can improve by, for example, swapping global datasets for higher quality local ones or connecting the model setup to a calibration algorithm. 
 
 
 ## Data coverage
@@ -115,6 +115,22 @@ At the time of writing (12-04-2021) `numpy` issues warnings about a deprecated f
 - https://github.com/Unidata/netcdf4-python/commit/d50b949ea3982a6281c6bce25d335736ad067b64
 
 
+## Disk space requirements
+
+Disk space requirements are largely dependent on the size of the modeling domain (in time and space) and the number of output variables saved by SUMMA. Minimum requirements for the Bow at Banff example are as follows:
+
+- SUMMA source code: < 50 MB
+- mizuRoute source code: < 50 MB
+- Initial forcing data download: < 20 MB (5 years at hourly resolution, 20 ERA5 grid cells)
+- Initial soil map download: < 500 MB (downloads a global map that is later subset to the region of interest)
+- Initial DEM data download: ~3.5 GB (downloads a 30x30 degree region that is later subset to the region of interest)
+- Initial MODIS data download: ~22 GB (downloads global data that is later subset to the region of interest)
+- SUMMA simulation: < 150 MB (18 model variables simulated with hourly timesteps but saved as daily values)
+- mizuRoute simulation: < 100 MB (both routing schemes)
+
+Note that data generated in intermediate steps in the workflow is saved in corresponding directories. Users may wish to manually delete these intermediate results if disk space is an issue. 
+
+
 ## Disclaimer
 
 This workflow (“the program”) is licensed under the GNU GPL v3.0 license. You should have received a copy of the GNU General Public License along with this program. If not, see https://www.gnu.org/licenses/. Please take note of the following:
@@ -133,6 +149,7 @@ Our thanks to those who have contributed to improving this repository (in order 
 - Dave Casson
 - Hongli Liu
 - Guoqiang Tang
+- Jim Freer
 
 
 ## References
