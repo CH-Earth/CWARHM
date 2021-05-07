@@ -139,7 +139,7 @@ hm_shape = hm_shape.to_crs('EPSG:6933')
 rm_shape = rm_shape.to_crs('EPSG:6933')
 
 # Run the intersection
-intersected_shape = esmr.intersection_shp(esmr_called,rm_shape,hm_shape)
+intersected_shape = esmr.intersection_shp(esmr_caller,rm_shape,hm_shape)
 
 # Reproject the intersection to WSG84
 intersected_shape = intersected_shape.to_crs('EPSG:4326')
