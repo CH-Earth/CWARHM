@@ -162,8 +162,16 @@ for file in forcing_files:
         # Make a data array of size (nTime,nHru) 
         addThis = xr.DataArray(np.tile(lapse_values_sorted.values, (len(dat['time']),1)), dims=('time','hru')) 
     
+        # Get the air temperature variables
+        tmp_longname = dat['airtemp'].long_name
+        tmp_units = dat['airtemp'].units    
+    
         # Subtract lapse values from existing temperature data
         dat['airtemp'] = dat['airtemp'] + addThis
+    
+        # Add the attributes back in
+        dat.airtemp.attrs['long_name'] = tmp_longname
+        dat.airtemp.attrs['units'] = tmp_units
     
         # --- Time step specification 
         dat['data_step'] = data_step
