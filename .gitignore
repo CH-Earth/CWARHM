@@ -7,3 +7,5 @@ core.*
 
 # notebook stuff
 .ipynb_checkpoints
+0_control_files/control_active.txt
+0_control_files/control_Bow_at_Banff.txt

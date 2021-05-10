@@ -1,9 +1,6 @@
 from setuptools import setup, find_packages
 import pathlib
 
-with open('requirements.txt') as f:
-    requirements = f.read().splitlines()
-
 here = pathlib.Path(__file__).parent.resolve()
 
 # Get the long description from the README file

@@ -15,11 +15,10 @@ import os,sys,glob
 import time
 import shutil
 import requests
-import concurrent
-from concurrent.futures.thread import ThreadPoolExecutor
 from netrc import netrc
 from pathlib import Path
 from shutil import copyfile
+from concurrent.futures import ThreadPoolExecutor
 import subprocess
 
 #Import local modules
@@ -119,12 +118,11 @@ modis_path.mkdir(parents=True, exist_ok=True)
 
 # Set the log path and file name
 logPath = modis_path
-log_suffix = '_modis_download_'
+log_suffix = '_modis_download'
 
 # Create a log folder
 logFolder = '_workflow_log'
 Path(logPath / logFolder).mkdir(parents=True, exist_ok=True)
-
 #Create a logging file
 logger = create_log_file(logPath / logFolder,thisFile,suffix=log_suffix)
 
@@ -138,6 +136,7 @@ netrc_folder = os.path.expanduser("~/.netrc")
 # Get user name and password - not great, but these are stored as plain text on the user's machine regardless..
 usr = netrc(netrc_folder).authenticators(url)[0]
 pwd = netrc(netrc_folder).authenticators(url)[2]
+
 
 # --- Do the downloads
 # Get the download links from file
