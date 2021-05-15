@@ -1,7 +1,7 @@
 # Create a new multiband VRT with each data year being one band
 
 # load the module
-module load gdal
+module load gdal/3.0.4
 
 #---------------------------------
 # Specify settings
@@ -67,7 +67,7 @@ FILENAME="domain_MCD12Q1_2001_2018.vrt"
 ls ${source_path}/*.vrt > filelist.txt
 
 # Create the multiband VRT
-gdalbuildvrt -separate -input_file_list filelist.txt ${dest_path}/${FILENAME}
+gdalbuildvrt -separate -input_file_list filelist.txt ${dest_path}/${FILENAME} -resolution highest
 
 # Remove the temporary file
 rm -f filelist.txt
