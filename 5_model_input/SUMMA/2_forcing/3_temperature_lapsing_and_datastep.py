@@ -157,33 +157,33 @@ for file in forcing_files:
     print('Starting on ' + file)
     
     # load the data
-with xr.open_dataset(forcing_easymore_path / file) as dat:
+    with xr.open_dataset(forcing_easymore_path / file) as dat:
     
         # --- Temperature lapse rates
         # Find the lapse rates by matching the HRU order in the forcing file with that in 'lapse_values'
-    lapse_values_sorted = lapse_values['lapse_values'].loc[dat['hruId'].values]
+        lapse_values_sorted = lapse_values['lapse_values'].loc[dat['hruId'].values]
     
         # Make a data array of size (nTime,nHru) 
-    addThis = xr.DataArray(np.tile(lapse_values_sorted.values, (len(dat['time']),1)), dims=('time','hru')) 
+        addThis = xr.DataArray(np.tile(lapse_values_sorted.values, (len(dat['time']),1)), dims=('time','hru')) 
     
         # Get the air temperature variables
-    tmp_longname = dat['airtemp'].long_name
-    tmp_units = dat['airtemp'].units    
+        tmp_longname = dat['airtemp'].long_name
+        tmp_units = dat['airtemp'].units    
     
         # Subtract lapse values from existing temperature data
-    dat['airtemp'] = dat['airtemp'] + addThis
+        dat['airtemp'] = dat['airtemp'] + addThis
     
         # Add the attributes back in
-    dat.airtemp.attrs['long_name'] = tmp_longname
-    dat.airtemp.attrs['units'] = tmp_units
+        dat.airtemp.attrs['long_name'] = tmp_longname
+        dat.airtemp.attrs['units'] = tmp_units
     
         # --- Time step specification 
-    dat['data_step'] = data_step
-    dat.data_step.attrs['long_name'] = 'data step length in seconds'
-    dat.data_step.attrs['units'] = 's'
+        dat['data_step'] = data_step
+        dat.data_step.attrs['long_name'] = 'data step length in seconds'
+        dat.data_step.attrs['units'] = 's'
     
         # --- Save to file in new location
-    dat.to_netcdf(forcing_summa_path/file) 
+        dat.to_netcdf(forcing_summa_path/file) 
         
         
 # --- Code provenance
