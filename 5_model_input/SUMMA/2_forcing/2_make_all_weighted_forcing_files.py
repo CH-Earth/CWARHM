@@ -156,10 +156,12 @@ esmr.remap_csv = str(intersect_path / remap_file)
 # Enforce that we want our HRUs returned in the order we put them in
 esmr.sort_ID = False
 
+# Flag that we want to skip existing remap files
+esmr.overwrite_existing_remap = False
 
 # --- Run EASYMORE - this can be parallelized for speed ups
 # Loop over the remaining forcing files
-for file in forcing_files[1:]: # skip the first one, as we completed that in the previous script
+for file in forcing_files[1:]: # skip the first one, as we completed that in the previous script  
     
     # ERA5 forcing files to use
     esmr.source_nc = str(file) # Path() to string
