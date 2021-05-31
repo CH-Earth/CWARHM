@@ -200,7 +200,6 @@ dependencies:
     - imageio==2.9.0
     - json5==0.9.5
     - networkx==2.5.1
-    - osgeo==0.0.0
     - pysheds==0.2.7
     - pywavelets==1.1.1
     - scikit-image==0.18.1
