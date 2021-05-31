@@ -87,7 +87,7 @@ else:
     
 # Find the files
 _,_,forcing_files = next(os.walk(forcing_easymore_path))
-
+forcing_files.sort() # technically doesn't matter but w/e
 
 # --- Find the time step size of the forcing data
 # Value in control file
@@ -136,7 +136,11 @@ lapse_rate = 0.0065 # [K m-1]
 topo_data['lapse_values'] = topo_data[weights] * lapse_rate * (topo_data[forcing_elev] - topo_data[catchment_elev]) # [K]
 
 # Find the total lapse value per basin; i.e. sum the individual contributions of each HRU+ERA5-grid overlapping part
-lapse_values = topo_data.groupby([gru_ID,hru_ID]).lapse_values.sum().reset_index()
+# Account for the special case where gru_ID and hru_ID share the same column and thus name
+if gru_ID == hru_ID:
+    lapse_values = topo_data.groupby([hru_ID]).lapse_values.sum().reset_index() # Sort by HRU
+else:
+    lapse_values = topo_data.groupby([gru_ID,hru_ID]).lapse_values.sum().reset_index() # sort by GRU first and HRU second
 
 # Sort and set hruID as the index variable
 lapse_values = lapse_values.sort_values(hru_ID).set_index(hru_ID)

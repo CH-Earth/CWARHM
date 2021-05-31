@@ -3,7 +3,7 @@
 
 # module
 import os
-import gdal
+from osgeo import gdal
 from pathlib import Path
 from shutil import copyfile
 from datetime import datetime
@@ -100,7 +100,9 @@ old_tif = str(soil_raw_path/soil_raw_name)
 new_tif = str(soil_domain_path/soil_domain_name)
 
 # Crop to domain
-ds = gdal.Translate(new_tif, old_tif, projWin=bbox)
+#ds = gdal.Translate(new_tif, old_tif, projWin=bbox)
+translate_options = gdal.TranslateOptions(format = 'GTiff', projWin = bbox, creationOptions = ['COMPRESS=DEFLATE'])
+ds = gdal.Translate(new_tif, old_tif, options=translate_options)
 
 # Close the data set
 ds = None

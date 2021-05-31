@@ -73,7 +73,7 @@ else:
 if mergePath == 'default':
     mergePath = make_default_path('forcing/2_merged_data')
 else: 
-    forcingPath = Path(forcingPath) # ensure Path() object 
+    mergePath = Path(mergePath) # ensure Path() object 
     
 # Make the merge folder if it doesn't exist
 mergePath.mkdir(parents=True, exist_ok=True)
@@ -90,9 +90,11 @@ years = [int(year) for year in years]
 
 # --- Merge the files
 # Loop through all years and months
-for year in range(years[0],years[1]+1):
-    for month in range (1,13):
-
+#for year in range(years[0],years[1]+1):
+#    for month in range (1,13):
+for year in range(2006,2007):
+    for month in range (7,8):
+    
         # Define file names 
         data_pres = 'ERA5_pressureLevel137_' + str(year) + str(month).zfill(2) + '.nc'
         data_surf = 'ERA5_surface_' + str(year) + str(month).zfill(2) + '.nc'
@@ -109,8 +111,8 @@ for year in range(years[0],years[1]+1):
             surf_time = src2.variables['time'][:]
 
         # Update the pressure level coordinates
-        pres_lat[pres_lat > 90] = pres_lat[pres_lat > 90] - 180
-        pres_lon[pres_lon > 180] = pres_lon[pres_lon > 90] - 360
+        pres_lat[pres_lat >= 90] = pres_lat[pres_lat >= 90] - 180
+        pres_lon[pres_lon >= 180] = pres_lon[pres_lon >= 180] - 360
 
         # Step 2: check that coordinates and time are the same between the both files
         # Compare dimensions (lat, long, time)
