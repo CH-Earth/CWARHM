@@ -146,7 +146,7 @@ with nc4.Dataset(attribute_path/attribute_name, "r+") as att:
         attribute_hru = att['hruId'][idx]
     
         # Find the row in the shapefile that contains info for this HRU
-        shp_mask = (shp[intersect_hruId_var] == attribute_hru)
+        shp_mask = (shp[intersect_hruId_var].astype(int) == attribute_hru)
         
         # Find the elevation & downHRUindex
         tmp_elev = shp['elev_mean'][shp_mask].values[0]
