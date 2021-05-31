@@ -3,7 +3,11 @@
 # Script to download ERA5 pressure level data
 # Reads download path, years to download and spatial extent from 'summaWorkflow_public/0_control_files/control_active.txt'.
 
-module load python
+# Requires use of the Copernicus Data Store API
+# CDS registration: https://cds.climate.copernicus.eu/user/register?destination=%2F%23!%2Fhome
+# CDS api setup: https://cds.climate.copernicus.eu/api-how-to
+
+module load python/3.7
 
 # --- Settings
 # -- Find where to save data

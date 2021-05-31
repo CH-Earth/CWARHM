@@ -8,6 +8,9 @@ from pathlib import Path
 from shutil import copyfile
 from datetime import datetime
 
+# CDS registration: https://cds.climate.copernicus.eu/user/register?destination=%2F%23!%2Fhome
+# CDS api setup: https://cds.climate.copernicus.eu/api-how-to
+
 ''' 
 Downloads 1 year of ERA5 data as monthly chunks.
 Usage: python download_ERA5_surfaceLevel_annual.py <year> <coordinates> <path/to/save/data> 
