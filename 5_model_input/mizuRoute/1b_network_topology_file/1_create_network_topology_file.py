@@ -71,7 +71,6 @@ river_seg_id      = read_from_control(controlFolder/controlFile,'river_network_s
 river_down_seg_id = read_from_control(controlFolder/controlFile,'river_network_shp_downsegid')
 river_slope       = read_from_control(controlFolder/controlFile,'river_network_shp_slope')
 river_length      = read_from_control(controlFolder/controlFile,'river_network_shp_length')
-river_outlet_id   = float( read_from_control(controlFolder/controlFile,'river_network_shp_outlet_id') )
 
 
 # --- Find location of river basin shapefile (routing catchments)
@@ -105,6 +104,17 @@ else:
 # Make the folder if it doesn't exist
 topology_path.mkdir(parents=True, exist_ok=True)
 
+# --- Find if we need to enforce any segments as outlet(s)
+river_outlet_ids  = read_from_control(controlFolder/controlFile,'settings_mizu_make_outlet')
+
+# Set flag and convert variable type if needed
+if 'n/a' in river_outlet_ids:
+    enforce_outlets = False
+else:
+    enforce_outlets = True
+    river_outlet_ids = river_outlet_ids.split(',') # does nothing if string contains no comma
+    river_outlet_ids = [int(outlet_id) for outlet_id in river_outlet_ids]    
+
 
 # --- Make the river network topology file
 # Open the shapefile
@@ -115,9 +125,14 @@ shp_basin = gpd.read_file(river_basin_path/river_basin_name)
 num_seg = len(shp_river)
 num_hru = len(shp_basin)
 
-# Ensure that the most downstream segment in the river network has a downstream_ID of 0
-# This indicates to mizuRoute that this segment has no downstream segment attached to it
-shp_river.loc[shp_river[river_seg_id] == river_outlet_id, river_down_seg_id] = 0
+# Ensure that any segments specified in the control file are identified to mizuRoute as outlets, by setting the downstream segment to 0
+# This indicates to mizuRoute that this segment has no downstream segment attached to it; i.e. is an outlet
+if enforce_outlets:
+    for outlet_id in river_outlet_ids:
+        if any(shp_river[river_seg_id] == outlet_id):
+            shp_river.loc[shp_river[river_seg_id] == outlet_id, river_down_seg_id] = 0
+        else:
+            print('outlet_id {} not found in {}'.format(outlet_id,river_seg_id))
 
 # Function to create new nc variables
 def create_and_fill_nc_var(ncid, var_name, var_type, dim, fill_val, fill_data, long_name, units):
