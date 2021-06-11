@@ -1,6 +1,9 @@
 # SUMMA workflow
 This repository contains scripts to install, set up and run the Structure for Unifying Multiple Modeling Alternatives (SUMMA, Clark et al., 2015a,b) and mizuRoute (Mizukami et al., 2016) to generate hydrologic simulations for a given domain. The workflow uses open-source data with global coverage to determine model parameters and forcing, thus enabling transparent and efficient hydrologic science.
 
+#### Note on cyber security
+Use of this workflow requires accounts with various data providers. Login details with these providers are stored as plain text in the user's home directory. It is therefore strongly recommended that you **choose unique, new passwords for these accounts**. Do not use passwords that are identical to any other passwords you may be using.   
+
 
 ## Scope
 
