@@ -1,12 +1,16 @@
 # Forcing data download
-Downloads ERA5 forcing data for the domain specified in the control file. Notebooks are set up for serial downloads, Python and shell scripts together run downloads in parallel. Notebooks read the control file to find download path, download period and spatial domain. Downloads data and makes log file. Shell scripts read the control file to find download path, download period and spatial domain. They then call the relevant Python script with path, download year and spatial domain as input arguments using the `parallel` command line utility. The code in the python scripts downloads the data, after which the shell scripts write simple log files. Note that ECMWF sometimes restricts data access to the ERA5 data (e.g. only 1 connection per user may be allowed). In such cases parallelization on the user's side will not speed up the downloads.
+Downloads ERA5 forcing data (surface and pressure level variables) for the domain specified in the control file. Note that downloads of surface level and pressure level data are retrieved from two different types of data storage on the ECMWF side. Different restrictions may apply to both storage types at any given time and downloads of surface and pressure level data are typically not equally fast. 
 
-Note that downloads of surface level and pressure level data are retrieved from two different types of data storage on the ECMWF side. Different restrictions may apply to both storage types at any given time and downloads of surface and pressure level data are typically not equally fast. 
+
+## Notebooks vs Python and shell scripts
+Notebooks are set up for serial downloads, Python and shell scripts together run downloads in parallel. Notebooks read the control file to find download path, download period and spatial domain. Downloads data and makes log file. Shell scripts read the control file to find download path, download period and spatial domain. They then call the relevant Python script with path, download year and spatial domain as input arguments using the `parallel` command line utility. The code in the python scripts downloads the data, after which the shell scripts write simple log files. Note that ECMWF sometimes restricts data access to the ERA5 data (e.g. only 1 connection per user may be allowed). In such cases parallelization on the user's side will not speed up the downloads.
+
 
 ## Download setup instructions
 Downloading ERA5 data requires:
 - Registration: https://cds.climate.copernicus.eu/user/register?destination=%2F%23!%2Fhome
 - Setup of the `cdsapi`: https://cds.climate.copernicus.eu/api-how-to
+
 
 ## Download run instructions
 Execute the download script and keep the terminal or notebook open until the downloads fully complete. No manual interaction with the https://cds.climate.copernicus.eu/ website is required.
@@ -19,7 +23,7 @@ Steps to downloading ERA5 through CDS can be found here: https://confluence.ecmw
 1. Make a CDS account
 2. Create a .cdsapi file in $HOME/
 3. Install the cdsapi (pip install --user cdsapi)
-4. Run a python script with the download request
+4. Run the scripts/notebooks to download data
 
 
 ## Assumptions not specified in `control_active.txt`

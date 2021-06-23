@@ -31,7 +31,7 @@ if [ "$source_path" = "default" ]; then
 fi
 
 # --- Location where converted data needs to go
-dest_line=$(grep -m 1 "^parameter_land_vrt3_path" ../../../0_control_files/control_active.txt) # full settings line
+dest_line=$(grep -m 1 "^parameter_land_vrt4_path" ../../../0_control_files/control_active.txt) # full settings line
 dest_path=$(echo ${dest_line##*|})   # removing the leading text up to '|'
 dest_path=$(echo ${dest_path%%#*}) # removing the trailing comments, if any are present
 
