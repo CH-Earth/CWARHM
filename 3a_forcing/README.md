@@ -64,3 +64,11 @@ Copernicus Climate Change Service (C3S) (2017): ERA5: Fifth generation of ECMWF 
 - Product main page (last access 8-01-2020): http://climate.copernicus.eu/climate-reanalysis
 - Documentation (last access 8-01-2020): https://confluence.ecmwf.int/display/CKB/ERA5%3A+data+documentation
 - Download guide (last access 8-01-2020): https://confluence.ecmwf.int/display/CKB/How+to+download+ERA5
+
+## Control file settings
+This section lists all the settings in `control_active.txt` that the code in this folder uses.
+- **forcing_raw_time**: years for which to download ERA5 data
+- **forcing_raw_space**: catchment bounding box, i.e. the area for which forcing is required
+- **forcing_shape_name**: name for the newly generated forcing grid shapefile
+- **forcing_shape_lat_name, forcing_shape_lon_name**: names for the latitude and longitude fields in the newly generated forcing grid shapefile
+- **forcing_raw_path, forcing_geo_path, forcing_merged_path, forcing_shape_path**: file paths

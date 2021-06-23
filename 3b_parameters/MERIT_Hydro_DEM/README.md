@@ -53,10 +53,16 @@ Summary
 - Data is stored in band 1 in each .tif
 - Data is in regular lat/long (EPSG:4326)
 
-
-
 ## Source
 http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/
 
 ## Suggested citation
 Yamazaki D., D. Ikeshima, J. Sosa, P.D. Bates, G.H. Allen, T.M. Pavelsky. MERIT Hydro: A high-resolution global hydrography map based on latest topography datasets. Water Resources Research, vol.55, pp.5053-5073, 2019, doi: 10.1029/2019WR024873
+
+## Control file settings
+This section lists all the settings in `control_active.txt` that the code in this folder uses.
+- **parameter_dem_main_url**: main download URL
+- **parameter_dem_file_template**: Merit Hydro file name template, will be populated with correct spatial extent and appended to main URL to form complete download URL
+- **forcing_raw_space**: bounding box of the modelling domain, used to find the correct Merit files to download and later to subset to the exact extent of the modelling domain
+- **parameter_dem_raw_path, parameter_dem_unpack_path, parameter_dem_vrt1_path, parameter_dem_vrt2_path, parameter_dem_tif_path**: file paths 
+- **parameter_dem_tif_name**: name for the final .tif file that contains the domain DEM 
