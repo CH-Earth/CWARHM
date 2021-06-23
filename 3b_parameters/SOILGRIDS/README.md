@@ -52,5 +52,12 @@ Benham, E., Ahrens, R. J., & Nettleton, W. D. (2009). Clarification of Soil Text
 
 Hengl T, Mendes de Jesus J, Heuvelink GBM, Ruiperez Gonzalez M, Kilibarda M, Blagotić A, et al. (2017) SoilGrids250m: Global gridded soil information based on machine learning. PLoS ONE 12(2): e0169748. doi:10.1371/journal.pone.0169748
 
-
 Knoben, W. J. M. (2021). Global USDA-NRCS soil texture class map, HydroShare, https://doi.org/10.4211/hs.1361509511e44adfba814f6950c6e742 	
+
+
+## Control file settings
+This section lists all the settings in `control_active.txt` that the code in this folder uses.
+- **parameter_soil_hydro_ID**: ID of the Hydroshare resource that contains the global soil texture class map needed by the download API
+- **forcing_raw_space**: bounding box of the modelling domain, used to subset global data to the exact extent of the modelling domain
+- **parameter_soil_raw_path, parameter_soil_domain_path**: file paths 
+- **parameter_soil_tif_name**: name of the .tif that contains the soil classes for the domain

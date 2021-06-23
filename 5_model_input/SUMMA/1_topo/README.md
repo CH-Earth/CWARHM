@@ -45,3 +45,10 @@ The scripts can easily be adapted to interact with a local QGIS install by speci
 
 ## Assumptions not included in `control_active.txt`
 Code assumes we're after a zonal histogram (soil and land classes) or a zonal mean (DEM). Changes to the code are needed to change these functions to something else if desired. 
+
+## Control file settings
+This section lists all the settings in `control_active.txt` that the code in this folder uses.
+- **catchment_shp_path, catchment_shp_name**: location and file name of the shapefile that contains the delineation of model elements.
+- **parameter_dem_tif_path, parameter_dem_tif_name, parameter_soil_domain_path, parameter_soil_domain_name, parameter_land_mode_path, parameter_land_mode_name**: locations of the geospatial parameter fields.
+- **intersect_dem_path, intersect_dem_name, intersect_soil_path, intersect_soil_name, intersect_land_path, intersect_land_name**: location where the files that contain the intersections between model elements and data need to be saved. 
+
