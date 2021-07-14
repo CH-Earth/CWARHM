@@ -1,9 +1,7 @@
 # Convert the multiband VRT to .tif 
 
 # modules
-module load nixpkgs/16.09 gcc/5.4.0 gdal-hdf4/2.1.3
-#module load proj geos/3.6.1 netcdf/4.4.1.1 nixpkgs/16.09  gcc/5.4.0 gdal-hdf4/2.1.3
-
+module load gdal/3.0.4
 
 #---------------------------------
 # Specify settings

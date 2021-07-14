@@ -111,11 +111,15 @@ Table name: "MODIFIED_IGBP_MODIS_NAOH"
 | 19    | Mixed Tundra                       |
 | 20    | Barren Tundra                      |
 
-
-
 ## References
 Friedl, M., Sulla-Menashe, D. (2019). MCD12Q1 MODIS/Terra+Aqua Land Cover Type Yearly L3 Global 500m SIN Grid V006 [Data set]. NASA EOSDIS Land Processes DAAC. Accessed 2020-05-20 from https://doi.org/10.5067/MODIS/MCD12Q1.006
 
+## Control file settings
+This section lists all the settings in `control_active.txt` that the code in this folder uses.
+- **parameter_land_list_path, parameter_land_list_name**: specify the location and name of the file that contains all MODIS download URLs
+- **forcing_raw_space**: bounding box of the modelling domain, used to subset global data to the exact extent of the modelling domain
+- **parameter_land_raw_path, parameter_land_vrt1_path, parameter_land_vrt2_path, parameter_land_vrt3_path, parameter_land_vrt4_path, parameter_land_tif_path, parameter_land_mode_path**: file paths
+- **parameter_land_tif_name**: name of the .tif file that contains the land classes for the domain 
 
 
 

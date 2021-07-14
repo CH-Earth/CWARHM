@@ -1,6 +1,10 @@
 # Script to download ERA5 geopotential data.
 # Geopotential data can be converted into elevation, which is needed for temperature lapsing.
 
+# Requires use of the Copernicus Data Store API
+# CDS registration: https://cds.climate.copernicus.eu/user/register?destination=%2F%23!%2Fhome
+# CDS api setup: https://cds.climate.copernicus.eu/api-how-to
+
 # modules
 import cdsapi    # copernicus connection
 import calendar  # to find days per month

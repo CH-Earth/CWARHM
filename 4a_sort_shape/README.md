@@ -55,3 +55,8 @@ Therefore, it assumes the HRUs can be found at the following indices in each `.n
 	* HRU 4: expected at index 4
 	
 The sorting ensures that this expectation is met.
+
+## Control file settings
+This section lists all the settings in `control_active.txt` that the code in this folder uses.
+- **catchment_shp_path, catchment_shp_name**: location of the catchment shapefile.
+- **catchment_shp_gruid, catchment_shp_hruid**: names of the GRU and HRU ID columns in the shapefile

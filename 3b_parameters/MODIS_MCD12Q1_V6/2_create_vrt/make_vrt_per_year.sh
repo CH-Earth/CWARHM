@@ -4,8 +4,7 @@
 # First creates .txt files that contain the names of .h5 files per year, then creates separate VRTs for each year.
 
 # load gdal
-module load nixpkgs/16.09 gcc/5.4.0 gdal-hdf4/2.1.3
-#module load gdal
+module load gdal/3.0.4
 
 
 #---------------------------------
@@ -88,7 +87,7 @@ do
 	OUTVRT="${dest_path}/MCD12Q1_"$YEAR".vrt"
 
 	# Make the vrt
-	gdalbuildvrt $OUTVRT -input_file_list $OUTTXT -sd 1
+	gdalbuildvrt $OUTVRT -input_file_list $OUTTXT -sd 1 -resolution highest
 
 done
 
