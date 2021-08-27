@@ -32,3 +32,13 @@ The applied lapse rate is hard-coded in script 3. This is a globally average val
 
 ## References
 Wallace, J., and P. Hobbs (2006), Atmospheric Science: An Introductory Survey, 483 pp., Academic Press, Burlington, Mass
+
+
+## Control file settings
+This section lists all the settings in `control_active.txt` that the code in this folder uses.
+- **intersect_dem_path, intersect_dem_name**: location and name of the file that contains the intersection between catchment shape and DEM.
+- **forcing_shape_path, forcing_shape_name**: location and name of the file that contains the forcing shapefile.
+- **intersect_forcing_path**: file path where the intersection between catchment and forcing shapefiles needs to go and can be found.
+- **forcing_merged_path, forcing_easymore_path, forcing_basin_avg_path, forcing_summa_path**: file paths where the merged forcing can be found and where the temporary EASYMORE files, the HRU-averaged forcing files, and the final SUMMA-ready input files need to go.
+- **forcing_time_step_size**: time step size of forcing data in [s].
+- **catchment_shp_hruid, catchment_shp_gruid**: names of columns in the catchment shapefiles. 

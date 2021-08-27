@@ -29,3 +29,9 @@ Note that both programs are under active development and thus that substantial c
 
 ## Note on mizuRoute compiling
 At the time of writing (mizuRoute commit `137820620f624f84f8cdb1d4e9884b8222a3f3df`) the compiler issues six warnings: one about an unused function, two about possible conversion errors, two about unused variables and one about unused dummy argument. These can safely be ignored.
+
+## Control file settings
+This section lists all the settings in `control_active.txt` that the code in this folder uses.
+- **github_summa, github_mizu**: GitHub URLs from which to clone SUMMA and mizuRoute.
+- **install_path_summa, install_path_mizu**: install locations for both models.
+- **exe_name_summa, exe_name_mizu**: names for compiled executables of both models

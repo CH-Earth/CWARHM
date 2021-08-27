@@ -111,8 +111,8 @@ for year in range(2006,2007):
             surf_time = src2.variables['time'][:]
 
         # Update the pressure level coordinates
-        pres_lat[pres_lat >= 90] = pres_lat[pres_lat >= 90] - 180
-        pres_lon[pres_lon >= 180] = pres_lon[pres_lon >= 180] - 360
+        pres_lat[pres_lat > 90] = pres_lat[pres_lat > 90] - 180
+        pres_lon[pres_lon > 180] = pres_lon[pres_lon > 180] - 360
 
         # Step 2: check that coordinates and time are the same between the both files
         # Compare dimensions (lat, long, time)
