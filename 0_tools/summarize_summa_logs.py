@@ -1,6 +1,6 @@
 '''Summarize all SUMMA logs in a folder. Assumes all .txt files in folder are SUMMA logs. 
 Summary file is placed inside the log folder. Specifying a summary file name is optional.
-Usage: python summarize_logs.py [log_folder] [name_of_summary_file.txt]'''
+Usage: python summarize_logs.py [log_folder] [name_of_summary_file.txt] [log file extension]'''
     
 # Modules
 import os
@@ -8,7 +8,11 @@ import re
 import sys
 import statistics as sts
 
-# ----------------------    
+# ----------------------
+# Set defaults
+summaryFile = '_log_summary.txt' # default, placed at the top of the log folder
+ext = '.txt' 
+    
 # Handle input arguments
 if len(sys.argv) == 1: # sys.argv only contains the script name
     sys.exit('Error: no input folder specified')
@@ -19,14 +23,17 @@ else: # at least 2 elements in sys.argv; len(sys.argv) cannot be zero or we woul
     folder = sys.argv[1] # sys.argv values are strings by default so this is fine
     
     # Check if there are more arguments
-    if len(sys.argv) > 2:
+    if len(sys.argv) == 3:
         
         # Assume the second argument is the name for the log file
         summaryFile = sys.argv[2] # string
     
     # No extra argument so no summary file name is specified
-    else: 
-        summaryFile = '_log_summary.txt' # default, placed at the top of the log folder
+    elif len(sys.argv) == 4: 
+        
+        # Assume the second argument is the name for the log file and the third is the file extension
+        summaryFile = sys.argv[2] # string
+        ext = sys.argv[3] # string        
 
 # End of input arguments
 # ----------------------
@@ -78,7 +85,7 @@ def determine_output(folder,file,nLines=2):
     # loop over the lines in the log text to find what happened
     msg = 'no line read' # initialize output
     for line in log_txt:
-        
+                
         # determine if the log contains a SUMMA statement
         if 'successfully' in line:
                        
@@ -96,9 +103,9 @@ def determine_output(folder,file,nLines=2):
             msg = line
             return success, summa, other, msg, time # we know what happened, stop function call
         
-        # if we reach this, no SUMMA termination statement was found
-        other = 1
-        msg = 'check SLURM logs - simulation terminated early at: ' + line
+    # if we reach this, no SUMMA termination statement was found
+    other = 1
+    msg = 'check SLURM logs - simulation terminated early at: ' + line
     
     return success, summa, other, msg, time
     
@@ -108,10 +115,17 @@ def determine_output(folder,file,nLines=2):
 # -------------------
 # Start of processing
 
+# Remove the summar file if it exists
+try:
+    os.remove(folder + '/' + summaryFile)
+except OSError:
+    pass
+
 # Find the .txt files in the folder
 files = []
 for file in os.listdir(folder):
-    if file.endswith(".txt"):
+    #if file.endswith(".txt"):
+    if file.endswith(ext):
         files.append(file)
             
 # Sort the list
