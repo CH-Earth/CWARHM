@@ -25,7 +25,7 @@ from datetime import datetime
 
 # --- Control file handling
 # Easy access to control file folder
-controlFolder = Path('../../../0_control_files')
+controlFolder = Path('../../0_control_files')
 
 # Store the name of the 'active' file in a variable
 controlFile = 'control_active.txt'
@@ -268,7 +268,7 @@ logFolder = '_workflow_log'
 Path( logPath / logFolder ).mkdir(parents=True, exist_ok=True)
 
 # Copy this script
-thisFile = '1_make_one_weighted_forcing_file.ipynb'
+thisFile = '1_make_one_weighted_forcing_file.py'
 copyfile(thisFile, logPath / logFolder / thisFile);
 
 # Get current date and time

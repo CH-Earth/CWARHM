@@ -194,7 +194,7 @@ dependencies:
   - pip:
     - datetime==4.3
     - decorator==4.4.2
-    - easymore==0.0.0
+    - easymore==0.0.1
     - geojson==2.5.0
     - geovoronoi==0.3.0
     - imageio==2.9.0
