@@ -90,10 +90,8 @@ years = [int(year) for year in years]
 
 # --- Merge the files
 # Loop through all years and months
-#for year in range(years[0],years[1]+1):
-#    for month in range (1,13):
-for year in range(2006,2007):
-    for month in range (7,8):
+for year in range(years[0],years[1]+1):
+    for month in range (1,13):
     
         # Define file names 
         data_pres = 'ERA5_pressureLevel137_' + str(year) + str(month).zfill(2) + '.nc'
