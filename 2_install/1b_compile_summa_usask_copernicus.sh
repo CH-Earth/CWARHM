@@ -66,9 +66,6 @@ echo # empty line
 #---------------------------------
 # Compile
 #---------------------------------
-# Copy the makefile and rename
-cp Makefile_summa_copernicus $F_MASTER/build/Makefile
-
 # Compile
 make -f ${F_MASTER}/build/Makefile
 
