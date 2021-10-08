@@ -94,6 +94,17 @@ If `summa-env` is not automatically added as a kernel, close the notebook, run t
 python -m ipykernel install --name summa-env
 ```
 
+#### Note on differences between conda and pip
+Please note that while conda automatically installs the necessary underlying libraries for a given package, pip does not. The user must take care to have local installs of the required libraries if using pip. Assumed to exist locally are:
+
+```
+module load proj/7.0.1
+module load geos/3.8.1
+module load gdal/3.0.4
+module load libspatialindex/1.8.5
+```
+
+
 #### Interaction with QGIS
 The scripts used for geospatial analysis use several functions from QGIS. Depending on your system, you may be able to get `QGIS` as a Conda package (https://anaconda.org/conda-forge/qgis) or require a stand-alone install of QGIS (https://qgis.org/en/site/). The provided notebooks in folder `/summaWorkflow_public/4b_remapping/1_topo/` are designed to use `QGIS` as a Conda package; the Python scripts in this folder show how to use a standalone install. This folder also contains a more detailed description of QGIS setup.
 
