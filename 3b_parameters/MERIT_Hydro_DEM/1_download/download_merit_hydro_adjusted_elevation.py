@@ -114,7 +114,7 @@ with open(os.path.expanduser("~/.merit")) as file:
         merit_login[key] = val.strip() # remove whitespace, newlines
         
 # Get the authentication details
-usr = merit_login['name']
+usr = merit_login['user']
 pwd = merit_login['pass']
 
 
