@@ -162,8 +162,8 @@ for dl_lon in dl_lons:
                     # print a completion message
                     print('Successfully downloaded ' + str(merit_path) + '/' + file_url)
 
-            except:
-                print('Error downloading ' + file_url + ' on try ' + str(retries_cur))
+            except Exception as e:
+                print('Error downloading ' + file_url + ' on try ' + str(retries_cur) + ' with error: ' + str(e))
                 retries_cur += 1
                 continue
             else:
