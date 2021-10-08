@@ -160,7 +160,7 @@ for dl_lon in dl_lons:
                         shutil.copyfileobj(content, data)
 
                     # print a completion message
-                    print('Successfully downloaded ' + file_url)
+                    print('Successfully downloaded ' + str(merit_path) + '/' + file_url)
 
             except:
                 print('Error downloading ' + file_url + ' on try ' + str(retries_cur))
