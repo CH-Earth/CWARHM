@@ -42,7 +42,7 @@ river_basin_needs_remap     | no                                          # 'no'
 
 
 # Install settings
-github_summa                | https://github.com/ncar/summa               # Replace this with the path to your own fork if you forked the repo.
+github_summa                | https://github.com/CH-Earth/summa           # Replace this with the path to your own fork if you forked the repo.
 github_mizuroute            | https://github.com/ncar/mizuroute           # Replace this with the path to your own fork if you forked the repo.
 install_path_summa          | default                                     # If 'default', clones source code into 'root_path/installs/summa'.
 install_path_mizuroute      | default                                     # If 'default', clones source code into 'root_path/installs/mizuRoute'.

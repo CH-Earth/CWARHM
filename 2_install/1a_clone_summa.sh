@@ -37,7 +37,7 @@ owd=$(pwd)
 cd "$summa_path"
 
 # Set the upstream repo
-git remote add upstream https://github.com/ncar/summa.git
+git remote add upstream https://github.com/CH-Earth/summa.git
 
 # Fetch latest updates
 git pull upstream develop

@@ -114,7 +114,7 @@ with open(os.path.expanduser("~/.merit")) as file:
         merit_login[key] = val.strip() # remove whitespace, newlines
         
 # Get the authentication details
-usr = merit_login['name']
+usr = merit_login['user']
 pwd = merit_login['pass']
 
 
@@ -160,10 +160,10 @@ for dl_lon in dl_lons:
                         shutil.copyfileobj(content, data)
 
                     # print a completion message
-                    print('Successfully downloaded ' + file_url)
+                    print('Successfully downloaded ' + str(merit_path) + '/' + file_url)
 
-            except:
-                print('Error downloading ' + file_url + ' on try ' + str(retries_cur))
+            except Exception as e:
+                print('Error downloading ' + file_url + ' on try ' + str(retries_cur) + ' with error: ' + str(e))
                 retries_cur += 1
                 continue
             else:

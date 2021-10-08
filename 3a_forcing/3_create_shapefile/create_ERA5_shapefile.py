@@ -72,7 +72,7 @@ mergePath = read_from_control(controlFolder/controlFile,'forcing_merged_path')
 if mergePath == 'default':
     mergePath = make_default_path('forcing/2_merged_data')
 else: 
-    forcingPath = Path(forcingPath) # ensure Path() object     
+    mergePath = Path(mergePath) # ensure Path() object     
     
     
 # --- Find location of geopotential data file

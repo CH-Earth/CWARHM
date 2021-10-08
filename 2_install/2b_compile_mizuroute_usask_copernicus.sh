@@ -54,6 +54,14 @@ module load netcdf-fortran/4.4.4
 # Specify the necessary path for the compiler
 export NCDF_PATH="$EBROOTNETCDFMINFORTRAN" #/cvmfs/soft.computecanada.ca/easybuild/software/2017/avx2/Compiler/gcc5.4/netcdf-fortran/4.4.4
 
+# Specify if openMP is to be used
+export isOpenMP="no"
+
+# Specify compiler flags, because the standard mizuRoute makefile does not do this for gfortran
+if [ $isOpenMP = "yes" ]; then
+ FLAGS_OMP="test"
+fi
+export FLAGS="-O3 -ffree-line-length-none -fmax-errors=0 ${FLAGS_OMP}"
 
 # --- Define optional setting
 # fast:      Enables optimizations
@@ -70,17 +78,15 @@ echo 'executable name: ' $EXE
 echo 'compiler name:   ' $FC
 echo 'compiler .exe:   ' $FC_EXE
 echo 'netcdf path:     ' $NCDF_PATH
+echo 'isOpenMP:        ' $isOpenMP
 echo 'compile mode:    ' $MODE
+echo 'compiler flags:  ' $FLAGS
 echo # empty line				 
 
 
 #---------------------------------
 # Compile
 #---------------------------------
-# Copy the makefile and rename
-cp Makefile_mizuroute_copernicus $F_MASTER/build/Makefile
-
-# Compile
 make -f ${F_MASTER}/build/Makefile
 
 

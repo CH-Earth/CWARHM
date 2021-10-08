@@ -4,10 +4,10 @@ Note that the MERIT DEM (http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_DEM/) has
 ## Download setup instructions
 MERIT Hydro downloads require registration through a Google webform. See: http://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_Hydro/
 
-Store the obtained user details (username and password) in a new file `$HOME/.merit` (Unix/Linux) or `C:\Users\[user]\.merit` (Windows) as follows (replace `[name]` and `[pass]` with your own credentials):
+Store the obtained user details (username and password) in a new file `$HOME/.merit` (Unix/Linux) or `C:\Users\[user]\.merit` (Windows) as follows (replace `[user]` and `[pass]` with your own credentials):
 
 ```
-name: [name]
+user: [user]
 pass: [pass]
 
 ```

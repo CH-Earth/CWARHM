@@ -1,7 +1,7 @@
 # SUMMA workflow
 This repository contains scripts to install, set up and run the Structure for Unifying Multiple Modeling Alternatives (SUMMA, Clark et al., 2015a,b) and mizuRoute (Mizukami et al., 2016) to generate hydrologic simulations for a given domain. The workflow uses open-source data with global coverage to determine model parameters and forcing, thus enabling transparent and efficient hydrologic science.
 
-#### Note on cyber security
+## Note on cyber security
 Use of this workflow requires accounts with various data providers. Login details with these providers are stored as plain text in the user's home directory. It is therefore strongly recommended that you **choose unique, new passwords for these accounts**. Do not use passwords that are identical to any other passwords you may be using.   
 
 
@@ -29,23 +29,14 @@ The workflow can thus generate model setups with global coverage and for the pas
 
 ## Shapefile requirements
 
-The workflow assumes the user can provide shapefiles that delineate the (sub-)catchments used by SUMMA and the river network used by mizuRoute. These shapefiles should include certain additional info. The folder `0_example` contains example shapefiles that can be used to create a model setup for the Bow at Banff, Canada. This folder also contains a detailed description of shapefile requirements.
+The workflow assumes the user can provide shapefiles that delineate the (sub-)catchments used by SUMMA and the river network used by mizuRoute. These shapefiles should include certain mandatory elements. The folder `0_example` contains example shapefiles that can be used to create a model setup for the Bow at Banff, Canada. This folder also contains a detailed description of shapefile requirements.
 
 
 ## Getting started
 
-Example shapefiles and a control file for the Bow river at Banff, AB, Canada, are provided as part of this repository. Shapefiles can be found in the folder `0_example`. The control file can be found in `0_control_files`. We strongly recommend to first use the provided shapefiles and control file to create your own setup for the Bow river at Banff. This domain is relatively small and the control file only specifies 1 year of data, which limits the download requirements. Instructions:
-1. Obtain a copy of the repository code;
-2. Ensure your computational environment has the correct packages and modules installed (see below);
-3. Modify the setting `root_path` in the file `control_BowAtBanff.txt` to point to your desired data directory location;
-4. Run the scripts in order, starting with the one in folder `./1_folder_prep`. This creates a basic folder structure in your specified data directory.
-5. Copy the Bow at Banff shapefiles from the `./0_examples/shapefiles` folder in this repo into the newly generated basic folder structure in your data directory. The remaining scripts in the workflow will look for the shapefiles there.
-6. Run the remaining scripts in the workflow in order and try to trace which information each script needs and how it obtains this from the control file. Understanding how the workflow operates will make it much easier to create your own control file.
+### Typical workflow
 
-
-## Typical workflow
-
-The workflow is organized around the idea that the code that generates data (i.e. the scripts that form this repo) is kept in a separate directory from the data that is downloaded and created. The connection between repository scripts and data directory is given in the `control_file` as control setting `root_path`. We strongly recommend to **_not_** put the data directory specified in `root_path` inside any of the repository folders, but to use a dedicated and separate location for the data instead. Note that the size requirement of the data directory depends on the size of the domain and the length and number of simulations.
+The workflow is organized around the idea that the code that generates data (i.e. the scripts that form this repo) is kept in a separate directory from the data that is downloaded and created. The connection between repository scripts and data directory is given in the `control_file` as control setting `root_path`. We strongly recommend to **_not_** put the data directory specified in `root_path` inside any of the repository folders, but to use a dedicated and separate location for the data instead. Note that the size requirement of the data directory depends on the size of the domain and the length and number of simulations ([see below](#-disk-space-requirements)).
 
 A typical application would look as follows:
 
@@ -59,6 +50,16 @@ A typical application would look as follows:
 4. Navigate to `summaWorkflow_public/1_folderPrep` and run the notebook or Python code there to create the basic layout of your data directory.
 5. Copy your catchment, river network and routing basin shapefiles (`.shp`) into the newly created `your/data/path/domain_[yourDomain]/shapefiles` folder, placing the shapefiles in the `catchment` and `river_network` folders respectively.
 6. Run through the various scripts in order.
+
+### Example
+
+To assist in understanding the process described above, example shapefiles and a control file for the Bow river at Banff, AB, Canada, are provided as part of this repository. Shapefiles can be found in the folder `0_example`. The control file can be found in `0_control_files`. We strongly recommend to first use the provided shapefiles and control file to create your own setup for the Bow river at Banff. This domain is relatively small and the control file only specifies 1 year of data, which limits the download requirements. Instructions:
+1. Obtain a copy of the repository code;
+2. Ensure your computational environment has the correct packages and modules installed (see below);
+3. Modify the setting `root_path` in the file `control_BowAtBanff.txt` to point to your desired data directory location;
+4. Run the scripts in order, starting with the one in folder `./1_folder_prep`. This creates a basic folder structure in your specified data directory.
+5. Copy the Bow at Banff shapefiles from the `./0_examples/shapefiles` folder in this repo into the newly generated basic folder structure in your data directory. The remaining scripts in the workflow will look for the shapefiles there.
+6. Run the remaining scripts in the workflow in order and try to trace which information each script needs and how it obtains this from the control file. Understanding how the workflow operates will make it much easier to create your own control file.
 
 
 ## Software requirements
@@ -93,8 +94,21 @@ If `summa-env` is not automatically added as a kernel, close the notebook, run t
 python -m ipykernel install --name summa-env
 ```
 
+#### Note on differences between conda and pip
+Please note that while conda automatically installs the necessary underlying libraries for a given package, pip does not. The user must take care to have local installs of the required libraries if using pip. Assumed to exist locally are:
+
+```
+module load proj/7.0.1
+module load geos/3.8.1
+module load gdal/3.0.4
+module load libspatialindex/1.8.5
+```
+
+
 #### Interaction with QGIS
-The scripts used for geospatial analysis use several functions from QGIS. Depending on your system, you may be able to get `QGIS` as a Conda package (https://anaconda.org/conda-forge/qgis) or require a stand-alone install of QGIS (https://qgis.org/en/site/). The provided notebooks in folder `/summaWorkflow_public/5_model_input/SUMMA/1_topo/` are designed to use `QGIS` as a Conda package; the Python scripts in this folder show how to use a standalone install.
+The scripts used for geospatial analysis use several functions from QGIS. Depending on your system, you may be able to get `QGIS` as a Conda package (https://anaconda.org/conda-forge/qgis) or require a stand-alone install of QGIS (https://qgis.org/en/site/). The provided notebooks in folder `/summaWorkflow_public/4b_remapping/1_topo/` are designed to use `QGIS` as a Conda package; the Python scripts in this folder show how to use a standalone install. This folder also contains a more detailed description of QGIS setup.
+
+
 
 
 ### Bash
