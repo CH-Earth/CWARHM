@@ -217,7 +217,7 @@ with nc4.Dataset(attribute_path/attribute_name, "w", format="NETCDF4") as att:
     var = 'elevation'
     att.createVariable(var, 'f8', 'hru', fill_value = False)
     att[var].setncattr('units', 'm')
-    att[var].setncattr('long_name', 'Elevation of HRU''s centroid')
+    att[var].setncattr('long_name', 'Mean HRU elevation')
     
     var = 'HRUarea'
     att.createVariable(var, 'f8', 'hru', fill_value = False)

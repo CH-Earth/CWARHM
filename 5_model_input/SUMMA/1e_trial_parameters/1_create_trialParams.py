@@ -6,6 +6,7 @@
 
 # modules
 import os
+import numpy as np
 import xarray as xr
 import netCDF4 as nc4
 from pathlib import Path
@@ -98,6 +99,31 @@ forcing_hruIds = forc['hruId'].values.astype(int) # 'hruId' is prescribed by SUM
 num_hru = len(forcing_hruIds)
 
 
+# --- Read any other trial parameters that need to be specified
+num_tp = int( read_from_control(controlFolder/controlFile,'settings_summa_trialParam_n') )
+
+# read the names and values of trial parameters to specify
+all_tp = {}
+for ii in range(0,num_tp):
+    
+    # Get the values
+    par_and_val = read_from_control(controlFolder/controlFile,f'settings_summa_trialParam_{ii+1}')
+    
+    # Split into parameter and value
+    arr = par_and_val.split(',')
+    
+    # Convert value(s) into float
+    if len(arr) > 2:
+        # Store all values as an array of floats    
+        val = np.array(arr[1:], dtype=np.float32)
+    else: 
+        # Convert the single value to a float
+        val = float( arr[1] )
+        
+    # Store in dictionary
+    all_tp[arr[0]] = val
+
+
 # --- Make the trial parameter file
 # Create the empty trial params file
 with nc4.Dataset(parameter_path/parameter_name, "w", format="NETCDF4") as tp:
@@ -106,7 +132,7 @@ with nc4.Dataset(parameter_path/parameter_name, "w", format="NETCDF4") as tp:
     now = datetime.now()
     tp.setncattr('Author', "Created by SUMMA workflow scripts")
     tp.setncattr('History','Created ' + now.strftime('%Y/%m/%d %H:%M:%S'))
-    tp.setncattr('Purpose','Create n empty trial parameter .nc file for initial SUMMA runs')
+    tp.setncattr('Purpose','Create a trial parameter .nc file for initial SUMMA runs')
     
     # === Define the dimensions 
     tp.createDimension('hru',num_hru)
@@ -117,6 +143,11 @@ with nc4.Dataset(parameter_path/parameter_name, "w", format="NETCDF4") as tp:
     tp[var].setncattr('units', '-')
     tp[var].setncattr('long_name', 'Index of hydrological response unit (HRU)')
     tp[var][:] = forcing_hruIds
+    
+    # Loop over any specified trial parameters and store in file
+    for var,val in all_tp.items():
+        tp.createVariable(var, 'f8', 'hru', fill_value = False)
+        tp[var][:] = val  
     
     
 # --- Code provenance
