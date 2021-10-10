@@ -130,7 +130,7 @@ with nc4.Dataset(attribute_path/attribute_name, "r+") as att:
         att['vegTypeIndex'][idx] = tmp_lc
         
     # Print water counts
-    print('HRU identified as mostly water in {} cases. Note that SUMMA skips hydrologic calculations for such HRUs.'.format(is_water))
+    print('{} HRUs were identified as containing only open water. Note that SUMMA skips hydrologic calculations for such HRUs.'.format(is_water))
     
     
 # --- Code provenance
