@@ -97,7 +97,7 @@ shapePath = read_from_control(controlFolder/controlFile,'forcing_shape_path')
 if shapePath == 'default':
     shapePath = make_default_path('shapefiles/forcing')
 else: 
-    forcingPath = Path(forcingPath) # ensure Path() object 
+    shapePath = Path(shapePath) # ensure Path() object 
     
 # Find name of the new shapefile
 shapeName = read_from_control(controlFolder/controlFile,'forcing_shape_name')
