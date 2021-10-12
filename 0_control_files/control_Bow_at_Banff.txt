@@ -129,6 +129,8 @@ settings_summa_trialParams  | trialParams.nc                              # Name
 settings_summa_forcing_list | forcingFileList.txt                         # Name of the file that has the list of forcing files.
 settings_summa_attributes   | attributes.nc                               # Name of the attributes file.
 settings_summa_connect_HRUs | no                                          # Attribute setting: "no" or "yes". Tricky concept, see README in ./5_model_input/SUMMA/3f_attributes. If no; all HRUs modeled as independent columns (downHRUindex = 0). If yes; HRUs within each GRU are connected based on relative HRU elevation (highest = upstream, lowest = outlet). 
+settings_summa_trialParam_n | 1                                           # Number of trial parameter specifications. Specify 0 if none are wanted (they can still be included in this file but won't be read).
+settings_summa_trialParam_1 | maxstep,900                                 # Name of trial parameter and value to assign. Value assumed to be float.
 
 
 # Experiment settings - mizuRoute
