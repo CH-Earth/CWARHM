@@ -26,7 +26,8 @@ else
 fi
 
 # Specify home directory of mizuroute/build
-export F_MASTER=$mizu_path 
+#export 
+F_MASTER=$mizu_path
 
 
 # --- Specify a name for the executable 
@@ -34,15 +35,18 @@ export F_MASTER=$mizu_path
 exe_line=$(grep -m 1 "^exe_name_mizuroute" ../0_control_files/control_active.txt) 
 mizu_exe=$(echo ${exe_line##*|}) 
 mizu_exe=$(echo ${mizu_exe%%#*}) 
-export EXE=$mizu_exe
+#export 
+EXE=$mizu_exe
 
 
 # --- Compiler settings 
 # Compiler (used in selection statements inside Makefile)
-export FC=gfortran
+#export 
+FC=gfortran
 
 # Compiler .exe
-export FC_EXE='gfortran' # /cvmfs/soft.computecanada.ca/nix/var/nix/profiles/gcc-5.4.0/bin/gfortran
+#export 
+FC_EXE='gfortran' # /cvmfs/soft.computecanada.ca/nix/var/nix/profiles/gcc-5.4.0/bin/gfortran
 
 
 # --- Library settings
@@ -52,16 +56,19 @@ module load gcc/7.3.0
 module load netcdf-fortran/4.4.4
 
 # Specify the necessary path for the compiler
-export NCDF_PATH="$EBROOTNETCDFMINFORTRAN" #/cvmfs/soft.computecanada.ca/easybuild/software/2017/avx2/Compiler/gcc5.4/netcdf-fortran/4.4.4
+#export 
+NCDF_PATH="$EBROOTNETCDFMINFORTRAN" #/cvmfs/soft.computecanada.ca/easybuild/software/2017/avx2/Compiler/gcc5.4/netcdf-fortran/4.4.4
 
 # Specify if openMP is to be used
-export isOpenMP="no"
+#export 
+isOpenMP="no"
 
 # Specify compiler flags, because the standard mizuRoute makefile does not do this for gfortran
 if [ $isOpenMP = "yes" ]; then
  FLAGS_OMP="test"
 fi
-export FLAGS="-O3 -ffree-line-length-none -fmax-errors=0 ${FLAGS_OMP}"
+#export 
+FLAGS="-O3 -ffree-line-length-none -fmax-errors=0 ${FLAGS_OMP}"
 
 # --- Define optional setting
 # fast:      Enables optimizations
@@ -87,7 +94,7 @@ echo # empty line
 #---------------------------------
 # Compile
 #---------------------------------
-make -f ${F_MASTER}/build/Makefile
+make -f ${F_MASTER}/build/Makefile FC=$FC FC_EXE=$FC_EXE EXE=$EXE MODE=$MODE isOpenMP=$isOpenMP F_MASTER=$F_MASTER NCDF_PATH=$NCDF_PATH FLAGS="$FLAGS"
 
 
 #---------------------------------
