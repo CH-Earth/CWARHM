@@ -139,6 +139,9 @@ settings_mizu_parameters    | param.nml.default                           # Name
 settings_mizu_topology      | topology.nc                                 # Name of the river network topology file.
 settings_mizu_remap         | routing_remap.nc                            # Name of the optional catchment remapping file, for cases when SUMMA uses different catchments than mizuRoute.
 settings_mizu_control_file  | mizuroute.control                           # Name of the control file.
+settings_mizu_input_path    | default                                     # Name of the folder with SUMMA outputs. If 'default', uses 'root_path/domain_[name]/simulations/[experiment_id]/SUMMA'
+settings_mizu_input_pattern | *_timestep.nc                               # File pattern in SUMMA output files to use as mizuRoute input.
+settings_mizu_input_list    | summaOutputFileList.txt                     # Name of the file that specifies the names of the netcdf files with SUMMA output mizuRoute is supposed to use.
 settings_mizu_routing_var   | averageRoutedRunoff                         # Name of SUMMA output variable to use for routing.
 settings_mizu_routing_units | m/s                                         # Units of the variable to be routed.
 settings_mizu_routing_dt    | 3600                                        # Size of the routing time step [s].
