@@ -1,4 +1,4 @@
-# Create forcing file list
+# Create input file list
 # Populates a text file with the names of the SUMMA runoff files used as mizuRoute input.
 
 # modules
