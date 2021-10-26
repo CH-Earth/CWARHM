@@ -4,11 +4,11 @@ module load StdEnv/2020 intel/2020.1.217 openmpi/4.0.3 cdo/1.9.8 nco/4.9.5
 path_src='/scratch/wknoben/summaWorkflow_data/domain_NorthAmerica/simulations/run1/SUMMA'
 path_tmp='/scratch/wknoben/summaWorkflow_data/domain_NorthAmerica/simulations/run1/tmp'
 path_des='/scratch/wknoben/summaWorkflow_data/domain_NorthAmerica/simulations/run1/intermediate'
-year=$1
+year=$1 # accepts year as input argument; disable this and enable FOR loop below to run everything sequentially
 
 # loop over all years and months
-#for year in {1979..1979}; do
- for month in {02..12}; do
+#for year in {1979..2019}; do
+ for month in {01..12}; do
   
   # progress
   echo ${year}-${month}
