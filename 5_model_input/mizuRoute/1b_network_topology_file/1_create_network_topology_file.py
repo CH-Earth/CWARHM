@@ -125,6 +125,9 @@ shp_basin = gpd.read_file(river_basin_path/river_basin_name)
 num_seg = len(shp_river)
 num_hru = len(shp_basin)
 
+# Ensure that any segment with length 0 is set to 1m to avoid tripping mizuRoute
+shp_river.loc[shp_river[river_length] == 0, river_length] = 1
+
 # Ensure that any segments specified in the control file are identified to mizuRoute as outlets, by setting the downstream segment to 0
 # This indicates to mizuRoute that this segment has no downstream segment attached to it; i.e. is an outlet
 if enforce_outlets:
