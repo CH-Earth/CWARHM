@@ -1,6 +1,7 @@
 # concatenate SUMMA domain-split outputs into time-split files
 # Splits on calendar years by default, months optional
 
+import os
 import sys
 import glob
 import xarray as xr
@@ -8,7 +9,7 @@ from pathlib import Path
 
 
 # --- check args
-if len(sys.argv) != 98:
+if len(sys.argv) != 9:
     print(""" Usage: %s <arg1> <arg2> <...> <arg8>
                arg1: summa output directory,       e.g. /path/to/summa/out/
                arg2: summa output file pattern,    e.g. run1_G*_day.nc
@@ -22,7 +23,7 @@ if len(sys.argv) != 98:
     
 # otherwise continue
 src_dir = sys.argv[1] # e.g. '/path/to/summa/out/'
-src_pat = sys.argv[2] # e.g. 'run1_G*_day.nc'
+src_pat = sys.argv[2] # e.g. 'run1_G*_timestep.nc'
 src_var = sys.argv[3] # e.g. 'averageRoutedRunoff'
 des_dir = sys.argv[4] # e.g. '/path/to/mizu/in/'
 des_fil = sys.argv[5] # e.g. 'run1_{}.nc'
@@ -32,10 +33,10 @@ split_m = sys.argv[8] # Split by months too: True/False
 
 
 # Settings
-#src_dir = '/gpfs/tp/gwf/gwf_cmt/wknoben/summaWorkflow_data/domain_NorthAmerica/simulations/run1/SUMMA'
+#src_dir = '/scratch/wknoben/summaWorkflow_data/domain_NorthAmerica/simulations/run1/SUMMA'
 #src_pat = 'run1_G*_timestep.nc'
 #src_var = 'averageRoutedRunoff'
-#des_dir = '/gpfs/tp/gwf/gwf_cmt/wknoben/summaWorkflow_data/domain_NorthAmerica/simulations/run1/intermediate'
+#des_dir = '/scratch/wknoben/summaWorkflow_data/domain_NorthAmerica/simulations/run1/intermediate'
 #des_fil = 'run1_mizu_in_{}.nc'
 #split_s = 1979
 #split_e = 2019
@@ -57,14 +58,15 @@ des_dir.mkdir(parents=True, exist_ok=True)
 src_files = glob.glob(str( src_dir / src_pat ))
 src_files.sort()
 
-src_names = [ele for ele in src_names if not ele.endswith("run1_G097498-097704_day.nc")]
-
 # define the extraction function
 def make_new_file(time):
     
-    # Progress print
-    if progres:
-        print(time)
+    # Check if the file already exists and skip if sort
+    if os.path.isfile(des_dir / des_fil.format(time)):
+        print('file for {} already exists. Skipping.'.format(time))
+        return
+    else:
+        print('Starting on file for {}.'.format(time))
     
     # Initialize a variable
     new = None
