@@ -71,18 +71,13 @@ def merge_subsets_into_one(src,pattern,des,name):
 ncpus = int(os.environ.get('SLURM_CPUS_PER_TASK',default=1))
 if __name__ == "__main__":
     pool = mp.Pool(processes=ncpus)
-    # try 1
-    #results = [] 
-    #[pool.apply_async(run_loop, args=(file,), callback=results.append) for file in src_files]
-    
-    # try 2
-    #[pool.apply_async(run_loop, args=(file,)) for file in src_files]
-    
     pool.map(run_loop,src_files)
     pool.close()
-    
-    #pool.join() # try 2
 # -- end parallel processing
 
 # merge the individual files into one for further vizualization
 merge_subsets_into_one(des_dir,des_fil.replace('{}','*'),des_dir,viz_fil)
+
+# remove the individual files for cleanliness
+for file in glob.glob(des_fil.replace('{}','*')):
+    os.remove(file)
