@@ -2,7 +2,7 @@
 
 # Assumes yearly mizuRoute outputs. 
 # Keeps the mean value over time of two routing variables and also keeps the segment ID variable.
-module load StdEnv/2020 intel/2020.1.217 openmpi/4.0.3 cdo/1.9.8 nco/4.9.5
+module load StdEnv/2020 intel/2020.1.217 openmpi/4.0.3 cdo/1.9.8
 
 path_src='/scratch/wknoben/summaWorkflow_data/domain_NorthAmerica/simulations/run1/mizuRoute'
 path_des='/scratch/wknoben/summaWorkflow_data/domain_NorthAmerica/simulations/run1/statistics'
@@ -16,7 +16,7 @@ for year in {1979..2019}; do
 done
 
 # merge separate files into one
-cdo mergetime ${path_des}/run1_mizuRoute_mean_KWT_IRF_*.nc ${path_des}/run1_mizuRoute_mean_KWT_IRF.nc
+cdo timmean -mergetime ${path_des}/run1_mizuRoute_mean_KWT_IRF_*.nc ${path_des}/run1_mizuRoute_mean_KWT_IRF.nc
 
 # remove the individual files for cleanliness
 rm ${path_des}/run1_mizuRoute_mean_KWT_IRF_*.nc
