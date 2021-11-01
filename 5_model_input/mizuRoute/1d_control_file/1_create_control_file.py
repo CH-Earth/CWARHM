@@ -82,13 +82,13 @@ else:
     
 # Paths - SUMMA output/mizuRoute input folder
 # -------------------------------------------
-path_to_input = read_from_control(controlFolder/controlFile,'settings_mizu_input_path')
+path_to_input = read_from_control(controlFolder/controlFile,'experiment_output_summa')
 
 # Specify default path if needed
 if path_to_input == 'default':  
     path_to_input = make_default_path('simulations/' + experiment_id + '/SUMMA') # outputs a Path()
 else:
-    path_to_input = Path(path_to_input) # make sure a user-specified path is a Path()    
+    path_to_input = Path(path_to_input) # make sure a user-specified path is a Path()   
 
 # Paths - mizuRoute output folder
 # -------------------------------
@@ -102,10 +102,6 @@ else:
     
 # Make the folder if it doesn't exist
 path_to_output.mkdir(parents=True, exist_ok=True)
-
-# Input file
-# ----------
-in_file = read_from_control(controlFolder/controlFile,'settings_mizu_input_list')
 
 # Parameter file
 # --------------
@@ -164,6 +160,7 @@ else:
     
 # SUMMA output settings
 # ---------------------
+routing_nc  = experiment_id + '_timestep.nc'
 routing_var_flow = read_from_control(controlFolder/controlFile,'settings_mizu_routing_var')
 routing_var_flow_units = read_from_control(controlFolder/controlFile,'settings_mizu_routing_units')
 routing_dt = read_from_control(controlFolder/controlFile, 'settings_mizu_routing_dt')
@@ -186,7 +183,7 @@ do_basin_route = read_from_control(controlFolder/controlFile,'settings_mizu_with
 
 # --- Make the file
 # Add some extra whitespace so (most of) the comments line up - easier to read that way
-pad_to = 23 # should be slightly higher than length of longest setting value for maximum neatness
+pad_to = 20 # should be slightly higher than length of longest setting value for maximum neatness
 
 # Create the file list
 with open(control_path / control_name, 'w') as cf:
@@ -228,7 +225,7 @@ with open(control_path / control_name, 'w') as cf:
 
     # SUMMA output
     cf.write("!\n! --- DEFINE RUNOFF FILE \n")
-    cf.write("<fname_qsim>            {:{}}    ! File with netCDF name(s) for HM_HRU runoff \n".format(in_file, pad_to))
+    cf.write("<fname_qsim>            {:{}}    ! netCDF name for HM_HRU runoff \n".format(routing_nc, pad_to))
     cf.write("<vname_qsim>            {:{}}    ! Variable name for HM_HRU runoff \n".format(routing_var_flow, pad_to))
     cf.write("<units_qsim>            {:{}}    ! Units of input runoff. e.g., mm/s \n".format(routing_var_flow_units, pad_to)) 
     cf.write("<dt_qsim>               {:{}}    ! Time interval of input runoff in seconds, e.g., 86400 sec for daily step \n".format(routing_dt, pad_to)) 
