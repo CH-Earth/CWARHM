@@ -6,7 +6,7 @@
 
 
 # Modeling domain settings
-root_path                   | /project/gwf/gwf_cmt/wknoben/summaWorkflow_data       # Root folder where data will be stored.
+root_path                   | /project/gwf/gwf_cmt/wknoben/summaWorkflow_data # Root folder where data will be stored.
 domain_name                 | BowAtBanff                                  # Used as part of the root folder name for the prepared data.
 
 
