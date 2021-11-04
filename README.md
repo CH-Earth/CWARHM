@@ -22,9 +22,10 @@ This workflow requires the user to provide the catchment and river network shape
 ## Data coverage
 
 The workflow uses the following data sources:
-- ERA5 forcing data (Copernicus Climate Change Service, 2017), available globally from 1970 to current minus five days;
+- ERA5 forcing data (Copernicus Climate Change Service, 2017), available globally from 1979 to current minus five days;
 - SOILGRIDS-derived (Benham et al., 2009; Hengl et al., 2017; Knoben, 2021) maps of global soil classes;
-- MODIS maps (Friedl et al., 2019) of global vegetation types.
+- MODIS maps (Friedl et al., 2019) of global vegetation types;
+- MERIT Hydro Hydrologically Adjusted Elevations (Yamazaki et al., 2019) as a DEM.
 
 The workflow can thus generate model setups with global coverage and for the past half century.
 
@@ -166,6 +167,7 @@ In practical terms, this means that:
 Our thanks to those who have contributed to improving this repository (in order of first reports):
 
 - Dave Casson
+- Hannah Burdett
 - Hongli Liu
 - Guoqiang Tang
 - Jim Freer
@@ -190,3 +192,5 @@ Hengl T, Mendes de Jesus J, Heuvelink GBM, Ruiperez Gonzalez M, Kilibarda M, Bla
 Knoben, W. J. M. (2021). Global USDA-NRCS soil texture class map, HydroShare, https://doi.org/10.4211/hs.1361509511e44adfba814f6950c6e742 	
 
 Mizukami, N., Clark, M. P., Sampson, K., Nijssen, B., Mao, Y., McMillan, H., Viger, R. J., Markstrom, S. L., Hay, L. E., Woods, R., Arnold, J. R., and Brekke, L. D., 2016: mizuRoute version 1: a river network routing tool for a continental domain water resources applications, Geosci. Model Dev., 9, 2223–2238, https://doi.org/10.5194/gmd-9-2223-2016
+
+Yamazaki, D., Ikeshima, D., Sosa, J., Bates, P.D., Allen, G.H., Pavelsky, T.M., 2019. MERIT Hydro: A High‐Resolution Global Hydrography Map Based on Latest Topography Dataset. Water Resour. Res. 55, 5053–5073. https://doi.org/10.1029/2019WR024873
