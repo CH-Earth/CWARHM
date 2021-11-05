@@ -56,7 +56,17 @@ We need the following variables at the lowest pressure level (L137) of the atmos
 This is not directly available through the CDS API and must come from MARS instead (see template_ERA5_pressureLevel.py; https://confluence.ecmwf.int/display/CKB/How+to+download+ERA5#).
 
 ## Suggested citation
+**General**:
+
 Copernicus Climate Change Service (C3S) (2017): ERA5: Fifth generation of ECMWF atmospheric reanalyses of the global climate. Copernicus Climate Change Service Climate Data Store (CDS), 2020-03-26. https://cds.climate.copernicus.eu/cdsapp#!/home
+
+**Pressure level data**:
+
+Hersbach, H., Bell, B., Berrisford, P., Hirahara, S., Horányi, A., Muñoz‐Sabater, J., Nicolas, J., Peubey, C., Radu, R., Schepers, D., Simmons, A., Soci, C., Abdalla, S., Abellan, X., Balsamo, G., Bechtold, P., Biavati, G., Bidlot, J., Bonavita, M., De Chiara, G., Dahlgren, P., Dee, P., Diamantakis, M., Dragani, R., Flemming, J., Forbes, R., Fuentes, M., Geer, A., Haimberger, L., Healy, S., Hogan, R.J., Hólm, E., Janisková, M., Keeley, S., Laloyaux, P., Lopez, P., Lupu, C., Radnoti, G., de Rosnay, P., Rozum, I., Vamborg, F., Villaume, S., Thépaut, J.-N., 2017. Complete ERA5: Fifth generation of ECMWF atmospheric reanalyses of the global climate
+
+**Single level data**:
+
+Hersbach, H., Bell, B., Berrisford, P., Biavati, G., Horányi, A., Muñoz Sabater, J., Nicolas, J., Peubey, C., Radu, R., Rozum, I., Schepers, D., Simmons, A., Soci, C., Dee, D., Thépaut, J.-N., 2018. ERA5 hourly data on single levels from 1979 to present. https://doi.org/10.24381/cds.adbb2d47
 
 ## Reference pages
 - General description (last access 8-01-2020): https://www.ecmwf.int/en/forecasts/datasets/reanalysis-datasets/era5
