@@ -9,7 +9,7 @@ State parameters are set at hard-coded values as follows:
 | nSoil                | 8                                            | -      | Number of soil layers |
 | nSnow                | 0                                            | -      | Number of currently active snow layers |
 | iLayerHeight         | [0, 0.025, 0.1, 0.25, 0.5, 1, 1.5, 2.5, 4]   | m      | Location of layer boundaries. 0 at the soil surface with positive numbers indicating deeper layers |
-| mLayerHeight         | [0.025, 0.075, 0.15, 0.25, 0.5, 0.5, 1, 1.5] | m      | Height of each active layer |
+| mLayerDepth          | [0.025, 0.075, 0.15, 0.25, 0.5, 0.5, 1, 1.5] | m      | Height of each active layer |
 | scalarCanopyIce      | 0                                            | kg m-2 | Current ice storage in the canopy |
 | scalarCanopyLiq      | 0                                            | kg m-2 | Current liquid water storage in the canopy |
 | scalarSnowDepth      | 0                                            | m      | Current snow depth |
