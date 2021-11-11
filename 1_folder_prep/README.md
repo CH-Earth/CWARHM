@@ -36,3 +36,10 @@ Including this file is **_optional_** and is only required in cases where the ca
 - Include a column with the stream segment ID (as specified in the river network shapefile) that each routing HRU drains into.
 
 Note that the HRUs mentioned here are distinctly different entities than the HRUs that are defined as part of the (SUMMA) catchment shapefile. If routing basins differ from the SUMMA GRUs, make sure to set the control file option `river_basin_needs_remap` to `yes`.
+
+
+## Control file settings
+This section lists all the settings in `control_active.txt` that the code in this folder uses.
+- **root_path**: main path where data needs to go.
+- **domain_name**: name of the modelling domain that will be used to create a dedicated domain_[domain_name] subfolder in root_path.
+- **catchment_shp_path, river_network_shp_path, river_basin_shp_path**: paths where the domain shapefiles need to go. Default settings will automatically generate these folder in root_path/domain_[domain_name]/shapefiles 

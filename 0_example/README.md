@@ -27,7 +27,7 @@ Note: centroid location and area should be calculated in an equal-area projectio
 
 
 ### River network shapefile
-A shapefile that shows the river network that connects the routing basins. Also needs river segment slope and length:
+A shapefile that shows the river network that connects the routing basins. Segments that have no downstream segment (i.e. outlets) should be inciated by setting their downstream segment ID to 0 or a anegative value. Also needs river segment slope and length:
 
 | Name in example file | Variable                  | Units  | Control file variable       | 
 |----------------------|---------------------------|--------|-----------------------------|

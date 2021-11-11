@@ -3,7 +3,8 @@
 
 # Reprojects the VRTs with MODIS data into EPSG:4326, which the rest of the workflow is based on.
 
-module load gdal
+# load gdal
+module load gdal/3.0.4
 
 
 #---------------------------------

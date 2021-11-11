@@ -27,7 +27,6 @@ river_network_shp_segid     | COMID                                       # Name
 river_network_shp_downsegid | NextDownID                                  # Name of the downstream segment ID column.
 river_network_shp_slope     | slope                                       # Name of the slope column. Slope must be in in units [length/length].
 river_network_shp_length    | length                                      # Name of the segment length column. Length must be in units [m].
-river_network_shp_outlet_id | 71028585                                    # ID of the most downstream segment in the river network (river network shapefile). Note that this specifies a single segment ID value. It is not a column in the shapefile.
 
 
 # Shapefile settings - mizuRoute catchment file
@@ -43,7 +42,7 @@ river_basin_needs_remap     | no                                          # 'no'
 
 
 # Install settings
-github_summa                | https://github.com/ncar/summa               # Replace this with the path to your own fork if you forked the repo.
+github_summa                | https://github.com/CH-Earth/summa           # Replace this with the path to your own fork if you forked the repo.
 github_mizuroute            | https://github.com/ncar/mizuroute           # Replace this with the path to your own fork if you forked the repo.
 install_path_summa          | default                                     # If 'default', clones source code into 'root_path/installs/summa'.
 install_path_mizuroute      | default                                     # If 'default', clones source code into 'root_path/installs/mizuRoute'.
@@ -130,6 +129,8 @@ settings_summa_trialParams  | trialParams.nc                              # Name
 settings_summa_forcing_list | forcingFileList.txt                         # Name of the file that has the list of forcing files.
 settings_summa_attributes   | attributes.nc                               # Name of the attributes file.
 settings_summa_connect_HRUs | no                                          # Attribute setting: "no" or "yes". Tricky concept, see README in ./5_model_input/SUMMA/3f_attributes. If no; all HRUs modeled as independent columns (downHRUindex = 0). If yes; HRUs within each GRU are connected based on relative HRU elevation (highest = upstream, lowest = outlet). 
+settings_summa_trialParam_n | 1                                           # Number of trial parameter specifications. Specify 0 if none are wanted (they can still be included in this file but won't be read).
+settings_summa_trialParam_1 | maxstep,900                                 # Name of trial parameter and value to assign. Value assumed to be float.
 
 
 # Experiment settings - mizuRoute
@@ -144,6 +145,7 @@ settings_mizu_routing_dt    | 3600                                        # Size
 settings_mizu_output_freq   | annual                                      # Frequency with which mizuRoute generates new output files. Must be one of 'single', 'day', 'month', 'annual'.
 settings_mizu_output_vars   | 0                                           # Routing output. '0' for both KWT and IRF; '1' IRF only; '2' KWT only.
 settings_mizu_within_basin  | 0                                           # '0' (no) or '1' (IRF routing). Flag to enable within-basin routing by mizuRoute. Should be set to 0 if SUMMA is run with "subRouting" decision "timeDlay".
+settings_mizu_make_outlet   | 71028585                                    # Segment ID or IDs that should be set as network outlet. Specify multiple IDs separated by commas: X,Y,Z. Specify no IDs as: n/a. Note that this can also be done in the network shapefile.
 
 
 # Postprocessing settings

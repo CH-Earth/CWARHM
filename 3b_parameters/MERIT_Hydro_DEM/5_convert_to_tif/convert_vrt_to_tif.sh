@@ -1,7 +1,7 @@
 # Convert the MERIT .vrt to .tif 
 
 # modules
-module load nixpkgs/16.09 gcc/5.4.0 gdal/2.1.3
+module load gdal/3.0.4
 
 
 #---------------------------------
@@ -9,6 +9,29 @@ module load nixpkgs/16.09 gcc/5.4.0 gdal/2.1.3
 #---------------------------------
 
 # --- Location of source data
+dest_line=$(grep -m 1 "^parameter_dem_unpack_path" ../../../0_control_files/control_active.txt) # full settings line
+data_path=$(echo ${dest_line##*|})   # removing the leading text up to '|'
+data_path=$(echo ${data_path%%#*}) # removing the trailing comments, if any are present
+
+# Specify the default path if needed
+if [ "$data_path" = "default" ]; then
+  
+ # Get the root path and append the appropriate install directories
+ root_line=$(grep -m 1 "^root_path" ../../../0_control_files/control_active.txt)
+ root_path=$(echo ${root_line##*|}) 
+ root_path=$(echo ${root_path%%#*})
+
+ # domain name
+ domain_line==$(grep -m 1 "^domain_name" ../../../0_control_files/control_active.txt)
+ domain_name=$(echo ${domain_line##*|}) 
+ domain_name=$(echo ${domain_name%%#*})
+ 
+ # source path
+ data_path="${root_path}/domain_${domain_name}/parameters/dem/2_MERIT_hydro_unpacked_data"
+
+fi
+
+# --- Location of source VRT
 dest_line=$(grep -m 1 "^parameter_dem_vrt2_path" ../../../0_control_files/control_active.txt) # full settings line
 source_path=$(echo ${dest_line##*|})   # removing the leading text up to '|'
 source_path=$(echo ${source_path%%#*}) # removing the trailing comments, if any are present
@@ -68,10 +91,21 @@ dest_name=$(echo ${dest_name%%#*}) # removing the trailing comments, if any are 
 # Make the destination path+name
 tif_file="${dest_path}/${dest_name}"
 
+#--------------------------------------------------------------------------
+# Check if we need BIGTIFF (IF_NEEDED doesn't work with compression, sadly)
+#--------------------------------------------------------------------------
+fold_size=($(du -s $data_path))
+if (($fold_size > 4000000)); then
+ bigtiff_flag='YES'
+else
+ bigtiff_flag='NO'
+fi
+
+
 #---------------------------------
 # Create .tif file
 #---------------------------------
-gdal_translate -co "COMPRESS=DEFLATE" $vrt_file $tif_file
+gdal_translate -co COMPRESS="DEFLATE" -co BIGTIFF=$bigtiff_flag $vrt_file $tif_file
 
 
 #---------------------------------

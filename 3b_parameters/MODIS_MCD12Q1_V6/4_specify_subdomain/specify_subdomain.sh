@@ -4,8 +4,7 @@
 # Extract the modeling domain out of the global-cover VRTs.
 
 # load the module
-module load nixpkgs/16.09  gcc/5.4.0 gdal/2.1.3
-
+module load gdal/3.0.4
 
 #---------------------------------
 # Specify settings

@@ -98,7 +98,7 @@ echo "file     = ${mizu_log_name}"
 
 # - Get the mizuRoute output path (for code provenance and possibly settings backup)
 # ----------------------------------------------------------------------------------
-mizu_out_line=$(grep -m 1 "^settings_mizu_path" ../0_control_files/control_active.txt)
+mizu_out_line=$(grep -m 1 "^experiment_output_mizuRoute" ../0_control_files/control_active.txt)
 mizu_out_path=$(echo ${mizu_out_line##*|}) 
 mizu_out_path=$(echo ${mizu_out_path%%#*})
 

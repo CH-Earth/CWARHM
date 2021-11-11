@@ -10,7 +10,7 @@ cligj==0.7.1
 cycler==0.10.0
 DateTime==4.3
 decorator==4.4.2
-easymore==0.0.0
+easymore==0.0.1
 Fiona==1.8.13.post1
 GDAL==3.0.4
 geojson==2.5.0
@@ -27,7 +27,6 @@ netCDF4==1.5.4
 networkx==2.5.1
 numpy==1.20.2
 oauthlib==3.1.0
-osgeo==0.0.0
 pandas==1.2.3
 Pillow==8.1.2
 pyparsing==2.4.7

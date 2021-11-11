@@ -97,7 +97,7 @@ fi
 
 # - Get the SUMMA output path (for code provenance and possibly settings backup)
 # ------------------------------------------------------------------------------
-summa_out_line=$(grep -m 1 "^settings_summa_path" ../0_control_files/control_active.txt)
+summa_out_line=$(grep -m 1 "^experiment_output_summa" ../0_control_files/control_active.txt)
 summa_out_path=$(echo ${summa_out_line##*|}) 
 summa_out_path=$(echo ${summa_out_path%%#*})
 
@@ -134,7 +134,7 @@ do_backup=$(echo ${do_backup%%#*})
 # Specify the path (inside the experiment output folder)
 if [ "$do_backup" = "yes" ]; then
  # Make the setting backup path
- backup_path="${summa_out_path}run_settings"
+ backup_path="${summa_out_path}/run_settings"
 fi
 #echo "backup = ${backup_path}"
 
@@ -143,7 +143,7 @@ fi
 # Do the settings backup if needed
 if [ "$do_backup" = "yes" ]; then
  mkdir -p $backup_path
- copy_command="cp -R ${settings_path}. ${backup_path}"
+ copy_command="cp -R ${settings_path}/. ${backup_path}"
  $copy_command
 fi
 

@@ -4,8 +4,7 @@
 # First creates a .txt file that contain the names of all .tif files, then creates the VRT.
 
 # load gdal
-module load nixpkgs/16.09  gcc/5.4.0 gdal/2.1.3
-
+module load gdal/3.0.4
 
 #---------------------------------
 # Specify settings
@@ -72,7 +71,7 @@ OUTVRT="${dest_path}/MERIT_Hydro_dem.vrt"
 find $source_path -name "*.tif" >> $OUTTXT
 
 # Make the vrt
-gdalbuildvrt $OUTVRT -input_file_list $OUTTXT -sd 1
+gdalbuildvrt $OUTVRT -input_file_list $OUTTXT -sd 1 -resolution highest
 
 
 #---------------------------------

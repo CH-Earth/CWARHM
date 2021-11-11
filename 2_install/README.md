@@ -19,13 +19,14 @@ mizuRoute: https://github.com/ncar/mizuRoute
 
 Specify the URL of both repositories/forks and the desired install location in the control file and use the provided scripts to clone the latest version of both models to your local machine. The provided download scripts will work whether you forked the repositories or not. 
 
-Next, compile the source code. This step depends on the user's configuration and cannot easily be standardized. Scripts that compile either executable on the University of Saskatachewan's HPC cluster "Copernicus" are included to (1) provide a traceable record of USask's SUMMA and mizuRoute setups, and (2) provide an example of how compiling both executables can be done. This example is unlikely to work as is on different computing environments and changes to the way and which modules are loaded and possibly the contents of the makefiles may be necessary. When in doubt, contact your system administrator. The repositories of both models (links given above) provide more details on how they should be compiled. 
+Next, compile the source code. This step depends on the user's configuration and cannot easily be standardized. Scripts that compile either executable on the University of Saskatachewan's HPC clusters "Plato" and "Copernicus", and Compute Canada's cluster "Graham", are included to (1) provide a traceable record of USask's SUMMA and mizuRoute setups, and (2) provide an example of how compiling both executables can be done. This example is unlikely to work as is on different computing environments: changes to which modules are loaded and the way in which this is done, and possibly the contents of the makefiles may be necessary. When in doubt, contact your system administrator. The repositories of both models (links given above) provide more details on how they should be compiled. 
 
 ## Assumptions not specified in `control_active.txt`
 This code by default clones the `develop` branch of both repositories, which contains the latest available fixes and updates before they are included in new releases on the respective `master` branches. 
 
-## Note on Makefile versions
-Note that both programs are under active development and thus that substantial changes to the code base can happen. This may result in changes to the respective Makefiles too, meaning that it cannot be guaranteed that older Makefiles will still work after an update. Therefore the Makefiles that are part of this repository are provided as a *record* of our setup on 2021-02-05 and may not necessarily work with newer versions of SUMMA and mizuRoute. Up-to-date Makefiles are included as part of the source code of both programs and can be found in `[program]/build`. 
 
-## Note on mizuRoute compiling
-At the time of writing (mizuRoute commit `137820620f624f84f8cdb1d4e9884b8222a3f3df`) the compiler issues six warnings: one about an unused function, two about possible conversion errors, two about unused variables and one about unused dummy argument. These can safely be ignored.
+## Control file settings
+This section lists all the settings in `control_active.txt` that the code in this folder uses.
+- **github_summa, github_mizu**: GitHub URLs from which to clone SUMMA and mizuRoute.
+- **install_path_summa, install_path_mizu**: install locations for both models.
+- **exe_name_summa, exe_name_mizu**: names for compiled executables of both models
