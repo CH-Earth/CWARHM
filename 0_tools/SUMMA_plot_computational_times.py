@@ -80,6 +80,9 @@ def get_computation_time(file,nLines=30):
     
     # get the file contents
     log_txt = tail(folder,file,nLines)
+
+    # initialize the return values. Negative values allows for filtering outside this function if needed
+    total = physics = write = read = restart = setup = init = -1
     
     # only proceed if simulation was successful
     success = False
@@ -90,10 +93,7 @@ def get_computation_time(file,nLines=30):
     if not success:
         print(f'{file} does not appear to log a successful SUMMA run. Skipping.')
         nSkipped += 1
-        return
-    
-    # initialize the return values. Negative values allows for filtering outside this function if needed
-    total = physics = write = read = restart = setup = init = -1
+        return total,physics,write,read,restart,setup,init,nSkipped
     
     # loop over the lines and act according to what's found in the line
     for line in log_txt:
@@ -122,7 +122,7 @@ def get_computation_time(file,nLines=30):
 
 # Remove the summar file if it exists
 try:
-    os.remove(folder + '/' + summaryFile)
+    os.remove(folder + '/' + summaryFig)
 except OSError:
     pass
     
