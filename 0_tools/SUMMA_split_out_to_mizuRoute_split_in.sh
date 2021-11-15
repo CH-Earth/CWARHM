@@ -44,7 +44,7 @@ year=$1 # accepts year as input argument; disable this and enable FOR loop below
   ncrcat -O ${path_tym}/*.nc ${path_des}/run1_${year}${month}.nc
   
   # swap the dimensions again
-  ncpdq -O -a time,gru ${path_des}/run1_${year}${month}.nc ${path_des}/run1_${year}${month}.nc
+  ncpdq -O -L 1 -a time,gru ${path_des}/run1_${year}${month}.nc ${path_des}/run1_${year}${month}.nc
   
   # clean the temporary dir
   rm -r ${path_tym}
