@@ -1,0 +1,3 @@
+steps:
+- bash create_symlinks.sh
+- python -m "$@"

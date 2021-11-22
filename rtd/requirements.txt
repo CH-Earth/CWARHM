@@ -1,1 +1,2 @@
+git+https://github.com/NiklasRosenstein/readthedocs-custom-steps.git
 myst_parser

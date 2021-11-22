@@ -1,1 +1,0 @@
-/Users/chris/Documents/science/code/summaWorkflow_public/./3b_parameters/MODIS_MCD12Q1_V6/4_specify_subdomain/README.md

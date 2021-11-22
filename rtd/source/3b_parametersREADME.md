@@ -1,1 +1,0 @@
-/Users/chris/Documents/science/code/summaWorkflow_public/./3b_parameters/README.md
