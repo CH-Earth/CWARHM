@@ -1,0 +1,1 @@
+/Users/chris/Documents/science/code/summaWorkflow_public/./5_model_input/SUMMA/1b_file_manager/README.md
