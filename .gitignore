@@ -7,3 +7,8 @@ core.*
 
 # notebook stuff
 .ipynb_checkpoints
+
+# rtd
+rtd/build
+
+rtd/source/*.md

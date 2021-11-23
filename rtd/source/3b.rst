@@ -1,0 +1,23 @@
+Step 3b Geospatial data pre-processing
+-------------------------------------------
+
+.. toctree::
+   :numbered:
+
+   3b_parametersMERIT_Hydro_DEM1_downloadREADME.md.rst
+   3b_parametersMERIT_Hydro_DEM3_create_vrtREADME.md.rst
+   3b_parametersMERIT_Hydro_DEM4_specify_subdomainREADME.md.rst
+   3b_parametersMERIT_Hydro_DEM5_convert_to_tifREADME.md.rst
+   3b_parametersMERIT_Hydro_DEMREADME.md.rst
+   3b_parametersMODIS_MCD12Q1_V61_downloadREADME.md.rst
+   3b_parametersMODIS_MCD12Q1_V62_create_vrtREADME.md.rst
+   3b_parametersMODIS_MCD12Q1_V63_reproject_vrtREADME.md.rst
+   3b_parametersMODIS_MCD12Q1_V64_specify_subdomainREADME.md.rst
+   3b_parametersMODIS_MCD12Q1_V65_multiband_vrtREADME.md.rst
+   3b_parametersMODIS_MCD12Q1_V66_convert_to_tifREADME.md.rst
+   3b_parametersMODIS_MCD12Q1_V67_find_mode_land_classREADME.md.rst
+   3b_parametersMODIS_MCD12Q1_V6README.md.rst
+   3b_parametersREADME.md.rst
+   3b_parametersSOILGRIDS1_downloadREADME.md.rst
+   3b_parametersSOILGRIDS2_extract_domainREADME.md.rst
+   3b_parametersSOILGRIDSREADME.md.rst
