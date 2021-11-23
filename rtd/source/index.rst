@@ -6,7 +6,7 @@
 Welcome to ESM Open Workflow's documentation!
 =============================================
 
-.. include:: README.md
+.. include:: ../../README.md
    :parser: myst_parser.sphinx_
 
 .. toctree::
@@ -24,5 +24,5 @@ Welcome to ESM Open Workflow's documentation!
    5.rst
    6.rst
    7.rst
- 
+   
 

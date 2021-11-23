@@ -18,4 +18,4 @@ Step 5: Model configuration files
    5_model_inputmizuRoute1b_network_topology_fileREADME.md.rst
    5_model_inputmizuRoute1c_optional_remapping_fileREADME.md.rst
    5_model_inputmizuRoute1d_control_fileREADME.md.rst
-   5_model_inputmizuRouteREADME.md .rst
+   5_model_inputmizuRouteREADME.md.rst
