@@ -1,9 +1,7 @@
-Step 4
--------- 
+Step 4a: Shapefile sorting
+----------------------------
 
 .. toctree::
+   :numbered:
 
    4a_sort_shapeREADME.md
-   4b_remapping1_topoREADME.md
-   4b_remapping2_forcingREADME.md
-   4b_remappingREADME.md

@@ -1,7 +1,8 @@
-Step 5
--------- 
+Step 5: Model configuration files
+------------------------------------
 
 .. toctree::
+   :numbered:
 
    5_model_inputREADME.md
    5_model_inputSUMMA0_base_settingsREADME.md

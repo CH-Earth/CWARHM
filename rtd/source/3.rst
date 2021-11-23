@@ -1,8 +1,9 @@
-Step 3a
---------
+Step 3a: Forcing pre-processing
+-----------------------------------
 
 .. toctree::
-
+   :numbered:
+   
    3a_forcing1a_download_forcingREADME.md
    3a_forcing1b_download_geopotentialREADME.md
    3a_forcing2_merge_forcingREADME.md

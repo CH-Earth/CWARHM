@@ -10,3 +10,5 @@ core.*
 
 # rtd
 rtd/build
+
+rtd/source/*.md

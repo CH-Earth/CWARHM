@@ -1,7 +1,8 @@
-Step 3b
---------
+Step 3b Geospatial data pre-processing
+-------------------------------------------
 
 .. toctree::
+   :numbered:
 
    3b_parametersMERIT_Hydro_DEM1_downloadREADME.md
    3b_parametersMERIT_Hydro_DEM3_create_vrtREADME.md

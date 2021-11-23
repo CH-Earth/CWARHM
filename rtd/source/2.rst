@@ -1,6 +1,7 @@
-Step 2
--------
+Step 2: Model installation
+----------------------------
 
 .. toctree::
-
+   :numbered:
+   
    2_installREADME.md
