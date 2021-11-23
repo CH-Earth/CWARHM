@@ -1,2 +1,1 @@
-git+https://github.com/Chrismarsh/readthedocs-custom-steps.git
 myst_parser

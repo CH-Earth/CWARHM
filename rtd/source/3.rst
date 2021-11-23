@@ -4,8 +4,8 @@ Step 3a: Forcing pre-processing
 .. toctree::
    :numbered:
    
-   3a_forcing1a_download_forcingREADME.md
-   3a_forcing1b_download_geopotentialREADME.md
-   3a_forcing2_merge_forcingREADME.md
-   3a_forcing3_create_shapefileREADME.md
-   3a_forcingREADME.md
+   3a_forcing1a_download_forcingREADME.md.rst
+   3a_forcing1b_download_geopotentialREADME.md.rst
+   3a_forcing2_merge_forcingREADME.md.rst
+   3a_forcing3_create_shapefileREADME.md.rst
+   3a_forcingREADME.md.rst

@@ -4,4 +4,4 @@ Step 4a: Shapefile sorting
 .. toctree::
    :numbered:
 
-   4a_sort_shapeREADME.md
+   4a_sort_shapeREADME.md.rst

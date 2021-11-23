@@ -4,18 +4,18 @@ Step 5: Model configuration files
 .. toctree::
    :numbered:
 
-   5_model_inputREADME.md
-   5_model_inputSUMMA0_base_settingsREADME.md
-   5_model_inputSUMMA1a_copy_base_settingsREADME.md
-   5_model_inputSUMMA1b_file_managerREADME.md
-   5_model_inputSUMMA1c_forcing_file_listREADME.md
-   5_model_inputSUMMA1d_initial_conditionsREADME.md
-   5_model_inputSUMMA1e_trial_parametersREADME.md
-   5_model_inputSUMMA1f_attributesREADME.md
-   5_model_inputSUMMAREADME.md
-   5_model_inputmizuRoute0_base_settingsREADME.md
-   5_model_inputmizuRoute1a_copy_base_settingsREADME.md
-   5_model_inputmizuRoute1b_network_topology_fileREADME.md
-   5_model_inputmizuRoute1c_optional_remapping_fileREADME.md
-   5_model_inputmizuRoute1d_control_fileREADME.md
-   5_model_inputmizuRouteREADME.md 
+   5_model_inputREADME.md.rst
+   5_model_inputSUMMA0_base_settingsREADME.md.rst
+   5_model_inputSUMMA1a_copy_base_settingsREADME.md.rst
+   5_model_inputSUMMA1b_file_managerREADME.md.rst
+   5_model_inputSUMMA1c_forcing_file_listREADME.md.rst
+   5_model_inputSUMMA1d_initial_conditionsREADME.md.rst
+   5_model_inputSUMMA1e_trial_parametersREADME.md.rst
+   5_model_inputSUMMA1f_attributesREADME.md.rst
+   5_model_inputSUMMAREADME.md.rst
+   5_model_inputmizuRoute0_base_settingsREADME.md.rst
+   5_model_inputmizuRoute1a_copy_base_settingsREADME.md.rst
+   5_model_inputmizuRoute1b_network_topology_fileREADME.md.rst
+   5_model_inputmizuRoute1c_optional_remapping_fileREADME.md.rst
+   5_model_inputmizuRoute1d_control_fileREADME.md.rst
+   5_model_inputmizuRouteREADME.md .rst

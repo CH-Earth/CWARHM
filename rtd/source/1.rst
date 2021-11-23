@@ -4,4 +4,4 @@ Step 1: Folder structure preparation
 .. toctree::
    :numbered:
 
-   1_folder_prepREADME.md
+   1_folder_prepREADME.md.rst
