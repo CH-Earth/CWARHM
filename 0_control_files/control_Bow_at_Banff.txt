@@ -1,4 +1,4 @@
-# SUMMA workflow setting file.
+# CWARHM-SUMMA workflow setting file.
 # Characters '|' and '#' are used as separators to find the actual setting values. Any text behind '|' is assumed to be part of the setting value, unless preceded by '#'.
 
 # Note on path specification
@@ -6,7 +6,7 @@
 
 
 # Modeling domain settings
-root_path                   | /project/gwf/gwf_cmt/wknoben/summaWorkflow_data       # Root folder where data will be stored.
+root_path                   | /project/gwf/gwf_cmt/wknoben/CWARHM_data       # Root folder where data will be stored.
 domain_name                 | BowAtBanff                                  # Used as part of the root folder name for the prepared data.
 
 
@@ -156,7 +156,7 @@ visualization_folder        | default                                     # If '
 # Example of the resulting folder structure in "root_path". 
 # New domains will go into their own folder.
 
-- summWorkflow_data
+- CWARHM_data
    |
    |_ domain_BowAtBanff
    |   |
