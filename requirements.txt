@@ -49,6 +49,6 @@ six==1.15.0
 snuggs==1.4.7
 tifffile==2021.4.8
 tqdm==4.60.0
-urllib3==1.26.4
+urllib3==1.26.5
 xarray==0.16.2
 zope.interface==4.7.1
