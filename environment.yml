@@ -177,7 +177,7 @@ dependencies:
   - tornado=6.1=py38h294d835_1
   - tqdm=4.60.0=pyhd8ed1ab_0
   - traitlets=5.0.5=py_0
-  - urllib3=1.26.4=pyhd8ed1ab_0
+  - urllib3=1.26.5=pyhd8ed1ab_0
   - vc=14.2=hb210afc_4
   - vs2015_runtime=14.28.29325=h5e1d092_4
   - wcwidth=0.2.5=pyh9f0ad1d_2
