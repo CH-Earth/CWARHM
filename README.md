@@ -1,15 +1,18 @@
-# SUMMA workflow
-This repository contains scripts to install, set up and run the Structure for Unifying Multiple Modeling Alternatives (SUMMA, Clark et al., 2015a,b) and mizuRoute (Mizukami et al., 2016) to generate hydrologic simulations for a given domain. The workflow uses open-source data with global coverage to determine model parameters and forcing, thus enabling transparent and efficient hydrologic science.
+# Community Workflows to Advance Reproducibility in Hydrologic Modeling (CWARHM)
+Despite the proliferation of computer-based research on hydrology and water resources, such research is typically poorly reproducible. Published studies have low reproducibility because of both incomplete availability of the digital artifacts of research and a lack of documentation on workflow processes. This leads to a lack of transparency and efficiency because existing code can neither be checked nor re-used. Given the high-level commonalities between existing process-based hydrological models in terms of their input data and required pre-processing steps, more open sharing of code can lead to large efficiency gains for the modeling community. 
 
-The code in this repository is the outcome of stepwise modification of an existing SUMMA instantiation developed by Andy Wood and colleagues at NCAR. This existing setup served as a testbed for consecutive changes to model input data, domain discretization and domain size, resulting in globally applicable model setup code.
+Here we present a model configuration workflow that provides full reproducibility of the resulting model instantiation in a way that separates the model-agnostic preprocessing of specific datasets from the model-specific requirements that specific models impose on their input files. This workflow is applied to the Structure for Unifying Multiple Modeling Alternatives (SUMMA, Clark et al., 2015a,b) and mizuRoute (Mizukami et al., 2016), to create a model configuration that provides process-based hydrologic simulations and vector-based streamflow routing capabilities. The workflow uses open-source data with global coverage to determine model parameters and forcing, thus enabling transparent and efficient hydrologic science.
+
+The code in this repository is the outcome of stepwise modification of an existing SUMMA instantiation developed by Andy Wood and colleagues at NCAR. This existing setup served as a testbed for consecutive changes to model input data, domain discretization and domain size, resulting in globally applicable model setup code that separates model-agnostic and model-specific configuration tasks.
+
 
 ## Note on cyber security
-Use of this workflow requires accounts with various data providers. Login details with these providers are stored as plain text in the user's home directory. It is therefore strongly recommended that you **choose unique, new passwords for these accounts**. Do not use passwords that are identical to any other passwords you may be using.   
+Use of this workflow requires accounts with various data providers. Login details with these providers are stored as plain text in the user's home directory. It is therefore strongly recommended that you **choose unique, new passwords for these accounts**. Using passwords the same passwords you use elsewhere poses a security risk.
 
 
 ## Scope
 
-A basic SUMMA+mizuRoute setup requires:
+A basic SUMMA + mizuRoute setup requires:
 - Compiled executables for SUMMA and mizuRoute;
 - A shapefile that discretizes the modelling domain into Grouped Responses Units (GRUs) and Hydrological Response Units (HRUs) for use by SUMMA;
 - A shapefile that discretizes the river network that connects the GRUs and, optionally, a shapefile that discretizes the routing basins if these are not the same as the SUMMA GRUs for use by mizuRoute;
