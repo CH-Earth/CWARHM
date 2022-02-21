@@ -1,9 +1,0 @@
-Step 4b: Data remapping
-----------------------------
-
-.. toctree::
-   :numbered:
-
-   4b_remapping1_topoREADME.md.rst
-   4b_remapping2_forcingREADME.md.rst
-   4b_remappingREADME.md.rst

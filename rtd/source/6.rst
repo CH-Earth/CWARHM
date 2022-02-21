@@ -1,7 +1,0 @@
-Step 6: Model runs
-------------------------
-
-.. toctree::
-   :numbered:
-
-   6_model_runsREADME.md.rst
