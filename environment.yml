@@ -1,0 +1,23 @@
+name: cwarhm-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python = 3.8.8 # gdal issues with python 3.9
+  - pip
+  - jupyter # for visualization
+  - nbconvert # for running notebooks from terminal
+  - numpy
+  - gdal < 3.4.0 # conflict with fiona 1.8.20
+  - xarray
+  - netCDF4
+  - pandas < 1.4.0 # numpy integer / float attribute error
+  - geopandas
+  - sphinx # for documentation
+  - pathlib
+  - qgis
+  - pip:
+    - easymore
+    - sphinx-rtd-theme # for read the docs lay-out
+    - black # for code reformatting
+    - cdsapi # for ERA5 downloading

@@ -13,7 +13,7 @@ The destination folders are referred to as "domain folders".
 '''
 
 # Specify the control file to use
-sourceFile  = 'control_Bow_at_Banff.txt'
+sourceFile  = 'control_Bow_at_Banff_test.txt'
 
 # --- Do not change below this line.
 
