@@ -16,7 +16,7 @@ test_data_path = Path("/Users/ayx374/Documents/project/chwarm_test_data/domain_B
 # set control file to use
 fm.change_control_file_in_submodule(cwarhm_summa_folder, 'control_Bow_at_Banff_test.txt')
 
-reset_test = False
+reset_test = True
 if reset_test:
     ## manage context of test: copy test data to required folder
     # remove results folder if exists
@@ -65,8 +65,9 @@ fm.extract_soilgrids_domain(cwarhm_summa_folder)
 #%% model agnostic mapping layer
 fm.sort_catchment_shape(cwarhm_summa_folder)
 
-fm.find_HRU_elevation(cwarhm_summa_folder) #this has a hardcoded stop in it...
-fm.find_HRU_land_classes(cwarhm_summa_folder) 
+fm.find_HRU_elevation(cwarhm_summa_folder) 
+fm.find_HRU_land_classes(cwarhm_summa_folder) #this has a hardcoded stop in it...
+#%%
 fm.find_HRU_soil_classes(cwarhm_summa_folder) 
 
 #%%
