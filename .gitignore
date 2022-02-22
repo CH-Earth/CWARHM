@@ -30,3 +30,6 @@ docs/_build/
 
 # test suite
 tests/*/results
+
+# code editors
+.vscode
