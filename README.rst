@@ -33,4 +33,7 @@ As test case workflows/summa_bowatbanff/ is available. Before running the test s
     - results_folder_path , to match the root_path in the control file
     - test_data_path , path to the test data, if you want to skip the data download workflow steps (by default)
     - reset_test to True (default), this is a flag that starts a new run (and deletes all data from any results folder), and restarts by copying the test data to the results folder or False: continue with existing data in the results folder.
-  3.) The test data is not part of this repo due to its size (30+GB). It can be found [insert download places]
+  3.) The test data is not part of this repo due to its size (30+GB). For those in the comphyd group it can be found here:
+
+**copernicus** /project/gwf/gwf_cmt/cwarhm_test_data
+**GRAHAM** /home/[USERNAME]/projects/rpp-kshook/CompHydCore/cwarhm_test_data (as soon as endpoints on copernicus are working again)
