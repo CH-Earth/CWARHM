@@ -6,6 +6,7 @@ import sys
 #%%
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 from cwarhm.wrappers import cwarhm_summa as fm
+import cwarhm.util.util as utl
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 cwarhm_summa_folder = "/Users/ayx374/Documents/GitHub/forks/summaWorkflow_public/dependencies/cwarhm-summa"
@@ -15,6 +16,9 @@ test_data_path = Path("/Users/ayx374/Documents/project/chwarm_test_data/domain_B
 
 # set control file to use
 fm.change_control_file_in_submodule(cwarhm_summa_folder, 'control_Bow_at_Banff_test.txt')
+# read control file to use with functions
+control_options = utl.read_summa_workflow_control_file('/Users/ayx374/Documents/GitHub/forks/summaWorkflow_public/dependencies/cwarhm-summa/0_control_files/control_Bow_at_Banff_test.txt')
+
 
 reset_test = True
 if reset_test:
