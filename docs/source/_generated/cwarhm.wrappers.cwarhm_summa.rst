@@ -1,7 +1,7 @@
-fairymwah.wrappers.mwahwrapper
-==============================
+cwarhm.wrappers.cwarhm\_summa
+=============================
 
-.. automodule:: fairymwah.wrappers.mwahwrapper
+.. automodule:: cwarhm.wrappers.cwarhm_summa
 
    
    
@@ -13,6 +13,7 @@ fairymwah.wrappers.mwahwrapper
 
    .. autosummary::
    
+      change_control_file_in_submodule
       clone_mizuroute_repo
       clone_summa_repo
       compile_mizuroute
@@ -22,16 +23,16 @@ fairymwah.wrappers.mwahwrapper
       copy_mizuroute_base_settings
       copy_summa_base_settings
       create_ERA5_shapefile
-      create_cold_state
       create_folder_structure
       create_merit_hydro_virtual_dataset
       create_mizuroute_control_file
       create_mizuroute_network_topology_file
       create_modis_virtual_dataset
       create_multiband_modis_vrt
+      create_summa_cold_state
       create_summa_file_manager
       create_summa_forcing_file_list
-      create_trial_parameters
+      create_summa_trial_parameters
       download_ERA5_geopotential
       download_ERA5_pressureLevel_annual
       download_ERA5_surfaceLevel_annual
@@ -65,10 +66,11 @@ fairymwah.wrappers.mwahwrapper
       reproject_modis_virtual_dataset
       run_download_ERA5_pressureLevel_paralell
       run_download_ERA5_surfaceLevel_paralell
+      run_jupyter_notebook
       run_mizuroute
       run_summa
       run_summa_as_array
-      setdefaultpath
+      set_default_path
       sort_catchment_shape
       specify_merit_hydro_subdomain
       specify_modis_subdomain

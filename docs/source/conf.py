@@ -18,9 +18,9 @@ sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
 
 # -- Project information -----------------------------------------------------
 
-project = "fairymwah"
+project = "CWARHM"
 copyright = "2021, USask Computational Hydrology Group"
-author = "Bart van Osnabrugge"
+author = "Wouter Knoben, Bart van Osnabrugge"
 
 # The full version, including alpha/beta/rc tags
 release = "0.1 alpha"
@@ -41,7 +41,7 @@ autosummary_generate = True
 
 # extensions.append('autoapi.extension')
 # autoapi_type = 'python'
-# autoapi_dirs = ['../../fairymwah']
+# autoapi_dirs = ['../../cwarhm']
 
 
 # Add any paths that contain templates here, relative to this directory.

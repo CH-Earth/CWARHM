@@ -1,7 +1,7 @@
-fairymwah.wrappers
-==================
+cwarhm.wrappers
+===============
 
-.. automodule:: fairymwah.wrappers
+.. automodule:: cwarhm.wrappers
 
    
    
@@ -27,5 +27,5 @@ fairymwah.wrappers
    :toctree:
    :recursive:
 
-   fairymwah.wrappers.mwahwrapper
+   cwarhm.wrappers.cwarhm_summa
 

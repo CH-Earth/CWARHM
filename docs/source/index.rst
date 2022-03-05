@@ -1,13 +1,13 @@
-.. fairymwah documentation master file, created by
+.. cwarhm documentation master file, created by
    sphinx-quickstart on Thu Nov 18 14:24:04 2021.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to fairymwah's documentation!
+Welcome to cwarhm's documentation!
 =====================================
 
-**fairymwah** is a Python library to organize workflows to build hydrological models.
-fairymwah stands for FAIR y Model Workflow Assembler for Hydrology.
+**cwarhm** is a Python library to organize workflows to build hydrological models.
+cwarhm stands for Community Workflows to Advance Reproducibility in Hydrological Modelling
 
 Check out the :doc:`usage` section for further information, , including how to
 :ref:`install <installation>` the project.
@@ -20,6 +20,7 @@ Check out the :doc:`usage` section for further information, , including how to
    :caption: Contents:
 
    usage
+   development
    wrappers
    api
 

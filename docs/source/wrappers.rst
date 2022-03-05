@@ -18,6 +18,7 @@ The preferred way to share code between python developments is through imports.
 Why wrappers
 ------------
 
-Wrappers are funcions in fairymwah that wrap around submodules. An example is the wrapper to set up SUMMA models, from the summaWorkflow_public submodule:
+Wrappers are funcions in the cwarhm package that wrap around submodules.
+An example is the wrapper to set up SUMMA models, from the summaWorkflow_public submodule:
 
-.. autofunction:: fairymwah.wrappers.mwahwrapper.create_folder_structure
+.. autofunction:: cwarhm.wrappers.cwarhm_summa.create_folder_structure
