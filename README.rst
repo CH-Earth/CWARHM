@@ -30,7 +30,7 @@ As test case workflows/summa_bowatbanff/ is available. Before running the test s
   1.) In workflows/summa_bowatbanff/control_Bow_at_Banff_test.txt, change the **root_path** modeling domain setting to a local folder where the test results should be saved.
   
   2.) In workflows/summa_bowatbanff/test_bow_at_banff.py, change the paths: 
-    - cwarhm_summa_folder
+    - cwarhm_summa_folder; to point to the `./summaWorkflow_public/dependencies/cwarhm-summa` folder
     - results_folder_path , to match the root_path in the control file
     - test_data_path , path to the test data, if you want to skip the data download workflow steps (by default)
     - reset_test to True (default), this is a flag that starts a new run (and deletes all data from any results folder), and restarts by copying the test data to the results folder or False: continue with existing data in the results folder.
