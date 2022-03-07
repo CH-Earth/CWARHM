@@ -16,9 +16,6 @@ test_data_path = Path("/Users/ayx374/Documents/project/chwarm_test_data/domain_B
 
 # set control file to use
 fm.change_control_file_in_submodule(cwarhm_summa_folder, 'control_Bow_at_Banff_test.txt')
-# read control file to use with functions
-control_options = utl.read_summa_workflow_control_file('/Users/ayx374/Documents/GitHub/forks/summaWorkflow_public/dependencies/cwarhm-summa/0_control_files/control_Bow_at_Banff_test.txt')
-
 
 reset_test = True
 if reset_test:
@@ -33,6 +30,8 @@ if reset_test:
     fm.create_folder_structure(cwarhm_summa_folder)
 
 #%% start example
+# read control file to use with functions
+control_options = utl.read_summa_workflow_control_file(os.path.join(cwarhm_summa_folder,'0_control_files/control_Bow_at_Banff_test.txt'))
 
 #%% download data (downloads not included in example) - data specific input layer - part 1
 ## the lines below are included if the test data is not available locally
