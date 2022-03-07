@@ -27,9 +27,9 @@ First test
 ----------
 As test case workflows/summa_bowatbanff/ is available. Before running the test script test_bow_at_banff.py, some path modifications have to be made:
 
-  1.) In control_Bow_at_Banff_test.txt, change the **root_path** modeling domain setting to a local folder where the test results should be saved
+  1.) In workflows/summa_bowatbanff/control_Bow_at_Banff_test.txt, change the **root_path** modeling domain setting to a local folder where the test results should be saved.
   
-  2.) In test_bow_at_banff.py, change the paths: 
+  2.) In workflows/summa_bowatbanff/test_bow_at_banff.py, change the paths: 
     - cwarhm_summa_folder
     - results_folder_path , to match the root_path in the control file
     - test_data_path , path to the test data, if you want to skip the data download workflow steps (by default)
