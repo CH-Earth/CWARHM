@@ -69,7 +69,7 @@ fm.extract_soilgrids_domain(cwarhm_summa_folder)
 fm.sort_catchment_shape(cwarhm_summa_folder)
 
 fm.find_HRU_elevation(cwarhm_summa_folder) 
-fm.find_HRU_land_classes(cwarhm_summa_folder) #this has a hardcoded stop in it...
+fm.find_HRU_land_classes(cwarhm_summa_folder)
 #%%
 fm.find_HRU_soil_classes(cwarhm_summa_folder) 
 

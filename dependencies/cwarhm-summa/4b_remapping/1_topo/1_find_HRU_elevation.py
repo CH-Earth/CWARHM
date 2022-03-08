@@ -147,7 +147,7 @@ zonalstats = QgsZonalStatistics(layer_polygon,                 # shapefile
                                 stats=QgsZonalStatistics.Mean).calculateStatistics(None)
                                 
 # Clean memory
-qgs.exitQgis()
+#qgs.exitQgis()
 
                                 
 # --- Code provenance
