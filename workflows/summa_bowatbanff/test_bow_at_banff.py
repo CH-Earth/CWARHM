@@ -6,18 +6,19 @@ import sys
 #%%
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 from cwarhm.wrappers import cwarhm_summa as fm
+from cwarhm.data_specific_processing import era5
 import cwarhm.util.util as utl
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
-cwarhm_summa_folder = "/Users/ayx374/Documents/GitHub/forks/summaWorkflow_public/dependencies/cwarhm-summa"
+cwarhm_summa_folder = "/Users/localuser/Github/CH-Earth/summaWorkflow_public/dependencies/cwarhm-summa"
 #cwarhm_summa_folder = "./dependencies/cwarhm-summa"
-results_folder_path = Path("/Users/ayx374/Documents/project/chwarm_test_results/domain_BowAtBanff")
-test_data_path = Path("/Users/ayx374/Documents/project/chwarm_test_data/domain_BowAtBanff")
+results_folder_path = Path("/Users/localuser/Research/chwarm_test_results/domain_BowAtBanff")
+test_data_path = Path("/Users/localuser/Research/summaWorkflow_data/domain_BowAtBanff")
 
 # set control file to use
 fm.change_control_file_in_submodule(cwarhm_summa_folder, 'control_Bow_at_Banff_test.txt')
 
-reset_test = True
+reset_test = False
 if reset_test:
     ## manage context of test: copy test data to required folder
     # remove results folder if exists
@@ -45,7 +46,10 @@ control_options = utl.read_summa_workflow_control_file(os.path.join(cwarhm_summa
 #%% process downloaded data - data specific input layer - part 2
 
 ### forcing ERA5 ###
-fm.merge_forcing(cwarhm_summa_folder)
+
+era5.merge_era5_forcing(control_options['forcing_raw_path'], control_options['forcing_merged_path'], control_options['forcing_raw_time'])
+# fm.merge_forcing(cwarhm_summa_folder, control_options['forcing_raw_time']) # replaced by functions from era5
+
 fm.create_ERA5_shapefile(cwarhm_summa_folder)
 
 ## merit hydro ##
