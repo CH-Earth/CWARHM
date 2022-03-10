@@ -47,7 +47,7 @@ control_options = utl.read_summa_workflow_control_file(os.path.join(cwarhm_summa
 
 ### forcing ERA5 ###
 
-era5.merge_era5_forcing(control_options['forcing_raw_path'], control_options['forcing_merged_path'], control_options['forcing_raw_time'])
+era5.merge_era5_surface_and_pressure_level_downloads(control_options['forcing_raw_path'], control_options['forcing_merged_path'], control_options['forcing_raw_time'])
 # fm.merge_forcing(cwarhm_summa_folder, control_options['forcing_raw_time']) # replaced by functions from era5
 
 fm.create_ERA5_shapefile(cwarhm_summa_folder)

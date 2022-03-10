@@ -4,8 +4,8 @@ from pathlib import Path
 import time, os
 
 
-def merge_era5_forcing(forcingPath, mergePath, years_str):
-    """ Combine separate surface and pressure level downloads
+def merge_era5_surface_and_pressure_level_downloads(forcingPath, mergePath, years_str):
+    """Combine separate surface and pressure level downloads
     Creates a single monthly `.nc` file with SUMMA-ready variables for further processing. # Combines ERA5's `u` and
     `v` wind components into a single directionless wind vector.
 
@@ -14,7 +14,7 @@ def merge_era5_forcing(forcingPath, mergePath, years_str):
     :param year_str: start,end year string from control file (e.g., "2008,2013")
     """
 
-    # pre proessing
+    # proessing
     years = [int(s) for s in years_str.split(',')]
     forcingPath = Path(forcingPath)
     mergePath = Path(mergePath)
