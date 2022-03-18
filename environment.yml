@@ -9,7 +9,9 @@ dependencies:
   - nbconvert # for running notebooks from terminal
   - numpy
   - gdal < 3.4.0 # conflict with fiona 1.8.20
+  - rasterio
   - xarray
+  - dask
   - netCDF4
   - pandas < 1.4.0 # numpy integer / float attribute error
   - geopandas
@@ -18,6 +20,7 @@ dependencies:
   - qgis
   - pip:
     - easymore
+    - rasterstats
     - sphinx-rtd-theme # for read the docs lay-out
     - black # for code reformatting
     - cdsapi # for ERA5 downloading
