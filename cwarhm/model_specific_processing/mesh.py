@@ -310,6 +310,29 @@ def add_gru_fractions_to_drainage_db(drainage_db, gru_fractions, fraction_type: 
     return drainage_db  
 
 def reindex_forcing_file(input_forcing, drainage_db, input_basin):
+    """reindex forcing file according to rank in mesh drainage database
+
+    In the final postprocessing part of the forcing dataset, it is required to 
+    reorder the forcing variables based on the remapped "Rank" IDs from the basin 
+    information file "drainage_database". Because EASYMORE remaps the forcing 
+    variables based on the MERIT Hydro catchment IDs (COMID), the order of 
+    forcing variables may not match the order of the "Rank" variable. 
+    Therefore, the fields in the remapped forcing files must be remapped to be 
+    compatible with the "drainage_database" file used for MESH. 
+    Three input data files are required for this process, the "drainage_databse", 
+    remapped forcing files, and the MERIT Hydro catchment shapefile used in the 
+    previous steps. The following section code block executes the reordering 
+    operation.
+
+    :param input_forcing: basin averaged forcing generated with EASYMORE
+    :type input_forcing: xarray.Dataset
+    :param drainage_db: mesh drainage database
+    :type drainage_db: xarray.Dataset
+    :param input_basin: shapefile with the catchment IDs (COMID)
+    :type input_basin: geopandas.GeoDataframe
+    :return: reordered forcing file for MESH
+    :rtype: xarray.Dataset
+    """       
 
     # set lon and lat as coordinates, not variables
     input_forcing = input_forcing.set_coords(['latitude','longitude'])
@@ -349,7 +372,7 @@ def reindex_forcing_file(input_forcing, drainage_db, input_basin):
         forc_vec[n].encoding['coordinates'] = 'time lon lat'
 
     # %% update meta data attribuetes
-    now = datetime.datetime.now()
+    now = datetime.now()
     forc_vec.attrs['Conventions'] = 'CF-1.6'
     forc_vec.attrs['License']     = 'The data were written by CWARHM'
     forc_vec.attrs['history']     = 'Created ' + now.strftime('%Y/%m/%d %H:%M:%S')
@@ -377,5 +400,7 @@ def reindex_forcing_file(input_forcing, drainage_db, input_basin):
     # Define a variable for the points and set the 'timeseries_id' (required for some viewers).
     forc_vec['subbasin'] = (['subbasin'], drainage_db['segId'].values.astype(np.int32).astype('S20'))
     forc_vec['subbasin'].attrs['cf_role'] = 'timeseries_id'
+
+    return forc_vec
 
     
