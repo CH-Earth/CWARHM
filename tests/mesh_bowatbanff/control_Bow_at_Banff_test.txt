@@ -147,10 +147,10 @@ settings_mizu_output_vars   | 0                                           # Rout
 settings_mizu_within_basin  | 0                                           # '0' (no) or '1' (IRF routing). Flag to enable within-basin routing by mizuRoute. Should be set to 0 if SUMMA is run with "subRouting" decision "timeDlay".
 settings_mizu_make_outlet   | 71028585                                    # Segment ID or IDs that should be set as network outlet. Specify multiple IDs separated by commas: X,Y,Z. Specify no IDs as: n/a. Note that this can also be done in the network shapefile.
 
-# Experiment settings - routing
-settings_routing_path          | default                                  # If 'default', uses 'root_path/domain_[name]/settings/mesh'.
-settings_routing_topology      | MESH_drainage_database.nc                      # Name of the river network topology file.
-settings_make_outlet           | 71028585                                 # Segment ID or IDs that should be set as network outlet. Specify multiple IDs separated by commas: X,Y,Z. Specify no IDs as: n/a. Note that this can also be done in the network shapefile.
+# Experiment settings - MESH
+settings_mesh_path          | default                                  # If 'default', uses 'root_path/domain_[name]/settings/mesh'.
+settings_mesh_topology      | MESH_drainage_database.nc                # Name of the river network topology file.
+settings_make_outlet        | 71028585                                 # Segment ID or IDs that should be set as network outlet. Specify multiple IDs separated by commas: X,Y,Z. Specify no IDs as: n/a. Note that this can also be done in the network shapefile.
 
 # Postprocessing settings
 visualization_folder        | default                                     # If 'default', uses 'root_path/domain_[name]/visualization'.

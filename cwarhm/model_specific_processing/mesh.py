@@ -4,17 +4,12 @@ import cwarhm.model_specific_processing.mizuroute as mizu
 import pandas as pd
 import netCDF4 as nc4
 import geopandas as gpd
+import xarray as xr
 import numpy as np
 from datetime import datetime
 from datetime import date
-import os, sys
-import easymore.easymore as esmr
-import itertools
 import warnings
-import xarray as xr
-import rasterio
-from rasterio.plot import show
-from rasterstats import zonal_stats
+import ntpath
 
 
 def generate_mesh_topology(infile_river_shp, infile_basin_shp, outfile_topology_nc, river_outlet_ids,
@@ -404,3 +399,293 @@ def reindex_forcing_file(input_forcing, drainage_db, input_basin):
     return forc_vec
 
     
+class MeshClassIniFile():
+    """A python class to write the CLASS.ini file for the Land-Surface scheme "CLASS" in MESH
+
+    Attributes
+    ----------
+    filepath : str
+        path to write the ini file to
+    n_gru : int
+        number of GRU's
+    """    
+    def __init__(self, filepath, n_GRU, pd_datetime_start,
+                title='Default set-up created with CWARHM', name="Bart van Osnabrugge",
+                place="University of Saskatchewan"
+                ):
+        """
+        :param filepath: path to write the ini file to
+        :type filepath: str
+        :param n_GRU: number of GRU's
+        :type n_GRU: int
+        """        
+        self.filepath = filepath
+        self.n_gru = n_GRU
+        self.pd_datetime_start = pd_datetime_start
+        self.title = title
+        self.name = name
+        self.place = place
+    
+    def set_header(self,title,name,place):
+        '''sets first three lines with header information'''
+        line1 = "{:<70}".format(title)+'01 TITLE'
+        line2 = "{:<70}".format(name)+'02 NAME'
+        line3 = "{:<70}".format(place)+'03 PLACE'
+        self.header = line1+'\n'+line2+'\n'+line3+'\n'
+
+    def set_area_info(self,deglat=0.00,deglon=0.00,windspeed_ref_height=40.00,
+                        temp_humid_ref_height=40.00, surface_roughness_height=50.00,
+                        ground_cover_flag=-1, ILW=1, n_grid=0):
+        '''sets line 4 DEGLAT/DEGLON/ZRFM/ZRFH/ZBLD/GC/ILW/NL/NM'''
+        n_GRU = self.n_gru
+        line4 = '{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t'.format(
+            deglat,deglon,windspeed_ref_height,temp_humid_ref_height,
+            surface_roughness_height,ground_cover_flag,ILW,n_grid,n_GRU
+        ).expandtabs(4)
+        line4 = "{:<70}".format(line4)+'04 DEGLAT/DEGLON/ZRFM/ZRFH/ZBLD/GC/ILW/NL/NM'
+        self.area_info = line4
+    
+    def GRU_part_template(self):
+        self.GRU_template = \
+        '''
+        _FCAN-NL#_    _FCAN-BL#_    _FCAN-C#_   _FCAN-G#_   _FCAN-U#_     _LAMX-NL#_    _LAMX-BL#_    _LAMX-C#_   _LAMX-G#_       05Land class type/fcanrow/pamxrow
+        _LNZ0-NL#_    _LNZ0-BL#_    _LNZ0-C#_   _LNZ0-G#_   _LNZ0-U#_     _LAMN-NL#_    _LAMN-BL#_    _LAMN-C#_   _LAMN-G#_       06lnz0row/pamnrow
+        _ALVC-NL#_    _ALVC-BL#_    _ALVC-C#_   _ALVC-G#_   _ALVC-U#_     _CMAS-NL#_    _CMAS-BL#_    _CMAS-C#_   _CMAS-G#_       07alvcrow/cmasrow
+        _ALIC-NL#_    _ALIC-BL#_    _ALIC-C#_   _ALIC-G#_   _ALIC-U#_     _ROOT-NL#_    _ROOT-BL#_    _ROOT-C#_   _ROOT-G#_       08alirow/rootrow
+        _RSMN-NL#_    _RSMN-BL#_    _RSMN-C#_   _RSMN-G#_                 _QA50-NL#_    _QA50-BL#_    _QA50-C#_   _QA50-G#_       09rsmnrow/qa50row
+        _VPDA-NL#_    _VPDA-BL#_    _VPDA-C#_   _VPDA-G#_                 _VPDB-NL#_    _VPDB-BL#_    _VPDB-C#_   _VPDB-G#_       10vpdarow/vpbprow
+        _PSGA-NL#_    _PSGA-BL#_    _PSGA-C#_   _PSGA-G#_                _PSGB-NL#_    _PSGB-BL#_    _PSGB-C#_   _PSGB-G#_       11psgarow/psgbrow
+        _DRN-#_       _SDEP-#_      _FARE-#_    _DDEN-#_                                                                          12drnrow/sdeprow/farerow/ddenrow
+        _XSLOPE-#_    _GRKF-#_      _MANN-#_    _KSAT-#_   1                                                                      13xslprow/grkfrow/manrow/WFCIROW/midrow
+        _SAND1-#_     _SAND2-#_     _SAND3-#_                                                                                     14sand
+        _CLAY1-#_     _CLAY2-#_     _CLAY3-#_                                                                                     15clay
+        _ORGM1-#_     _ORGM2-#_     _ORGM3-#_                                                                                     16org
+        _TBAR1-#_     _TBAR2-#_     _TBAR3-#_     _TCAN-#_      _TSNO-#_      _TPND-#_                                            17temperature-soil/can/sno/pnd
+        _THLQ1-#_     _THLQ2-#_     _THLQ3-#_     _THIC1-#_     _THIC2-#_     _THIC3-#_   _ZPND-#_                                18soil moisture-soil/ice/pnd
+        _RCAN-#_      _SCAN-#_      _SNO-#_       _ALBS-#_      _RHOS-#_      _GRO-#_                                             19rcan/scan/sno/albs/rho/gro
+        '''
+
+    def write_default_GRU_part(self):
+        '''Writes 15 lines for a single GRU parameters and initialization values'''
+        GRU_default_block = \
+        '''
+0.00    0.00    0.00    0.00    1.00    0.00    0.00    0.00    0.00  05 5xFCAN/4xLAMX
+0.00    0.00    0.00    0.00    0.30    0.00    0.00    0.00    0.00  06 5xLNZ0/4xLAMN
+0.00    0.00    0.00    0.00    0.09    0.00    0.00    0.00    0.00  07 5xALVC/4xCMAS
+0.00    0.00    0.00    0.00    0.15    0.00    0.00    0.00    0.00  08 5xALIC/4xROOT
+0.00    0.00    0.00    0.00            0.00    0.00    0.00    0.00  09 4xRSMN/4xQA50
+0.00    0.00    0.00    0.00            0.00    0.00    0.00    0.00  10 4xVPDA/4xVPDB
+0.00    0.00    0.00    0.00            0.00    0.00    0.00    0.00  11 4xPSGA/4xPSGB
+0.00    1.91    1.00    7.41                                          12 DRN/SDEP/FARE/DD
+0.106    0.57   0.015 3.9E-05       1 Urban                           13 XSLP/XDRAINH/MANN/KSAT/MID         | 4F8.1, I8
+23        25        33                                                14 3xSAND                             | 3F10.1
+11        12        15                                                15 3xCLAY                             | 3F10.1
+0.00      0.00      0.00                                              16 3xORGM                             | 3F10.1
+5.00      5.00      5.00      0.00      0.00      0.00                17 3xTBAR/TCAN/TSNO/TPND              | 6F10.2
+0.20      0.20      0.20      0.00      0.00      0.00      0.00      18 3xTHLQ/3xTHIC/ZPND                 | 7F10.3
+0.00      0.00      0.00      0.00      0.00      0.00                19 RCAN/SCAN/SNO/ALBS/RHOS/GRO        | 2F10.4,F10.2,F10.3,F10.4,F10.3
+        '''
+        return GRU_default_block
+
+    def set_start_end_times(self,pd_datetime_start):
+        '''Write dates to control CLASS point outputs and the start date'''
+        line_fill = "1\t1\t1\t1\t".expandtabs(10)
+        line20 = "{:<70}".format(line_fill)+'20 (not used, but 4x integer values are required)'
+        line21 = "{:<70}".format(line_fill)+'21 (not used, but 4x integer values are required)'
+        
+        iyear = pd_datetime_start.year
+        ijday = pd_datetime_start.dayofyear
+        iminutes = pd_datetime_start.minute
+        ihour = pd_datetime_start.hour
+
+        start_time_line = "{}\t{}\t{}\t{}\t".format(ihour,iminutes,ijday,iyear).expandtabs(10)
+        start_time_line = "{:<70}".format(start_time_line)+'22 IHOUR/IMINS/IJDAY/IYEAR'
+        self.start_end_times = line20+'\n'+line21+'\n'+start_time_line
+
+
+    def build_default_ini_file(self):
+        self.set_header(self.title,self.name,self.place)
+        self.set_area_info()
+        self.set_start_end_times(self.pd_datetime_start)
+
+    
+    def write_ini_file(self):
+        with open(self.filepath,'w') as inif:
+            inif.write(self.header)
+            inif.write(self.area_info)
+            for n in range(self.n_gru):
+                inif.write(self.write_default_GRU_part())
+            inif.write(self.start_end_times)
+
+class MeshRunOptionsIniFile():
+    """Class to edit Mesh Run options and write ini file
+    """    
+    def __init__(self, inifilepath, forcing_file=None) -> None:
+        
+        self.inifilepath = inifilepath
+        self.template = self.get_template()
+        self.flags = self.set_default_flags()
+        if forcing_file:
+            print('forcing setting parsed from forcing file')
+            self.set_flags_from_ff(forcing_file)
+        else:
+            print('forcing flags are set as default and need to be set manually')
+        self.write_ini_file()
+        
+    
+    def get_template(self):
+        template =  \
+'''MESH input run options file
+##### Control Flags #####
+----#
+$NOCF$                                                   # Number of control flags 
+SHDFILEFLAG              $SHDFILEFLAG$
+BASINFORCINGFLAG         $SHDFILEFLAG$ start_date=$STARTDATE$ hf=$HF$ time_shift=$TIMESHIFT$ fname=$FNAME$
+BASINSHORTWAVEFLAG       name_var=$BASINSHORTWAVEFLAG$
+BASINHUMIDITYFLAG        name_var=$BASINHUMIDITYFLAG$
+BASINRAINFLAG            name_var=$BASINRAINFLAG$
+BASINPRESFLAG            name_var=$BASINPRESFLAG$
+BASINLONGWAVEFLAG        name_var=$BASINLONGWAVEFLAG$
+BASINWINDFLAG            name_var=$BASINWINDFLAG$
+BASINTEMPERATUREFLAG     name_var=$BASINTEMPERATUREFLAG$
+TIMESTEPFLAG             $TIMESTEPFLAG$
+INPUTPARAMSFORMFLAG      $INPUTPARAMSFORMFLAG$
+IDISP                    $IDISP$                          #02 Vegetation Displacement Height Calculation  | A20, I4
+IZREF                    $IZREF$                          #03 Atmospheric Model Reference Height          | A20, I4
+IPCP                     $IPCP$                           #04 Rainfall-Snowfall Partition distribution    | A20, I4
+IWF                      $IWF$                            #08 Water Flow control                          | A20, I4
+FROZENSOILINFILFLAG      $FROZENSOILINFILFLAG$            #22 frozen soil infiltration flag               | A20, I4
+SAVERESUMEFLAG           $SAVERESUMEFLAG$
+RESUMEFLAG               $RESUMEFLAG$
+INTERPOLATIONFLAG        $INTERPOLATIONFLAG$
+SOILINIFLAG              $SOILINIFLAG$
+PBSMFLAG                 $PBSMFLAG$
+BASEFLOWFLAG             $BASEFLOWFLAG$
+RUNMODE                  $RUNMODE$
+BASINBALANCEOUTFLAG      $BASINBALANCEOUTFLAG$
+BASINAVGWBFILEFLAG 	     $BASINAVGWBFILEFLAG$
+BASINAVGEBFILEFLAG 	     $BASINAVGEBFILEFLAG$ 
+DIAGNOSEMODE             $DIAGNOSEMODE$
+PRINTSIMSTATUS           $PRINTSIMSTATUS$
+OUTFILESFLAG             $OUTFILESFLAG$
+AUTOCALIBRATIONFLAG    	 $AUTOCALIBRATIONFLAG$
+METRICSSPINUP        	 $METRICSSPINUP$
+##### Output Grid selection #####
+----#
+$NOGP$   #Maximum 5 points                               #17 Number of output grid points
+---------#---------#---------#---------#---------#
+$GRIDNUMBOUT$                                              #19 Grid number
+$GRUOUT$                                              #20 GRU (if applicable)
+$CLASSOUT$                                                #21 Output directory
+##### Output Directory #####
+---------#
+$OUTPUTDIR$   												    #24 Output Directory for total-basin files
+##### Simulation Run Times #####
+---#---#---#---#
+$STARTYEAR$   $STARTDAY$   $STARTHOUR$   $STARTMINUTE$          #27 Start year, day, hour, minute 2000 279
+$STOPYEAR$   $STOPDAY$   $STOPHOUR$   $STOPMINUTE$                                       #28 Stop year, day, hour, minute  2000 288
+'''
+        return template
+        
+    def set_default_flags(self):
+        '''create dictionairy with default flags'''
+        default_flags = dict()
+        default_flags['NOCF'] = '31'
+        default_flags['SHDFILEFLAG'] = 'nc_subbasin'
+        default_flags['STARTDATE'] = '20001001'
+        default_flags['HF'] = 60
+        default_flags['TIMESHIFT'] = 0
+        default_flags['FNAME'] = 'MESH_input.nc'
+        default_flags['BASINSHORTWAVEFLAG'] = 'FB'
+        default_flags['BASINHUMIDITYFLAG'] = 'HU'
+        default_flags['BASINRAINFLAG'] = 'PR'
+        default_flags['BASINPRESFLAG'] = 'P0'
+        default_flags['BASINLONGWAVEFLAG'] = 'FI'
+        default_flags['BASINWINDFLAG'] = 'UV'
+        default_flags['BASINTEMPERATUREFLAG'] = 'TT'
+        default_flags['TIMESTEPFLAG'] = 30
+        default_flags['INPUTPARAMSFORMFLAG'] = 'txt'
+        default_flags['IDISP'] = 0
+        default_flags['IZREF'] = 1
+        default_flags['IPCP'] = 1
+        default_flags['IWF'] = 1
+        default_flags['FROZENSOILINFILFLAG'] = 1
+        default_flags['SAVERESUMEFLAG'] = 0
+        default_flags['RESUMEFLAG'] = 0
+        default_flags['INTERPOLATIONFLAG'] = 1
+        default_flags['SOILINIFLAG'] = 1
+        default_flags['PBSMFLAG'] = 1
+        default_flags['BASEFLOWFLAG'] = 'wf_lzs'
+        default_flags['RUNMODE'] = 'runrte'
+        default_flags['BASINBALANCEOUTFLAG'] = 'none'
+        default_flags['BASINAVGWBFILEFLAG'] = 'daily'
+        default_flags['BASINAVGEBFILEFLAG'] = 'daily'
+        default_flags['DIAGNOSEMODE'] = 'on'
+        default_flags['PRINTSIMSTATUS'] = 'date_monthly'
+        default_flags['OUTFILESFLAG'] = 'on'
+        default_flags['AUTOCALIBRATIONFLAG'] = 1
+        default_flags['METRICSSPINUP'] = 366
+        default_flags['NOGP'] = 0
+        default_flags['GRIDNUMBOUT'] = 1936
+        default_flags['GRUOUT'] = 1
+        default_flags['CLASSOUT'] = 'CLASSOUT'
+        default_flags['OUTPUTDIR'] = '.'
+        default_flags['STARTYEAR'] = 2000
+        default_flags['STARTDAY'] = 275
+        default_flags['STARTHOUR'] = 0
+        default_flags['STARTMINUTE'] = 0
+        default_flags['STOPYEAR'] = 2018
+        default_flags['STOPDAY'] = '001'
+        default_flags['STOPHOUR'] = 0
+        default_flags['STOPMINUTE'] = 0
+        return default_flags
+
+    def set_flags_from_ff(self,forcing_file):
+        flags = self.flags
+        # open forcing file
+        ds = xr.open_dataset(forcing_file)
+        # get start and end date time
+        datetimestart = pd.Timestamp(ds.time.values[0])
+        datetimeend = pd.Timestamp(ds.time.values[-1])
+        timestep_ms = ds.time.values[1]-ds.time.values[0]
+        timestep_minutes = timestep_ms.astype('timedelta64[m]').astype('int')
+
+        # start stop flags
+        flags['STARTDATE'] = datetimestart.strftime('%Y%m%d')
+        flags['HF'] = timestep_minutes
+        flags['STARTYEAR'] = datetimestart.year
+        flags['STARTDAY'] = "{:02d}".format(datetimestart.day_of_year)
+        flags['STARTHOUR'] = datetimestart.hour
+        flags['STARTMINUTE'] = datetimestart.minute
+        flags['STOPYEAR'] = datetimeend.year
+        flags['STOPDAY'] = "{:02d}".format(datetimeend.day_of_year)
+        flags['STOPHOUR'] = datetimeend.hour
+        flags['STOPMINUTE'] = datetimeend.minute
+        # default time step is 30 min, only adjust this when
+        # forcing time step is smaller than 30 min
+        if timestep_minutes < flags['TIMESTEPFLAG']:
+            flags['TIMESTEPFLAG'] = timestep_minutes
+
+        # name flag
+        flags['FNAME'] = ntpath.basename(forcing_file)
+
+        self.flags = flags
+
+    def change_flag(self,flag,flag_value):
+        '''replace value in ini file with given value'''
+        flags = self.flags
+        flags[flag] = flag_value
+        self.write_ini_file()
+
+    def parse_flag_values(self):
+        '''replace all tags in template with flag values'''
+        text = self.template
+        for key, value in self.flags.items():
+            text = text.replace('$'+str(key)+'$',str(value))
+        return text
+
+    def write_ini_file(self):
+        '''parse flag values and write to file '''
+        text = self.parse_flag_values()
+        with open(self.inifilepath,'w') as setf:
+            setf.write(text)

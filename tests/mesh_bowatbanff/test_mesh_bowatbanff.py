@@ -10,6 +10,7 @@ from pathlib import Path
 import xarray as xr
 import geopandas as gpd
 import zipfile
+import pandas as pd
 
 from cwarhm.model_specific_processing import mesh as mesh
 from cwarhm.model_agnostic_processing import HRU as HRU
@@ -31,13 +32,15 @@ control_options = utl.read_summa_workflow_control_file('control_Bow_at_Banff_tes
 
 #%%
 # create mesh topology
+drain_db_path = os.path.join(control_options['settings_mesh_path'],control_options['settings_mesh_topology'])
+
 mesh.generate_mesh_topology(control_options['river_network_shp_path'], 
     control_options['river_basin_shp_path'],
-    os.path.join(control_options['settings_routing_path'],control_options['settings_routing_topology']),
+    drain_db_path,
     control_options['settings_make_outlet'])
-ranks, drain_db = mesh.reindex_topology_file(os.path.join(control_options['settings_routing_path'],control_options['settings_routing_topology']))
+ranks, drain_db = mesh.reindex_topology_file(drain_db_path)
 # save file
-drain_db.to_netcdf(os.path.join(control_options['settings_routing_path'],control_options['settings_routing_topology']))
+drain_db.to_netcdf(drain_db_path)
 
 # calculate land use fractions for MESH GRUS from CWARHM-SUMMA GRU/HRU land use counts
 gdf_land_use_counts = gpd.read_file(os.path.join(
@@ -51,7 +54,7 @@ fraction_type = ['Evergreen Needleleaf Forests','Woody Savannas','Savannas',
 # and add fractions and Grouped Response Unit info to the drainage_db
 drain_db = mesh.add_gru_fractions_to_drainage_db(drain_db, df_gru_land_use_fractions, fraction_type)
 # save file
-drain_db.to_netcdf(os.path.join(control_options['settings_routing_path'],control_options['settings_routing_topology']))
+drain_db.to_netcdf(drain_db_path)
 
 # remap forcing data from grids, to MESH GRUs (CWARHM-SUMMA maps to SUMMA HRUs)
 HRU.map_forcing_data(control_options['river_basin_shp_path'],
@@ -68,4 +71,30 @@ input_forcing = xr.open_mfdataset(control_options['forcing_basin_avg_path']+'/*.
 input_basin = gpd.read_file(control_options['river_basin_shp_path'])
 mesh_forcing = mesh.reindex_forcing_file(input_forcing, drain_db, input_basin)
 # save file
-mesh_forcing.to_netcdf(os.path.join(control_options['settings_routing_path'],'MESH_input_era5.nc'))
+mesh_forcing.to_netcdf(os.path.join(control_options['settings_mesh_path'],'MESH_input_era5.nc'))
+
+## mesh CLASS.ini file
+deglat = "{:.2f}".format(drain_db.lat.mean().values)
+deglon = "{:.2f}".format(drain_db.lon.mean().values)
+windspeed_ref_height = '40.00'
+temp_humid_ref_height = '40.00'
+surface_roughness_height = '50.00'
+ground_cover_flag = '-1.0'
+ILW = '1'
+n_grid = '51'
+n_GRU = len(drain_db.gru)
+datetime_start = pd.to_datetime(mesh_forcing.time[0].values)
+
+inif = mesh.MeshClassIniFile(os.path.join(control_options['settings_mesh_path'],'MESH_parameters_CLASS.ini'),
+                            n_GRU,datetime_start)
+inif.set_header("test_bow_blah","bartus","Canmore")
+inif.set_area_info(deglat,deglon,windspeed_ref_height=40.00,
+                        temp_humid_ref_height=40.00, surface_roughness_height=50.00,
+                        ground_cover_flag=-1, ILW=1, n_grid=0)
+inif.set_start_end_times(datetime_start)
+inif.write_ini_file()
+
+## Run options
+optf = mesh.MeshRunOptionsIniFile(os.path.join(control_options['settings_mesh_path'],'MESH_input_run_options.ini'),
+                                    drain_db_path)
+
