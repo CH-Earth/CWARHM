@@ -98,3 +98,6 @@ inif.write_ini_file()
 optf = mesh.MeshRunOptionsIniFile(os.path.join(control_options['settings_mesh_path'],'MESH_input_run_options.ini'),
                                     drain_db_path)
 
+# hydrological parameters ini file
+mhi = mesh.MeshHydrologyIniFile(os.path.join(control_options['settings_mesh_path'],'MESH_parameters_hydrology.ini'),
+                                n_gru=11)

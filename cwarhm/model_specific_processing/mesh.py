@@ -730,3 +730,156 @@ $STOPYEAR$   $STOPDAY$   $STOPHOUR$   $STOPMINUTE$                              
         text = self.parse_flag_values()
         with open(self.inifilepath,'w') as setf:
             setf.write(text)
+
+class MeshHydrologyIniFile():
+    """_summary_
+    """
+    def __init__(self, inifilepath, n_gru, mesh_setting_flags=None,
+                routing_parameters=None, gru_independent_parameters=None,
+                 gru_hydrologic_parameters=None) -> None:
+        self.inifilepath = inifilepath
+        self.template = self.get_template()
+        self.flags = self.set_default_flags()
+        if mesh_setting_flags:
+            print('NOT IMPLEMENTED YET Hydrology ini file parsed with settings')
+        else:
+            print('Hydrology ini is set as default')
+        if routing_parameters:
+            print('Set routing parameters from input')
+            self.routing_parameters = routing_parameters
+        else:
+            self.routing_parameters = self.set_default_routing_parameters()
+            print('Routing parameters set as default r2n, r1n, flz, pwr (5 identical classes)')
+        if gru_independent_parameters:
+            self.gru_independent_parameters = gru_independent_parameters
+            print("set gru independent parameters from input")
+        else:
+            self.gru_independent_parameters = self.set_default_gru_independent_parameters()
+        if gru_hydrologic_parameters:
+            self.gru_hydrologic_parameters = gru_hydrologic_parameters
+            print('set gru dependent parameters from input')
+        else:
+            self.gru_hydrologic_parameters = self.set_default_gru_dependent_parameters(n_gru)
+            print('default hydrologic gru dependent parameters')
+
+        self.write_ini_file()
+
+    def get_template(self):
+        template =  \
+'''2.0: MESH Hydrology Parameters (v2.0)
+!> Lines that begin with '!' are skipped as comments.
+!> All variable lines have the same free-format space delimited structure:
+!> [Variable name] [Value]
+##### Option Flags #####
+----#
+    $NOCF$ # Number of option flags.
+####### Channel routing parameters #####
+-------#
+    $NOCRPS$ # Number of channel routing parameters.
+$$$CHANNEL_ROUTING_PART$$$
+##### GRU class independent hydrologic parameters #####
+-------#
+    $NOGRUIPS$ # Number of GRU independent hydrologic parameters
+$$$GRU_INDEPENDENT_PART$$$
+##### GRU class dependent hydrologic parameters #####
+-------#
+    $NOGRUHPS$ # Number of GRU dependent hydrologic parameters.
+$$$GRU_DEPENDENT_PART$$$
+'''
+        return template
+
+    def set_default_flags(self):
+        '''create dictionairy with default flags'''
+        default_flags = dict()
+        default_flags['NOCF'] = 0
+        default_flags['NOCRPS'] = 4
+        default_flags['NOGRUIPS'] = 5
+        default_flags['NOGRUHPS'] = 13
+        return default_flags
+
+    def set_default_routing_parameters(self):
+        default_routing_parameters = pd.DataFrame(
+        data = np.array(
+            [[0.035, 0.10, 1.0E-04, 2.00] for i in range(5)]
+        ).transpose(),
+        index=['r2n','r1n','flz','pwr'],
+        columns=[str(n+1) for n in range(5)]
+        )
+        return default_routing_parameters
+
+    def parse_routing_parameters(self):
+        routing_parameters_text = self.routing_parameters.__repr__()
+        # make the header line a comment
+        all_lines = routing_parameters_text.split('\n')
+        line1 = all_lines[0]
+        line1_com = '!>\t'.expandtabs()+line1.lstrip()
+        all_lines[0] = line1_com
+        text_routing_parameters = '\n'.join(all_lines)
+        return text_routing_parameters
+
+    def set_default_gru_independent_parameters(self):
+        dgip = dict()
+        dgip['SOIL_POR_MAX'] = 0.8
+        dgip['SOIL_DEPTH'] = 4.1
+        dgip['S0'] = 1.0
+        dgip['T_ICE_LENS'] = -10.0
+        dgip['T0_ACC'] = [0]*30
+        return dgip
+
+    def parse_gru_independent_parameters(self):
+        dgip = self.gru_independent_parameters
+        lines = []
+        for key,value in dgip.items():
+            if key != 'T0_ACC':
+                lines.append(key+'\t'+str(value))
+            else:
+                T0_ACC_header = '!> YEAR\t'+'\t'.join([str(i+1) for i in range(len(value))])+'\n'
+                T0_ACC_values = 't0_ACC\t'+'\t'.join([str(a) for a in dgip['T0_ACC']])
+                T0_ACC_part = T0_ACC_header+T0_ACC_values
+        # join all parts and ensure T0_ACC part is last
+        text = '\n'.join(lines)
+        text = text+'\n'+T0_ACC_part
+        return text
+
+    def set_default_gru_dependent_parameters(self,n_gru):
+        default_grudep = pd.DataFrame(
+        data = np.array(
+            [[0,0.1,0.1,0.1,300.0,6.0,1.0,0.5,0.0,2.1,0.0,0.0,0.0] for i in range(n_gru)]
+        ).transpose(),
+        index=['IWF','ZSNL','ZPLS','ZPLG','fetch','Ht','N_S','A_S',
+                'Distrib','FRZC','FREZTH','SWELIM','SNDENLIM'],
+        columns=[str(n+1) for n in range(n_gru)]
+        )
+        return default_grudep
+
+    def parse_parameter_dataframe(self,dataframe,header=''):
+        text = dataframe.to_string()
+        # make the header line a comment
+        all_lines = text.split('\n')
+        line1 = all_lines[0]
+        line1_com = '!>{}\t'.format(header).expandtabs(12)+line1.lstrip()
+        #line1_com = '!>\t'.expandtabs()+line1.lstrip()
+        all_lines[0] = line1_com
+        all_lines_expanded = [line.expandtabs(12) for line in all_lines]
+        text_parameters = '\n'.join(all_lines_expanded)
+        return text_parameters
+
+    def parse_setup(self):
+        '''replace all tags in template with flag values'''
+        text = self.template
+        # first replace all flags
+        for key, value in self.flags.items():
+            text = text.replace('$'+str(key)+'$',str(value))
+        # then set the $$$ text blogs
+        #text = text.replace('$$$CHANNEL_ROUTING_PART$$$',self.parse_routing_parameters()+'\n')
+        text = text.replace('$$$CHANNEL_ROUTING_PART$$$',self.parse_parameter_dataframe(self.routing_parameters,'NRVR')+'\n')
+        text = text.replace('$$$GRU_INDEPENDENT_PART$$$',self.parse_gru_independent_parameters()+'\n')
+        text = text.replace('$$$GRU_DEPENDENT_PART$$$',self.parse_parameter_dataframe(self.gru_hydrologic_parameters,'GRU')+'\n')
+        return text
+
+    def write_ini_file(self):
+        text = self.parse_setup()
+        with open(self.inifilepath,'w') as setf:
+            setf.write(text)
+
+    
