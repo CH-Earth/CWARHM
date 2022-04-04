@@ -427,7 +427,16 @@ class MeshClassIniFile():
         self.place = place
     
     def set_header(self,title,name,place):
-        '''sets first three lines with header information'''
+        """sets first three comment lines with header information
+
+        :param title: title of the model run
+        :type title: str
+        :param name: name of the modeler
+        :type name: str
+        :param place: affiliation of modeler or modelling domain
+        :type place: str
+        """        
+        
         line1 = "{:<70}".format(title)+'01 TITLE'
         line2 = "{:<70}".format(name)+'02 NAME'
         line3 = "{:<70}".format(place)+'03 PLACE'
@@ -436,7 +445,27 @@ class MeshClassIniFile():
     def set_area_info(self,deglat=0.00,deglon=0.00,windspeed_ref_height=40.00,
                         temp_humid_ref_height=40.00, surface_roughness_height=50.00,
                         ground_cover_flag=-1, ILW=1, n_grid=0):
-        '''sets line 4 DEGLAT/DEGLON/ZRFM/ZRFH/ZBLD/GC/ILW/NL/NM'''
+        """sets line 4 DEGLAT/DEGLON/ZRFM/ZRFH/ZBLD/GC/ILW/NL/NM
+
+        :param deglat: Latitude of the sit or grid-cell in degrees, relevant
+        for grid version of MESH or site-specific only, otherwise indicative defaults to 0.00
+        :type deglat: float, optional
+        :param deglon: Longitude of the sit or grid-cell in degrees, , relevant
+        for grid version of MESH or site-specific only, otherwise indicativedefaults to 0.00
+        :type deglon: float, optional
+        :param windspeed_ref_height: Reference height (measurement height) for wind speed, defaults to 40.00
+        :type windspeed_ref_height: float, optional
+        :param temp_humid_ref_height: Reference height (measurement height) for temperature and humidity, defaults to 40.00
+        :type temp_humid_ref_height: float, optional
+        :param surface_roughness_height: Height into the atmosphere for aggregating surface roughness (usually in the order of 50-100 m), defaults to 50.00
+        :type surface_roughness_height: float, optional
+        :param ground_cover_flag: Ground cover flag; set to -1.0 if the GRUs in the file represent a "land surface", defaults to -1
+        :type ground_cover_flag: int, optional
+        :param ILW: Set to 1 (See the note on ILW below), defaults to 1
+        :type ILW: int, optional
+        :param n_grid: Number of grid-cells in the basin; this number must match the total number of grid-cells "TotalNumOfGrids" from the basin information file, defaults to 0
+        :type n_grid: int, optional
+        """                        
         n_GRU = self.n_gru
         line4 = '{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t'.format(
             deglat,deglon,windspeed_ref_height,temp_humid_ref_height,
@@ -446,6 +475,10 @@ class MeshClassIniFile():
         self.area_info = line4
     
     def GRU_part_template(self):
+        """Template of the text related to a single GRU
+
+        Template values can be replaced by replacing values encapsulated with "_"
+        """        
         self.GRU_template = \
         '''
         _FCAN-NL#_    _FCAN-BL#_    _FCAN-C#_   _FCAN-G#_   _FCAN-U#_     _LAMX-NL#_    _LAMX-BL#_    _LAMX-C#_   _LAMX-G#_       05Land class type/fcanrow/pamxrow
@@ -488,7 +521,11 @@ class MeshClassIniFile():
         return GRU_default_block
 
     def set_start_end_times(self,pd_datetime_start):
-        '''Write dates to control CLASS point outputs and the start date'''
+        """Write dates to control CLASS point outputs and the start date
+
+        :param pd_datetime_start: datetime of the first time value in forcing file
+        :type pd_datetime_start: pandas.Timestamp
+        """        
         line_fill = "1\t1\t1\t1\t".expandtabs(10)
         line20 = "{:<70}".format(line_fill)+'20 (not used, but 4x integer values are required)'
         line21 = "{:<70}".format(line_fill)+'21 (not used, but 4x integer values are required)'
@@ -504,12 +541,16 @@ class MeshClassIniFile():
 
 
     def build_default_ini_file(self):
+        """set_header, area_info and start_end_times with default values
+        """        
         self.set_header(self.title,self.name,self.place)
         self.set_area_info()
         self.set_start_end_times(self.pd_datetime_start)
 
     
     def write_ini_file(self):
+        """write ini text to file, with n_gru default GRUs
+        """        
         with open(self.filepath,'w') as inif:
             inif.write(self.header)
             inif.write(self.area_info)
