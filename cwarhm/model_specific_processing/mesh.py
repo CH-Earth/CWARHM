@@ -882,4 +882,92 @@ $$$GRU_DEPENDENT_PART$$$
         with open(self.inifilepath,'w') as setf:
             setf.write(text)
 
+class MeshReservoirTxtFile():
+    '''This file contains information about the controlled and natural reservoirs 
+    or lakes in the basin. 
+
+    Two types of reservoirs are supported in Standalone MESH. The first is the 
+    controlled reservoir, which replaces modelled streamflow with values from 
+    this file. The second is the natural reservoir, or lake, which allows a
+    power curve to regulate release from an outlet location. A third option,
+    a polynomial release curve, is implemented in test versions of the model.
+
+    This file is required by Standalone MESH, even if the watershed contains no 
+    reservoirs. If reservoirs are not required, a dummy file with fictitious data 
+    on the first line must exist, which follows the appropriate formatting rules. 
+    The following line can be used to create the dummy file. The first number is 
+    the number of reservoirs, and should be set to zero.
+
+    TODO: currently only gives the dummy file
+    '''
+    def __init__(self,inifilepath) -> None:
+        self.inifilepath = inifilepath
+        self.template = self.get_template()
+        self.write_ini_file()
+
+    def get_template(self):
+        template = '''0    0    0'''
+        return template
+
+    def parse_setup(self):
+        '''replace all tags in template with flag values'''
+        text = self.template
+        return text
+
+    def write_ini_file(self):
+        text = self.parse_setup()
+        with open(self.inifilepath,'w') as setf:
+            setf.write(text)
     
+class MeshSoilLevelTxtFile():
+    '''MESH_input_soil_levels.txt describes the depth in meters of connected 
+    soil layers in the soil profile.
+    
+    It is similar to the Soil_3lev file used by the CLASS 
+    Stand-Alone Driver. The first layer is the surface layer, which can be no 
+    less than 10 cm in depth. A minimum of three soil layers are required 
+    in the file.
+    '''
+    def __init__(self,inifilepath,soil_layers=None) -> None:
+        self.inifilepath = inifilepath
+        self.template = self.get_template()
+        self.flags = self.set_default_flags()
+        if soil_layers:
+            self.soil_layers = soil_layers
+            print("setting soil layers from soil layers input")
+        else:
+            self.soil_layers = self.set_default_soil_layers()
+            print("setting three default soil layers")
+        self.write_ini_file()
+
+    def get_template(self):
+        template = ''''''
+        return template
+
+    def set_default_flags(self):
+        self.flags = None
+
+    def set_default_soil_layers(self):
+        default_soil_layers = pd.DataFrame(
+        data = np.array(
+            [[0.10, 0.25, 3.75],[0.10, 0.35, 4.10]]
+        ).transpose(),
+        columns=['DELZ','ZBOT']
+        )
+        return default_soil_layers
+
+
+    def parse_setup(self):
+        '''replace all tags in template with flag values'''
+        text = self.template # template is empty here
+        lines = self.soil_layers.to_string(header=False,index=False,col_space=8).split('\n')
+        formatted_lines = ['{}\t#DELZ/ZBOT'.format(line) for line in lines]
+        text = '\n'.join(formatted_lines)
+        return text
+
+
+
+    def write_ini_file(self):
+        text = self.parse_setup()
+        with open(self.inifilepath,'w') as setf:
+            setf.write(text)

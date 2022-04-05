@@ -101,3 +101,10 @@ optf = mesh.MeshRunOptionsIniFile(os.path.join(control_options['settings_mesh_pa
 # hydrological parameters ini file
 mhi = mesh.MeshHydrologyIniFile(os.path.join(control_options['settings_mesh_path'],'MESH_parameters_hydrology.ini'),
                                 n_gru=11)
+
+# reservoir file (txt dummy version)
+resi = mesh.MeshReservoirTxtFile(os.path.join(control_options['settings_mesh_path'],'MESH_parameters_hydrology.ini'))
+
+# soil layers file (default version)
+sli = mesh.MeshSoilLevelTxtFile(os.path.join(control_options['settings_mesh_path'],'MESH_parameters_hydrology.ini'))
+
