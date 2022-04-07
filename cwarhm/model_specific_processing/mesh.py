@@ -330,10 +330,13 @@ def reindex_forcing_file(input_forcing, drainage_db, input_basin):
     """       
 
     # set lon and lat as coordinates, not variables
-    input_forcing = input_forcing.set_coords(['latitude','longitude'])
-    data_variables = list(input_forcing.keys())
     lon = input_forcing.variables['longitude'].values
     lat = input_forcing.variables['latitude'].values
+    # set lon lat as coordinates so that these are not in the data variables list
+    # lon and lat are reindexed first separately
+    input_forcing = input_forcing.set_coords(['latitude','longitude'])
+    data_variables = list(input_forcing.keys())
+
 
     # %% extract indices of forcing ids based on the drainage database
     n = len(drainage_db.hruId)
@@ -346,6 +349,10 @@ def reindex_forcing_file(input_forcing, drainage_db, input_basin):
 
     ind = np.int32(ind)
 
+    # first reindex lat and lon coordinates
+    lon_reind = lon[ind]
+    lat_reind = lat[ind]
+
     # %% reorder input forcing
     # initialize with the first variable
     forc_vec = xr.Dataset(
@@ -354,21 +361,21 @@ def reindex_forcing_file(input_forcing, drainage_db, input_basin):
         },
         coords={
             "time": input_forcing['time'].values.copy(),
-            "lon": (["subbasin"], lon),
-            "lat": (["subbasin"], lat),
+            "lon": (["subbasin"], lon_reind),
+            "lat": (["subbasin"], lat_reind),
         }
         )
     # then repeat for all other variables
     for n in data_variables[1::]:
         forc_vec[n] = (("subbasin", "time"), input_forcing[n].values[: , ind].transpose())
         forc_vec[n].coords["time"]          = input_forcing['time'].values.copy()
-        forc_vec[n].coords["lon"]           = (["subbasin"], lon)
-        forc_vec[n].coords["lat"]           = (["subbasin"], lat)
+        forc_vec[n].coords["lon"]           = (["subbasin"], lon_reind)
+        forc_vec[n].coords["lat"]           = (["subbasin"], lat_reind)
         forc_vec[n].attrs["units"]          = input_forcing[n].units
         forc_vec[n].attrs["grid_mapping"]   = 'crs'
         forc_vec[n].encoding['coordinates'] = 'time lon lat'
 
-    # %% update meta data attribuetes
+    # %% update meta data attributes
     now = datetime.now()
     forc_vec.attrs['Conventions'] = 'CF-1.6'
     forc_vec.attrs['License']     = 'The data were written by CWARHM'
