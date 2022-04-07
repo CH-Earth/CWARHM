@@ -6,7 +6,7 @@
 
 
 # Modeling domain settings
-root_path                   | /Users/ayx374/Documents/project/chwarm_test_results      # Root folder where data will be stored.
+root_path                   | /Users/localuser/Research/chwarm_test_results      # Root folder where data will be stored.
 domain_name                 | BowAtBanff                                  # Used as part of the root folder name for the prepared data.
 
 
@@ -60,7 +60,7 @@ forcing_shape_name          | era5_grid.shp                               # Name
 forcing_shape_lat_name      | lat                                         # Name of the latitude field that contains the latitude of ERA5 data points.
 forcing_shape_lon_name      | lon                                         # Name of the longitude field that contains the latitude of ERA5 data points.
 forcing_geo_path            | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/0_geopotential'.
-forcing_raw_path            | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/1_raw_data'.
+forcing_raw_path            | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/1_ERA5_raw_data'.
 forcing_merged_path         | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/2_merged_data'.
 forcing_easymore_path       | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/3_temp_easymore'.
 forcing_basin_avg_path      | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/3_basin_averaged_data'.
