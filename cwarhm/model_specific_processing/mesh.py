@@ -652,7 +652,7 @@ $STOPYEAR$   $STOPDAY$   $STOPHOUR$   $STOPMINUTE$                              
         default_flags['STARTDATE'] = '20001001'
         default_flags['HF'] = 60
         default_flags['TIMESHIFT'] = 0
-        default_flags['FNAME'] = 'MESH_input.nc'
+        default_flags['FNAME'] = 'MESH_input'
         default_flags['BASINSHORTWAVEFLAG'] = 'FB'
         default_flags['BASINHUMIDITYFLAG'] = 'HU'
         default_flags['BASINRAINFLAG'] = 'PR'
@@ -679,7 +679,7 @@ $STOPYEAR$   $STOPDAY$   $STOPHOUR$   $STOPMINUTE$                              
         default_flags['BASINAVGEBFILEFLAG'] = 'daily'
         default_flags['DIAGNOSEMODE'] = 'on'
         default_flags['PRINTSIMSTATUS'] = 'date_monthly'
-        default_flags['OUTFILESFLAG'] = 'on'
+        default_flags['OUTFILESFLAG'] = 'off'
         default_flags['AUTOCALIBRATIONFLAG'] = 1
         default_flags['METRICSSPINUP'] = 366
         default_flags['NOGP'] = 0
