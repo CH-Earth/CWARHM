@@ -175,6 +175,35 @@ def map_forcing_data(basin,forcing_data, output_dir,
                     fill_value_list = ['-999'], save_csv = False,
                     **esmr_kwargs
                     ):
+    """Wrapper to create an EASYMORE object with default options
+
+    Parameters
+    ----------
+    basin : str
+        path to the shapefile with the basins
+    forcing_data : str
+        path to the gridded forcing netcdf file
+    output_dir : str
+        path of the output directory to store remapped nc files
+    var_names : list
+        list with variable names to remap
+    var_lon : str, optional
+        name of the longitude dimension in nc file, by default 'lon'
+    var_lat : str, optional
+        name of latitude dimension in nc file, by default 'lat'
+    var_time : str, optional
+        name of time dimension in nc file, by default 'time'
+    case_name : str, optional
+        name of the case, by default 'workflow'
+    temp_dir : str, optional
+        directory to store intermediate products in, by default './esmr_temp/'
+    format_list : list, optional
+        format of the variables to be saved in remapped files, by default ['f4']
+    fill_value_list : list, optional
+        fill value in remapped file, by default ['-999']
+    save_csv : bool, optional
+        flag to save results as csv in addition to nc, by default False
+    """                    
     print(esmr_kwargs)
     # %% initializing EASYMORE object
     esmr = easymore()
