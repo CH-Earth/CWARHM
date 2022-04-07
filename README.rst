@@ -23,7 +23,7 @@ Additionally the package can be installed in the environment in developer mode (
   
   ``pip install -e .``
 
-First test
+Test Bow at Banff SUMMA
 ----------
 As test case workflows/summa_bowatbanff/ is available. Before running the test script test_bow_at_banff.py, some path modifications have to be made:
 
@@ -41,3 +41,9 @@ As test case workflows/summa_bowatbanff/ is available. Before running the test s
 **GRAHAM** /project/6008034/CompHydCore/cwarhm_test_data
 
 If this is not accessible, you can download the data with the CWARHM functions (wrapped from the original CWARHM). You can also use a results directory from an earlier test run.
+
+Test Bow at Banff MESH
+---------
+The Bow at Banff MESH test, performs a part of a complete workflow (with data specific parts and most of the model agnostic parts processed by the above workflow). to have a look at the relevant functions have a look at tests/test_mesh_bowatbanff.py
+Note that for it to run some input data is needed that is now included in the test folder and will be extracted automatically (21MB).
+Only one path has to adjusted, but in two(!) places (see test/test_mesh_bowatbanff.py).
