@@ -347,6 +347,7 @@ def reindex_forcing_file(input_forcing, drainage_db, input_basin):
     ind = np.int32(ind)
 
     # %% reorder input forcing
+    # initialize with the first variable
     forc_vec = xr.Dataset(
         {
             data_variables[0]: (["subbasin", "time"], input_forcing[data_variables[0]].values[:,ind].transpose()),
@@ -357,6 +358,7 @@ def reindex_forcing_file(input_forcing, drainage_db, input_basin):
             "lat": (["subbasin"], lat),
         }
         )
+    # then repeat for all other variables
     for n in data_variables[1::]:
         forc_vec[n] = (("subbasin", "time"), input_forcing[n].values[: , ind].transpose())
         forc_vec[n].coords["time"]          = input_forcing['time'].values.copy()
@@ -562,7 +564,14 @@ class MeshRunOptionsIniFile():
     """Class to edit Mesh Run options and write ini file
     """    
     def __init__(self, inifilepath, forcing_file=None) -> None:
-        
+        """
+        Parameters
+        ----------
+        inifilepath : str
+            path to write file to
+        forcing_file : str, optional
+            path to forcing file. if set, flags are set to match , by default None
+        """        
         self.inifilepath = inifilepath
         self.template = self.get_template()
         self.flags = self.set_default_flags()
@@ -579,7 +588,7 @@ class MeshRunOptionsIniFile():
 '''MESH input run options file
 ##### Control Flags #####
 ----#
-$NOCF$                                                   # Number of control flags 
+   $NOCF$                                                # Number of control flags 
 SHDFILEFLAG              $SHDFILEFLAG$
 BASINFORCINGFLAG         $SHDFILEFLAG$ start_date=$STARTDATE$ hf=$HF$ time_shift=$TIMESHIFT$ fname=$FNAME$
 BASINSHORTWAVEFLAG       name_var=$BASINSHORTWAVEFLAG$
@@ -613,17 +622,17 @@ AUTOCALIBRATIONFLAG    	 $AUTOCALIBRATIONFLAG$
 METRICSSPINUP        	 $METRICSSPINUP$
 ##### Output Grid selection #####
 ----#
-$NOGP$   #Maximum 5 points                               #17 Number of output grid points
+    $NOGP$   #Maximum 5 points                            #17 Number of output grid points
 ---------#---------#---------#---------#---------#
-$GRIDNUMBOUT$                                              #19 Grid number
-$GRUOUT$                                              #20 GRU (if applicable)
+    $GRIDNUMBOUT$                                         #19 Grid number
+    $GRUOUT$                                              #20 GRU (if applicable)
 $CLASSOUT$                                                #21 Output directory
 ##### Output Directory #####
 ---------#
-$OUTPUTDIR$   												    #24 Output Directory for total-basin files
+$OUTPUTDIR$   										      #24 Output Directory for total-basin files
 ##### Simulation Run Times #####
 ---#---#---#---#
-$STARTYEAR$   $STARTDAY$   $STARTHOUR$   $STARTMINUTE$          #27 Start year, day, hour, minute 2000 279
+$STARTYEAR$   $STARTDAY$   $STARTHOUR$   $STARTMINUTE$    #27 Start year, day, hour, minute 2000 279
 $STOPYEAR$   $STOPDAY$   $STOPHOUR$   $STOPMINUTE$                                       #28 Stop year, day, hour, minute  2000 288
 '''
         return template
@@ -670,7 +679,7 @@ $STOPYEAR$   $STOPDAY$   $STOPHOUR$   $STOPMINUTE$                              
         default_flags['GRIDNUMBOUT'] = 1936
         default_flags['GRUOUT'] = 1
         default_flags['CLASSOUT'] = 'CLASSOUT'
-        default_flags['OUTPUTDIR'] = '.'
+        default_flags['OUTPUTDIR'] = 'output'
         default_flags['STARTYEAR'] = 2000
         default_flags['STARTDAY'] = 275
         default_flags['STARTHOUR'] = 0
@@ -690,6 +699,7 @@ $STOPYEAR$   $STOPDAY$   $STOPHOUR$   $STOPMINUTE$                              
         datetimeend = pd.Timestamp(ds.time.values[-1])
         timestep_ms = ds.time.values[1]-ds.time.values[0]
         timestep_minutes = timestep_ms.astype('timedelta64[m]').astype('int')
+        print(timestep_minutes)
 
         # start stop flags
         flags['STARTDATE'] = datetimestart.strftime('%Y%m%d')
@@ -965,9 +975,537 @@ class MeshSoilLevelTxtFile():
         text = '\n'.join(formatted_lines)
         return text
 
+    def write_ini_file(self):
+        text = self.parse_setup()
+        with open(self.inifilepath,'w') as setf:
+            setf.write(text)
 
+class MeshInputStreamflowTxtFile():
+    '''This file contains measured streamflow values for gauged locations
+
+    It can also be used to specify locations where streamflow values will 
+    be output even if no gauge actually exists at that location.
+
+
+    At a minimum, every configuration of Standalone MESH must contain at least one
+    streamflow gauge location. Even if the watershed does not contain an actual 
+    streamflow gauge, one must still be included in the streamflow file. It is also
+    important that at least one gauge in the file has a measured value greater than 
+    zero during the first time step. This value is used to initialize the flow in 
+    the stream network. This value must be greater than zero and must be included 
+    even if the watershed contains no actual gauges with measured data.
+
+    For more information see https://wiki.usask.ca/display/MESH/MESH_input_streamflow.txt
+    '''
+    def __init__(self,inifilepath,streamflow=None,forcing_file=None) -> None:
+        self.inifilepath = inifilepath
+        self.template = self.get_template()
+        self.flags = self.set_default_flags()
+        if streamflow:
+            self.streamflow = streamflow
+            print("setting streamflow from streamflow input")
+            self.set_flags_from_streamflow()
+            print("setting header flags from streamflow input")
+        else:
+            if forcing_file:
+                self.streamflow = self.match_streamflow_with_forcing(forcing_file)
+                self.set_flags_from_streamflow()
+                print("setting default dummy streamflow that matches forcing length")
+            else:
+                self.streamflow = self.set_default_streamflow()
+                self.set_flags_from_streamflow() # to make sure compatibality
+                print("no input, default streamflow set - manual intervention needed")
+
+        self.write_ini_file()
+
+    def get_template(self):
+        '''The first line of the file is a comment line. Immediately following 
+        this line, in the second line in the file, is the header information. 
+        The header contains the number of streamflow gauge locations, the 
+        starting date of the record (for all gauges), and the uniform 
+        time-stepping of the records. It should also contain the number of 
+        records in the file, but this value is not used. The simulation will run 
+        until it reaches the user-specified stopping date, runs out of 
+        meteorological input data, or runs out of streamflow records to 
+        read from this file.'''
+        template = \
+'''# MESH streamflow record input file 01
+$WF_NO$    $WF_NL$    $WF_MHRD$   $WF_KT$ $WF_START_YEAR$  $WF_START_DAY$    $WF_START_HOUR$ 02 WF_NO/WF_NL/WF_MHRD/WF_KT/WF_START_YEAR/WF_START_DAY/WF_START_HOUR'''
+        return template
+
+    def set_default_flags(self):
+        default_flag = dict()
+        default_flag['WF_NO'] = 1
+        default_flag['WF_NL'] = 0 #obsolete
+        default_flag['WF_MHRD'] = 0 #obsolete
+        default_flag['WF_KT'] = 24
+        default_flag['WF_START_YEAR'] = 2000
+        default_flag['WF_START_DAY'] = 1
+        default_flag['WF_START_HOUR'] = 1
+        return default_flag
+
+    def set_default_streamflow(self):
+        streamflow_xr = xr.Dataset(
+        {
+            'streamflow': (["gauge","time"],np.array([[10]*10]))
+        },
+        coords={
+            "time":pd.date_range(start='2000-01-01',periods=10,freq='D'),
+            "id":  (["gauge"], ['default_gauge']),
+            "lon": (["gauge"], [0.00]),
+            "lat": (["gauge"], [0.00]),
+        },
+        )
+        # update metadata
+        streamflow_xr.attrs['Conventions'] = 'CF-1.6'
+        streamflow_xr.attrs['history'] = 'Example default input for MeshStreamflowTxt()'
+        streamflow_xr.attrs['featureType'] = 'timeSeries'
+        return streamflow_xr
+
+    def set_flags_from_streamflow(self):
+        flags = self.flags
+        sf = self.streamflow
+
+        # calculate timestep
+        datetimestart = pd.Timestamp(sf.time.values[0])
+        timestep_ms = sf.time.values[1]-sf.time.values[0]
+        timestep_hr = timestep_ms.astype('timedelta64[h]').astype('int')
+        # set flags
+        flags['WF_NO'] = sf.dims['gauge']
+        flags['WF_KT'] = timestep_hr
+        flags['WF_START_YEAR'] = datetimestart.year
+        flags['WF_START_DAY'] = datetimestart.day_of_year
+        flags['WF_START_HOUR'] = datetimestart.hour
+        self.flags = flags
+
+    def match_streamflow_with_forcing(self,forcing_dataset):
+        fds = forcing_dataset
+        empty_streamflow_array = np.array([[-1]*len(fds.time)])
+        empty_streamflow_array[0,0] = 10
+        streamflow_xr = xr.Dataset(
+        {
+            'streamflow': (["gauge","time"],empty_streamflow_array)
+        },
+        coords={
+            "time": fds.time,
+            "id":  (["gauge"], ['default_gauge']),
+            "lon": (["gauge"], [0.00]),
+            "lat": (["gauge"], [0.00]),
+        },
+        )
+        # update metadata
+        streamflow_xr.attrs['Conventions'] = 'CF-1.6'
+        streamflow_xr.attrs['history'] = 'Example default input for MeshStreamflowTxt()'
+        streamflow_xr.attrs['featureType'] = 'timeSeries'
+        return streamflow_xr
+
+
+    def parse_setup(self):
+        '''replace all tags in template with flag values'''
+        text_header = self.template # this is a header only
+        # first set header flags
+        for key, value in self.flags.items():
+            text_header = text_header.replace('$'+str(key)+'$',str(value))
+        # next write gauge header lines from streamflow info
+        gauge_headers = []
+        for g in range(self.streamflow.dims['gauge']):
+            gauge_info = self.streamflow.isel(gauge=g)
+            wf_iy = str(gauge_info.lat.values)
+            wf_jx = str(gauge_info.lon.values)
+            wf_gage = str(gauge_info.id.values)
+            line = "{}\t{}\t{:<12}".format(wf_iy,wf_jx,wf_gage[:12])
+            gauge_headers.append(line)
+        gauge_header = '\n'.join(gauge_headers)
+        # last parse streamflow data
+        streamflow_values = []
+        for g in range(self.streamflow.dims['gauge']):
+            gauge_info = self.streamflow.isel(gauge=g)
+            streamflow_values.append(gauge_info.streamflow.values)
+        dfs = pd.DataFrame(np.array(streamflow_values).transpose())
+        stream_values_text = dfs.to_string(header=False,index=False)
+
+        text = '\n'.join([text_header,gauge_header,stream_values_text])
+        return text
 
     def write_ini_file(self):
         text = self.parse_setup()
         with open(self.inifilepath,'w') as setf:
             setf.write(text)
+
+class MeshMinMaxParameterTxtFile():
+    '''This file is recently included to check if parameter values lie within specified ranges 
+    so as to avoid model crash problems that will be caused by unrealistic parameter values.
+
+    This file is currently static
+    '''
+    def __init__(self,inifilepath) -> None:
+        """Initialize file
+
+        Parameters
+        ----------
+        inifilepath : str
+            path to file to write
+        """        
+        self.inifilepath = inifilepath
+        self.template = self.get_template()
+        self.write_ini_file()
+    
+    def get_template(self):
+        template = \
+'''Reserved 1 - THEXTRA                               !ROW 1
+0.0000                                             !min
+0.0001                                             !max
+Reserved 2 - ICE_INDEX                             !ROW 2
+0.0000                                             !min
+0.0001                                             !max
+Reserved 3 - GWSCALE                               !ROW 3
+0.0000                                             !min
+0.0001                                             !max
+River roughness factor (WF_R2) (5 classes maximum) !ROW 4
+0.0200                                             !min
+2.0000                                             !max
+WF_R2 - CLASS 2                                    !ROW 5
+0.0200                                             !min
+2.0000                                             !max
+WF_R2 - CLASS 3                                    !ROW 6
+0.0200                                             !min
+2.0000                                             !max
+WF_R2 - CLASS 4                                    !ROW 7
+0.0200                                             !min
+2.0000                                             !max
+WF_R2 - CLASS 5                                    !ROW 8
+0.0200                                             !min
+2.0000                                             !max
+maximum soil porosity                              !ROW 9
+0.0000                                             !min
+1.0000                                             !max
+depth from surface to bottom of rooting zone for maximum water holding capacity, m !ROW 10
+0.0000                                             !min
+4.1000                                             !max
+Surface saturations [0.75 - 1.0]                   !ROW 11
+0.0000                                             !min
+1.0000                                             !max
+Overnight minimum to cause ice lens after major melt -[50 - 0.0 �C] !ROW 12
+-50.00                                             !min
+0.0000                                             !max
+DRNROW - DRAINAGE INDEX, CALCULATED DRAINAGE IS MULTIPLIED BY THIS VALUE                      !ROW 13
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min DRNROW
+1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000   !max
+SDEPROW - THE PERMEABLE DEPTH OF THE SOIL COLUMN                                              !ROW 14
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min SDEPROW
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+FAREROW - WHEN RUNNING A MOSAIC, THE FRACTIONAL AREA THAT THIS TILE REPRESENTS IN A GRID CELL !ROW 15
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min FAREROW
+5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000   !max
+DDENROW - THE DRAINAGE DENSITY OF THE GRU IN m/m2                                             !ROW 16
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min DDENROW
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+XSLPROW - AVERAGE OVERLAND SLOPE OF A GIVEN GRU                                               !ROW 17
+0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001 0.0001   !min XSLPROW
+1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000   !max
+XDNROW - HORIZONTAL CONDUCTIVITY AT A DEPTH OF h0 DIVIDED BY HORIZONTAL CONDUCTIVITY AT SURFACE !ROW 18
+0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010   !min XDNROW
+1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000   !max
+MANNROW - MANNING ROUGHNESS COEFFICIENT                                                       !ROW 19
+0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010 0.0010   !min MANNROW
+2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000 2.0000   !max
+KSROW - HORIZONTAL CONDUCTIVITY AT SURFACE                                                    !ROW 20
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min KSROW
+1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200 1.0200   !max
+SANDROW - PERCENTAGES OF SAND CONTENT OF SOIL LAYER 1                                         !ROW 21
+-5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000   !min % OF SAND not organic in soil layer 1
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+CLAYROW - PERCENTAGES OF CLAY CONTENT OF SOIL LAYER 1                                         !ROW 22
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min % OF CLAY not organic or sand in soil layer 1
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ORGMROW - PERCENTAGES OF ORGANIC MATTER OF SOIL LAYER 1                                       !ROW 23
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min % OF ORGANIC in soil layer 1
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+SANDROW - PERCENTAGES OF SAND CONTENT OF SOIL LAYER 2                                         !ROW 24
+-5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000   !min % OF SAND not organic in soil layer 2
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+CLAYROW - PERCENTAGES OF CLAY CONTENT OF SOIL LAYER 2                                         !ROW 25
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min % OF CLAY not organic or sand in soil layer 2
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ORGMROW - PERCENTAGES OF ORGANIC MATTER OF SOIL LAYER 2                                       !ROW 26
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min % OF ORGANIC in soil layer 2
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+SANDROW - PERCENTAGES OF SAND CONTENT OF SOIL LAYER 3                                         !ROW 27
+-5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000 -5.000   !min % OF SAND not organic in soil layer 3
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+CLAYROW - PERCENTAGES OF CLAY CONTENT OF SOIL LAYER 3                                         !ROW 28
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min % OF CLAY not organic or sand in soil layer 3
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ORGMROW - PERCENTAGES OF ORGANIC MATTER OF SOIL LAYER 3                                       !ROW 29
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min % OF ORGANIC in soil layer 3
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ZSNLROW - LIMITING SNOW DEPTH BELOW WHICH COVERAGE IS < 100%                                  !ROW 30
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ZSNLROW    **From MESH_parameters_hydrology.ini
+5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000 5.0000   !max
+ZPLSROW - MAXIMUM WATER PONDING DEPTH FOR SNOW-COVERED AREAS                                  !ROW 31
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ZPLSROW
+1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000   !max
+ZPLGROW - MAXIMUM WATER PONDING DEPTH FOR SNOW-FREE AREAS                                     !ROW 32
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ZPLGROW
+1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000   !max
+FZRCROW - COEFFICIENT FOR THE FROZEN SOIL INFILTRATION PARAMETERIC EQUATION                   !ROW 33
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min FZRCROW
+3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000 3.0000   !max
+LNZ0ROW - NATURAL LOGARITHM OF THE ROUGHNESS LENGTH FOR LAND COVER CATEGORY 1                 !ROW 34
+-20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00   !min LNZ0ROW1   Column 1 **Atmospheric parameters from MESH_parameters_CLASS.INI
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ALVCROW - VISIBLE ALBEDO FOR LAND COVER CATEGORY 1                                            !ROW 35
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ALVCROW1
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ALICROW - NEAR INFRARED ALBEDO FOR LAND COVER CATEGORY 1                                      !ROW 36
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ALICROW1
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+RSMNROW - MINIMUM STOMATAL RESISTANCE FOR THE VEGETATION TYPE 1                               !ROW 37
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min RSMNROW1
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+VPDAROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO VAPOR PRESSURE DEFICIT - COMMON VALUE 0.5 !ROW 38
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min VPDAROW1
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+PSGAROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO SOIL WATER SUCTION -OMMON VALUE 100 !ROW 39
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min PSGAROW1
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+LNZ0ROW - NATURAL LOGARITHM OF THE ROUGHNESS LENGTH FOR LAND COVER CATEGORY 2                 !ROW 40
+-20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00   !min LNZ0ROW2   Column 2 **Atmospheric parameters from MESH_parameters_CLASS.INI
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ALVCROW - VISIBLE ALBEDO FOR LAND COVER CATEGORY 2                                            !ROW 41
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ALVCROW2
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ALICROW - NEAR INFRARED ALBEDO FOR LAND COVER CATEGORY 2                                      !ROW 42
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ALICROW2
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+RSMNROW - MINIMUM STOMATAL RESISTANCE FOR THE VEGETATION TYPE 2                               !ROW 43
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min RSMNROW2
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+VPDAROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO VAPOR PRESSURE DEFICIT - COMMON VALUE 0.5 !ROW 44
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min VPDAROW2
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+PSGAROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO SOIL WATER SUCTION -OMMON VALUE 100 !ROW 45
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min PSGAROW2
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+LNZ0ROW - NATURAL LOGARITHM OF THE ROUGHNESS LENGTH FOR LAND COVER CATEGORY 3                 !ROW 46
+-20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00   !min LNZ0ROW3   Column 3 **Atmospheric parameters from MESH_parameters_CLASS.INI
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ALVCROW - VISIBLE ALBEDO FOR LAND COVER CATEGORY 3                                            !ROW 47
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ALVCROW3
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ALICROW - NEAR INFRARED ALBEDO FOR LAND COVER CATEGORY 3                                      !ROW 48
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ALICROW3
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+RSMNROW - MINIMUM STOMATAL RESISTANCE FOR THE VEGETATION TYPE 3                               !ROW 49
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min RSMNROW3
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+VPDAROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO VAPOR PRESSURE DEFICIT - COMMON VALUE 0.5 !ROW 50
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min VPDAROW3
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+PSGAROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO SOIL WATER SUCTION -OMMON VALUE 100 !ROW 51
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min PSGAROW3
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+LNZ0ROW - NATURAL LOGARITHM OF THE ROUGHNESS LENGTH FOR LAND COVER CATEGORY 4                 !ROW 52
+-20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00   !min LNZ0ROW4   Column 4 **Atmospheric parameters from MESH_parameters_CLASS.INI
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ALVCROW - VISIBLE ALBEDO FOR LAND COVER CATEGORY 4                                            !ROW 53
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ALVCROW4
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ALICROW - NEAR INFRARED ALBEDO FOR LAND COVER CATEGORY 4                                      !ROW 54
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ALICROW4
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+RSMNROW - MINIMUM STOMATAL RESISTANCE FOR THE VEGETATION TYPE 4                               !ROW 55
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min RSMNROW4
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+VPDAROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO VAPOR PRESSURE DEFICIT - COMMON VALUE 0.5 !ROW 56
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min VPDAROW4
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+PSGAROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO SOIL WATER SUCTION -OMMON VALUE 100 !ROW 57
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min PSGAROW4
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+LNZ0ROW - NATURAL LOGARITHM OF THE ROUGHNESS LENGTH FOR LAND COVER CATEGORY 5                 !ROW 58
+-20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00 -20.00   !min LNZ0ROW5   Column 5 **Atmospheric parameters from MESH_parameters_CLASS.INI
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ALVCROW - VISIBLE ALBEDO FOR LAND COVER CATEGORY 5                                            !ROW 59
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ALVCROW5
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ALICROW - NEAR INFRARED ALBEDO FOR LAND COVER CATEGORY 5                                      !ROW 60
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ALICROW5
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+LAMXROW - MAXIMUM LEAF AREA INDEX FOR THE VEGETATION TYPE 1                                   !ROW 61
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min LAMXROW1   Column 6
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+LAMNROW - MINIMUM LEAF AREA INDEX FOR THE VEGETATION TYPE 1                                   !ROW 62
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min LAMNROW1
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+CMASROW - ANNUAL MAXIMUM CANOPY MASS FOR VEGETATION TYPE 1 [kg m-2]                           !ROW 63
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min CMASROW1
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ROOTROW - ROOTING DEPTH FOR VEGETATION TYPE 1                                                 !ROW 64
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ROOTROW1
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+QA50ROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO LIGHT, COMMON VALUES - 30 TO 50 W/M2 !ROW 65
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min QA50ROW1
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+VPDBROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO VAPOR PRESSURE DEFICIT, COMMON VALUES - 1.0 !ROW 66
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min VPDBROW1
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+PSGBROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO SOIL WATER SUCTION, COMMON VALUES - 5       !ROW 67
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min PSGBROW1
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+LAMXROW - MAXIMUM LEAF AREA INDEX FOR THE VEGETATION TYPE 2                                   !ROW 68
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min LAMXROW2   Column 7
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+LAMNROW - MINIMUM LEAF AREA INDEX FOR THE VEGETATION TYPE 2                                   !ROW 69
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min LAMNROW2
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+CMASROW - ANNUAL MAXIMUM CANOPY MASS FOR VEGETATION TYPE 2 [kg m-2]                           !ROW 70
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min CMASROW2
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ROOTROW - ROOTING DEPTH FOR VEGETATION TYPE 2                                                 !ROW 71
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ROOTROW2
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+QA50ROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO LIGHT, COMMON VALUES - 30 TO 50 W/M2 !ROW 72
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min QA50ROW2
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+VPDBROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO VAPOR PRESSURE DEFICIT, COMMON VALUES - 1.0 !ROW 73
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min VPDBROW2
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+PSGBROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO SOIL WATER SUCTION, COMMON VALUES - 5 !ROW 74
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min PSGBROW2
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+LAMXROW - MAXIMUM LEAF AREA INDEX FOR THE VEGETATION TYPE 3                                   !ROW 75
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min LAMXROW3   Column 8
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+LAMNROW - MINIMUM LEAF AREA INDEX FOR THE VEGETATION TYPE 3                                   !ROW 76
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min LAMNROW3
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+CMASROW - ANNUAL MAXIMUM CANOPY MASS FOR VEGETATION TYPE 3 [kg m-2]                           !ROW 77
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min CMASROW3
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ROOTROW - ROOTING DEPTH FOR VEGETATION TYPE 3                                                 !ROW 78
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ROOTROW3
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+QA50ROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO LIGHT, COMMON VALUES - 30 TO 50 W/M2 !ROW 79
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min QA50ROW3
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+VPDBROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO VAPOR PRESSURE DEFICIT, COMMON VALUES - 1.0 !ROW 80
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min VPDBROW3
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+PSGBROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO SOIL WATER SUCTION, COMMON VALUES - 5 !ROW 81
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min PSGBROW3
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+LAMXROW - MAXIMUM LEAF AREA INDEX FOR THE VEGETATION TYPE 4                                   !ROW 82
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min LAMXROW4   Column 9
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+LAMNROW - MINIMUM LEAF AREA INDEX FOR THE VEGETATION TYPE 4                                   !ROW 83
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min LAMNROW4
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+CMASROW - ANNUAL MAXIMUM CANOPY MASS FOR VEGETATION TYPE 4 [kg m-2]                           !ROW 84
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min CMASROW4
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+ROOTROW - ROOTING DEPTH FOR VEGETATION TYPE 4                                                 !ROW 85
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min ROOTROW4
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+QA50ROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO LIGHT, COMMON VALUES - 30 TO 50 W/M2 !ROW 86
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min QA50ROW4
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+VPDBROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO VAPOR PRESSURE DEFICIT, COMMON VALUES - 1.0 !ROW 87
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min VPDBROW4
+100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00   !max
+PSGBROW - COEFFICIENT GOVERNING THE RESPONSE OF STOMATES TO SOIL WATER SUCTION, COMMON VALUES - 5       !ROW 88
+0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000   !min PSGBROW4
+1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0 1000.0   !max
+'''
+        return template
+
+    def parse_setup(self):
+        return self.template
+
+    def write_ini_file(self):
+        text = self.parse_setup()
+        with open(self.inifilepath,'w') as setf:
+            setf.write(text)
+
+class MeshParameterTxtFile():
+    '''MESH_parameters.txt is an optional input file, which can be used 
+    to replace the traditional INI format parameter files, and allows 
+    specifying additional parameters, variables, and options not 
+    supported by the legacy file formats. The file uses free-formatting, 
+    allows block and in-line comments, and uses a generalized structure 
+    for greater flexibility, which includes the use of names to identify 
+    parameters, variables, and options.
+
+    The structure of MESH_parameters.txt is free-format and does not contain 
+    identified sections. Parameters, variables, and options are listed by line, 
+    with corresponding values and settings listed in the same line as the 
+    parameter, variable, or option name key.
+    '''
+    def __init__(self,inifilepath,parameter_values=None) -> None:
+        """Initialize file
+
+        Parameters
+        ----------
+        inifilepath : str
+            path to file to write
+        parameter_values: pandas.core.frame.DataFrame
+            parameter values. First column VARIABLE NAMES, second column (or more) VARIABLE values
+            comments can be added by adding '!>' as Variable name. 
+            No values should be '' and example is:
+            pardf = pd.DataFrame(
+                    np.array([['!>','PARA','PARB','!>','PARC'],
+                    ['test comment',32,0.45,'comment two','txt'],
+                    ['','','0.8','','']]).transpose()
+                    )
+        """        
+        self.inifilepath = inifilepath
+        if isinstance(parameter_values,pd.core.frame.DataFrame):
+            self.flags = parameter_values
+            print('Parameter values read from input')
+        else:
+            self.flags = self.set_dummy_content()
+            print('No parameter values read - create dummy file')
+
+        self.write_ini_file()
+
+    def set_dummy_content(self):
+        pardf = pd.DataFrame(np.array(
+            [['!>','!>'],
+            ['No parameters given','Dummy file generated']]).transpose()
+                )
+        return pardf
+    
+    def parse_setup_dict(self):
+        # start with header
+        comment_parameter_lines = ['!> TXT (free-format) MESH configuration file.']
+        for parameter, valcom in self.flags.items():
+            # check if comment is included
+            if isinstance(valcom,tuple):
+                # change type to list, to have uniform behavior 
+                # for single values and lists
+                value = list(valcom[0])
+                # next try for comment
+                comment = valcom[1]
+                comment_line = '!>\t{}'.format(comment)
+                comment_parameter_lines.append(comment_line)
+            else:
+                value = list(valcom)
+            value_line = '{}\t{}'.format(parameter,'\t'.join([str(v) for v in value]))
+            comment_parameter_lines.append(value_line)
+        text = '\n'.join(comment_parameter_lines)
+
+        return text
+
+    def parse_setup_df(self):
+        text_header = '!> TXT (free-format) MESH configuration file.\n'
+        par_text = self.flags.to_string(header=False,index=False,justify='left')
+        return text_header + par_text
+
+    def write_ini_file(self):
+        text = self.parse_setup_df()
+        with open(self.inifilepath,'w') as setf:
+            setf.write(text)
+
+
+class MeshOutputTxtFile():
+    pass
