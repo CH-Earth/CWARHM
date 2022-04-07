@@ -11,6 +11,7 @@ import xarray as xr
 import geopandas as gpd
 import zipfile
 import pandas as pd
+import numpy as np
 
 from cwarhm.model_specific_processing import mesh as mesh
 from cwarhm.model_agnostic_processing import HRU as HRU
@@ -58,7 +59,7 @@ drain_db.to_netcdf(drain_db_path)
 
 # remap forcing data from grids, to MESH GRUs (CWARHM-SUMMA maps to SUMMA HRUs)
 HRU.map_forcing_data(control_options['river_basin_shp_path'],
-                    control_options['forcing_merged_path']+'/*200803.nc',
+                    control_options['forcing_merged_path']+'/*.nc',
                     control_options['forcing_basin_avg_path']+'/',
                     var_names = ['LWRadAtm', 'SWRadAtm', 'pptrate', 'airpres', 'airtemp', 'spechum', 'windspd'],
                     var_lon='longitude', var_lat='latitude',
@@ -96,15 +97,24 @@ inif.write_ini_file()
 
 ## Run options
 optf = mesh.MeshRunOptionsIniFile(os.path.join(control_options['settings_mesh_path'],'MESH_input_run_options.ini'),
-                                    drain_db_path)
+                                    os.path.join(control_options['settings_mesh_path'],'MESH_input_era5.nc'))
 
 # hydrological parameters ini file
 mhi = mesh.MeshHydrologyIniFile(os.path.join(control_options['settings_mesh_path'],'MESH_parameters_hydrology.ini'),
                                 n_gru=11)
 
 # reservoir file (txt dummy version)
-resi = mesh.MeshReservoirTxtFile(os.path.join(control_options['settings_mesh_path'],'MESH_parameters_hydrology.ini'))
+resi = mesh.MeshReservoirTxtFile(os.path.join(control_options['settings_mesh_path'],'MESH_input_reservoir.txt'))
 
 # soil layers file (default version)
-sli = mesh.MeshSoilLevelTxtFile(os.path.join(control_options['settings_mesh_path'],'MESH_parameters_hydrology.ini'))
+sli = mesh.MeshSoilLevelTxtFile(os.path.join(control_options['settings_mesh_path'],'MESH_input_soil_levels.txt'))
+# streamflow.txt file
+ffi = mesh.MeshInputStreamflowTxtFile(os.path.join(control_options['settings_mesh_path'],'MESH_input_streamflow.txt'),
+                                        forcing_file=mesh_forcing)
+# min_max parameter file
+mmpf = mesh.MeshMinMaxParameterTxtFile(os.path.join(control_options['settings_mesh_path'],'MESH_minmax_parameters.txt'))
 
+# parameter file
+parf = mesh.MeshParameterTxtFile(os.path.join(control_options['settings_mesh_path'],'MESH_parameters.txt'),
+                                pd.DataFrame(np.array([['!>','DTMINUSR'],['RTE time-step [s]',300.0]]).transpose()
+                                ))

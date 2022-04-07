@@ -724,8 +724,8 @@ $STOPYEAR$   $STOPDAY$   $STOPHOUR$   $STOPMINUTE$                              
         if timestep_minutes < flags['TIMESTEPFLAG']:
             flags['TIMESTEPFLAG'] = timestep_minutes
 
-        # name flag
-        flags['FNAME'] = ntpath.basename(forcing_file)
+        # name flag from filename, without extension
+        flags['FNAME'] = ntpath.basename(forcing_file).split('.')[0]
 
         self.flags = flags
 
