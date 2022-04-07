@@ -6,6 +6,7 @@ import sys
 #%%
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 from cwarhm.wrappers import cwarhm_summa as fm
+from cwarhm.model_specific_processing import mizuroute as mzr
 import cwarhm.util.util as utl
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -89,7 +90,11 @@ fm.clone_mizuroute_repo(cwarhm_summa_folder)
 
 ## mizuRoute ##
 fm.copy_mizuroute_base_settings(cwarhm_summa_folder)
+mzr.generate_mizuroute_topology(control_options['river_network_shp_path'], control_options['river_basin_shp_path'],
+    os.path.join(control_options['settings_mizu_path'],control_options['settings_mizu_topology']),
+    control_options['settings_mizu_make_outlet'])
 fm.create_mizuroute_network_topology_file(cwarhm_summa_folder)
+
 fm.remap_summa_catchments_to_mizurouting(cwarhm_summa_folder)
 fm.create_mizuroute_control_file(cwarhm_summa_folder)
 
