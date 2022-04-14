@@ -21,7 +21,7 @@ def download_merit(target_folder,credentials: dict,variables=['elv'],bbox: list=
 
     :param target_folder: root of target folder to save dowloaded MERIT data
     :type target_folder: string
-    :param credentials: credentials to download MERIT data of the form dict(user='user',password='pass') 
+    :param credentials: credentials to download MERIT data of the form dict(user='user',pass='pass') 
     :type credentials: dict
     :param variables: List of variables to download, defaults to ['elv']
     :type variables: list, optional
@@ -93,7 +93,7 @@ def download_merit(target_folder,credentials: dict,variables=['elv'],bbox: list=
 
                         # Send a HTTP request to the server and save the HTTP response in a response object called resp
                         # 'stream = True' ensures that only response headers are downloaded initially (and not all file contents too, which are 2GB+)
-                        with requests.get(file_url.strip(), auth=(credentials['user'],credentials['password']), stream=True) as response:
+                        with requests.get(file_url.strip(), auth=(credentials['user'],credentials['pass']), stream=True) as response:
             
                             # Decode the response
                             response.raw.decode_content = True

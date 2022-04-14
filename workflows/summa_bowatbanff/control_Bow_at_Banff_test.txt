@@ -6,7 +6,7 @@
 
 
 # Modeling domain settings
-root_path                   | /Users/localuser/Research/chwarm_test_results      # Root folder where data will be stored.
+root_path                   | /Users/ayx374/Documents/project/chwarm_test_results2      # Root folder where data will be stored.
 domain_name                 | BowAtBanff                                  # Used as part of the root folder name for the prepared data.
 
 

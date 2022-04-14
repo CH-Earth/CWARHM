@@ -8,12 +8,44 @@ import subprocess
 import ast
 import logging
 import logging.config
+from multiprocessing import Process
 logger = logging.getLogger('fileOutput')
 
 '''
 This file holds a collection of functions that support reading of control files
 making folder structures etc.
 '''
+
+def build_folder_structure(control_options):
+    """Build folder structure based on control options
+
+    Each folder must have 'path' in its key. No key with 'path'
+    should be a folder.
+
+    Parameters
+    ----------
+    control_options : dict
+        dictionairy with control options read from control file 
+        with :func:read_summa_workflow_control_file
+    """    
+    for key, value in control_options.items():
+        if 'path' in key:
+            this_dir = Path(value)
+            this_dir.mkdir(parents=True,exist_ok=True)
+
+def read_merit_credentials_file():
+    merit_login = {}
+    with open(os.path.expanduser("~/.merit")) as file:
+        for line in file:
+            (key, val) = line.split(':')
+            merit_login[key] = val.strip() # remove whitespace, newlines
+    return merit_login
+
+def unpack_year_range(yr_string):
+    """unpack the control 'forcing_raw_time' into list of all years
+    """    
+    ys,ye = yr_string.split(',')
+    return [y for y in range(int(ys),int(ye)+1)]
 
 def read_summa_workflow_control_file(workflow_control_file,comment_char='#',option_char='|'):
     """Read complete control data from the SUMMAworkflow (https://github.com/CH-Earth/summaWorkflow_public)
@@ -134,3 +166,14 @@ def get_git_revision_hash(directory = "") -> str:
     An alternate git repo could also be referenced.
     """
     return subprocess.check_output(['git', 'rev-parse', 'HEAD',f'{directory}']).decode('ascii').strip()
+
+def run_in_parallel(*fns):
+    """runs list of fns functions in parallel using multiprocessing
+    """    
+    proc = []
+    for fn in fns:
+        p = Process(target=fn)
+        p.start()
+        proc.append(p)
+    for p in proc:
+        p.join()
