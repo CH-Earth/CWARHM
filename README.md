@@ -81,7 +81,7 @@ Package requirements specified in `requirements.txt`. Assumes a local install of
 
 ```
 cd /path/to/CWARHM
-virtualenv summa-env
+virtualenv cwarhm-env
 source cwarhm-env/bin/activate
 pip install -r requirements.txt
 ```
