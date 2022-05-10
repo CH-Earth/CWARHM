@@ -1,14 +1,35 @@
-# Logs and databases #
-######################
-slurm-*.out
-output*.out
-ERA5_createForcing_CONUS*.sh
-core.*
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*/__pycache__/
+*.py[cod]
+*$py.class
 
-# notebook stuff
-.ipynb_checkpoints
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.pyc
 
-# rtd
-rtd/build
+# Sphinx documentation
+docs/_build/
 
-rtd/source/*.md
+# test suite
+tests/*/results
+
+# code editors
+.vscode

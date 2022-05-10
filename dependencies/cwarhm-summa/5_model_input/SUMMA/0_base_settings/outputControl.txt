@@ -1,0 +1,36 @@
+! -------------
+!  attributes
+! -------------
+hruId
+latitude
+longitude     
+!
+! -----------
+!  forcings
+! -----------
+pptrate            | 1  
+airtemp            | 1  
+!
+!
+! -------------------
+!  model variables 
+! -------------------
+averageRoutedRunoff   | 1   
+scalarTotalET         | 24  
+scalarSWE             | 24  
+scalarRainPlusMelt    | 24  
+scalarCanopyWat       | 24  
+scalarTotalSoilWat    | 24  
+scalarAquiferStorage  | 24  
+scalarSurfaceRunoff   | 24  
+scalarInfiltration    | 24  
+scalarSoilDrainage    | 24  
+scalarSoilBaseflow    | 24
+scalarAquiferBaseflow | 24
+scalarTotalRunoff     | 24 
+scalarNetRadiation    | 24 
+scalarLatHeatTotal    | 24 
+scalarSenHeatTotal    | 24
+
+
+

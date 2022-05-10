@@ -1,7 +1,0 @@
-Step 7: Visualization
---------------------------
-
-.. toctree::
-   :numbered:
-
-   7_visualizationREADME.md.rst
