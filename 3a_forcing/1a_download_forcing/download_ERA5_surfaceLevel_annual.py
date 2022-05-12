@@ -31,7 +31,7 @@ forcingPath = Path(sys.argv[3]) # string to Path()
 # function to round coordinates of a bounding box to ERA5s 0.25 degree resolution
 def round_coords_to_ERA5(coords):
     
-    '''Assumes coodinates are an array: [lon_min,lat_min,lon_max,lat_max].
+    '''Assumes coodinates are an array: [lat_max,lon_min,lat_min,lon_max] (top-left, bottom-right).
     Returns separate lat and lon vectors.'''
     
     # Extract values
@@ -61,7 +61,7 @@ def round_coords_to_ERA5(coords):
 coordinates,_,_ = round_coords_to_ERA5(bounding_box)
 
 # --- Start the month loop
-for month in range (1,13): # this loops through numbers 1 to 12
+for month in range (1,2): # this loops through numbers 1 to 12
        
     # find the number of days in this month
     daysInMonth = calendar.monthrange(year,month) 

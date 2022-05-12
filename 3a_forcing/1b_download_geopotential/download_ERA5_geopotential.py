@@ -83,7 +83,7 @@ bounding_box = [float(value) for value in bounding_box] # string to array
 # function to round coordinates of a bounding box to ERA5s 0.25 degree resolution
 def round_coords_to_ERA5(coords):
     
-    '''Assumes coodinates are an array: [lon_min,lat_min,lon_max,lat_max].
+    '''Assumes coodinates are an array: [lat_max,lon_min,lat_min,lon_max] (top-left, bottom-right).
     Returns separate lat and lon vectors.'''
     
     # Extract values
