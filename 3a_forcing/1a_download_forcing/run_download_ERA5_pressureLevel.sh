@@ -7,7 +7,7 @@
 # CDS registration: https://cds.climate.copernicus.eu/user/register?destination=%2F%23!%2Fhome
 # CDS api setup: https://cds.climate.copernicus.eu/api-how-to
 
-module load python/3.7
+module load python
 
 # --- Settings
 # -- Find where to save data

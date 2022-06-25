@@ -80,9 +80,9 @@ Pip:
 Package requirements specified in `requirements.txt`. Assumes a local install of the `GDAL` library is available. Scripts for topographic analysis are set up to interact with a stand-alone install of QGIS (see below). Basic instructions to create a new virtual environment:
 
 ```
-cd /path/to/summaWorkflow_public
-virtualenv summa-env
-source summa-env/bin/activate
+cd /path/to/CWARHM
+virtualenv cwarhm-env
+source cwarhm-env/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -90,14 +90,14 @@ Conda:
 Package requirements specified in `environment.yml`. Installs `GDAL` as a Conda package. Scripts for topographic analysis are set up to use the Conda `QGIS` package (see below). Basic instructions to create a new virtual environment:
 
 ```
-cd /path/to/summaWorkflow_public
+cd /path/to/CWARHM
 conda env create -f environment.yml
-conda activate summa-env
+conda activate cwarhm-env
 ```
 
-If `summa-env` is not automatically added as a kernel, close the notebook, run the following from a conda terminal and restart the notebook:
+If `cwarhm-env` is not automatically added as a kernel, close the notebook, run the following from a conda terminal and restart the notebook:
 ```
-python -m ipykernel install --name summa-env
+python -m ipykernel install --name cwarhm-env
 ```
 
 #### Note on differences between conda and pip
