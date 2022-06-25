@@ -7,7 +7,7 @@ import math
 import xarray as xr
 
 # Specify the input file(s)
-in_base       = '/project/6008034/CompHydCore/climateForcingData/ERA5/ERA5_for_SUMMA/'
+in_base       = '/gpfs/tp/gwf/gwf_cmt/wknoben/CWARHM_data/domain_global/forcing/'
 inout_paths   = ['1_ERA5_raw_data',                 '1_ERA5_raw_data',          '0_geopotential']
 in_files      = ['ERA5_pressureLevel137_197901.nc', 'ERA5_surface_197901.nc',   'ERA5_geopotential.nc']
 control_names = ['forcing_raw_path',                'forcing_raw_path',         'forcing_geo_path']
