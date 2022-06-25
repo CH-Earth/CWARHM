@@ -72,10 +72,18 @@ river_down_seg_id = read_from_control(controlFolder/controlFile,'river_network_s
 
 
 # --- Open the shape and process
+# Load the data
 shp = gpd.read_file(river_network_path/river_network_name)
-
-# Apply the correction
-shp[river_down_seg_id][shp[river_seg_id] == shp[river_down_seg_id]] = 0 
-
-# Save into original location
-shp.to_file(river_network_path/river_network_name)
+if (shp[river_seg_id] == shp[river_down_seg_id]).sum() > 0:
+    
+    # Print a log
+    print('About to fix circular river segment connections in {}/{}.'.format(river_network_path,river_network_name))
+    
+    # Apply the correction
+    shp[river_down_seg_id][shp[river_seg_id] == shp[river_down_seg_id]] = 0 
+    
+    # Save into original location
+    shp.to_file(river_network_path/river_network_name)
+    
+else:
+    print('No circular circular river segment connections found in {}/{}.'.format(river_network_path,river_network_name))
