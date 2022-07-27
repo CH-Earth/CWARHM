@@ -84,6 +84,7 @@ def determine_output(folder,file,nLines=2):
     
     # loop over the lines in the log text to find what happened
     msg = 'no line read' # initialize output
+    line = None
     for line in log_txt:
                 
         # determine if the log contains a SUMMA statement
@@ -105,7 +106,8 @@ def determine_output(folder,file,nLines=2):
         
     # if we reach this, no SUMMA termination statement was found
     other = 1
-    msg = 'check SLURM logs - simulation terminated early at: ' + line
+    if line is not None:
+        msg = 'check SLURM logs - simulation terminated early at: ' + line
     
     return success, summa, other, msg, time
     
