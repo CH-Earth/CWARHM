@@ -9,7 +9,6 @@ Store the obtained user details (username and password) in a new file `$HOME/.me
 ```
 user: [user]
 pass: [pass]
-
 ```
 
 ## Description

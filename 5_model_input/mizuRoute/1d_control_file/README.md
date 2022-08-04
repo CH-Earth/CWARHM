@@ -9,4 +9,4 @@ In the default setup in this workflow, the SUMMA modeling decision `subRouting` 
 
 ## Assumptions not specified in `control_active.txt`
 - Many of the variable names used in mizuRoute's control file are hard-coded here, because they are hard-coded in the other mizuRoute setup files as well. This is a conscious decision to make the variable names used by the scripts in the workflow correspond closely to the names used in the mizuRoute online documentation.
-- It is assumed that routing should be done for the entire provided river network. This can be changed by changing the value of variable `topolgy_outlet` to the segment ID that should be treated as the de facto outlet of the network.
+- It is assumed that routing should be done for the entire provided river network. This can be changed by changing the value of variable `topology_outlet` to the segment ID that should be treated as the de facto outlet of the network.

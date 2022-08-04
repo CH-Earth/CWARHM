@@ -1,7 +1,7 @@
 # Control files
-Control files are a basic way to interact with the code in the other parts of the repository. All scripts are set up to look for file_paths and certain other settings in the file `control_active.txt`. 
+Control files are a basic way to interact with the code in the other parts of the repository. All scripts are set up to look for file paths and certain other settings in the file `control_active.txt`. 
 
-To define a new domain, start by copying and renaming the `control_template.txt` file and populating it with the desired paths and settings. Then specify the name of this control file in the notebook or Python script `make_folder_structure` that can be found in folder `../1_folderPrep/`. This notebook/script will copy the contents of the new control file into `control_active.txt`, making sure that all settings are available for the scripts in the rest of the repository.
+To define a new domain, start by copying and renaming an existing control file and populating it with the desired paths and settings. Then specify the name of this updated control file in the notebook or Python script `make_folder_structure` that can be found in folder `../1_folderPrep/`. This notebook/script will copy the contents of the new control file into  a file called `control_active.txt`. The code in the rest of the repository will always look for the `control_active.txt` file and read any settings it needs from there.
 
 This setup allows a user to keep multiple control files in this directory, and switch between multiple experiments/domains by simply changing the contents of `control_active.txt`, without making changes to any other scripts in the repository.
 
