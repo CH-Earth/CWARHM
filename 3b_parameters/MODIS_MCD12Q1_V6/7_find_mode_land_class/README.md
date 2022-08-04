@@ -1,2 +1,2 @@
 # Find mode land class
-Takes the multiband `.tif` for the modeling domain and finds the mode vegetation class for each pixel. Every band contains data for a given year and this approach is in line with the recommendation in the MODIS docs to not use the data from any individual year due to the uncertainties involved. Using the mode likely gives us a more repsentative vegetation class per pixel.
+Takes the multiband `.tif` for the modeling domain and finds the mode vegetation class for each pixel. Every band contains data for a given year and this approach is in line with the recommendation in the MODIS docs to not use the data from any individual year due to the uncertainties involved. Using the mode likely gives us a more representative vegetation class per pixel.

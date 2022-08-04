@@ -17,7 +17,6 @@ Authentication is handled through Python's `requests` package. Store  user detai
 machine urs.earthdata.nasa.gov
 login <USERNAME>
 password <PASSWORD>
-
 ```
 For details, see: https://lpdaac.usgs.gov/resources/e-learning/how-access-lp-daac-data-command-line/
 

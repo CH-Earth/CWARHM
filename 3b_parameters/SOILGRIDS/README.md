@@ -15,7 +15,6 @@ Hydroshare downloads use the Python package `hs_restclient`. Downloads require a
 ```
 name: [name]
 pass: [pass]
-
 ```
 
 **_Note: given that these passwords are stored as plain text, it is strongly recommended to use a unique password that is different from any other passwords you currently have in use._**

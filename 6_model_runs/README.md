@@ -5,7 +5,7 @@ Contains scripts needed to run SUMMA and mizuRoute for a given experiment, using
 This section lists all the settings in `control_active.txt` that the code in this folder uses.
 - **install_path_summa, install_path_mizuroute**: install directories of both models
 - **exe_name_summa, exe_name_mizuroute**: names of compiled executables
-- **settings_summa_path, settings_mizu_path: main setting paths
+- **settings_summa_path, settings_mizu_path**: main setting paths
 - **settings_summa_filemanager, settings_mizu_control_file**: location of filemanager and mizuRoute.control files, which need to be specified as arguments for the executables
 - **experiment_log_summa, experiment_log_mizuroute**: location where log files need to be saved
 - **experiment_id**: name of the experiment
