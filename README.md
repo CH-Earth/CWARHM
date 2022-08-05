@@ -203,7 +203,7 @@ The Bash code requires various libraries and command line utilities. See the `Re
 The Python code requires various packages, which may be installed through either `pip` or `conda`. Please note that while conda automatically installs the necessary underlying libraries for a given package, pip does not. The user must take care to have local installs of the required libraries if using pip. See the `Requirements` section above. It is typically good practice to create a clean (virtual) environment and install the required packages through a package manager. The workflow was developed on Python 3.7.7. and successfully tested on Python 3.8.8. 
 
 Pip:
-Package requirements specified in `requirements.txt`. Assumes a local install various libraries is available. Basic instructions to create a new virtual environment:
+Package requirements specified in `requirements.txt`. Assumes a local install of various libraries is available. Basic instructions to create a new virtual environment:
 
 ```
 cd /path/to/CWARHM
