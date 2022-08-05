@@ -1,10 +1,14 @@
-.. ESM Open Workflow documentation master file, created by
+.. CWARHM Workflow documentation master file, created by
    sphinx-quickstart on Wed Nov 10 22:09:03 2021.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to ESM Open Workflow's documentation!
-=============================================
+Welcome to CWARHM's Workflow documentation!
+===========================================
+This page collects all individual README files in a single location.
+To navigate back to this main page, use the Home button in the top left.
+Source code and original documents can be found here: https://github.com/CH-Earth/CWARHM
+
 
 .. include:: ../../README.md
    :parser: myst_parser.sphinx_

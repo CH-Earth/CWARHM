@@ -1,5 +1,5 @@
-Step 0: Workflow control files
----------------------------------
+Step 0: Control files, example and tools
+----------------------------------------
 
 .. toctree::
    :numbered:
