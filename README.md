@@ -75,6 +75,12 @@ netCDF Operators              4.9.5     http://nco.sourceforge.net/
 Climate Data Operators (cdo)  1.9.8     https://code.mpimet.mpg.de/projects/cdo
 ```
 
+#### Note for reproduciblity
+Installation of Python packages is typically done through so-called package managers. Common ones are `pip` and `conda`. This repository contains configuration files usable by either package manager, called `requirements.txt` and `environment.yml` respectively. 
+
+All test cases described in Knoben et al. (2022) were generated using the library versions specified above, and the Python package versions specified in `requirements.txt`. Library and package versions in `environment.yml` differ slightly and were used during code development but not to generate any final results. 
+
+
 
 ### ESRI shapefile
 The scope of our workflow implementation assumes that the user has access to a basin discretization stored as an ESRI shapefile that defines the area of interest as discrete modeling elements (e.g., grid cells, sub-basins). Specifically, the workflow expects:
