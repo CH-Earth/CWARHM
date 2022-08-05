@@ -54,11 +54,11 @@ The model configuration code is written in a combination of Bash and Python and 
 
 Libraries needed for required Python packages:
 ```
-proj             7.0.1   https://proj.org/
-geos             3.8.1   https://libgeos.org/
-gdal             3.0.4   https://gdal.org/             Note: also used as a command line utility by certain scripts
-libspatialindex  1.8.5   https://libspatialindex.org/
-qgis             3.18.1  https://www.qgis.org/         Note: see Getting Started section for installation details
+proj             7.0.1    https://proj.org/
+geos             3.8.1    https://libgeos.org/
+gdal             3.0.4    https://gdal.org/             Note: also used as a command line utility by certain scripts
+libspatialindex  1.8.5    https://libspatialindex.org/
+qgis             3.16.01  https://www.qgis.org/         Note: see Getting Started section for installation details
 ```
 Python packages are listed in the `environment.yml` and `requirements.txt` files that can be found in the root folder of this repository. See the `Getting started` section for instructions on how to use these with conda and pip, respectively.
 
