@@ -41,7 +41,7 @@ stats_varId = 'scalarTotalRunoff'
 
 # Define where to save the figure
 fig_path = Path('/gpfs/tp/gwf/gwf_cmt/wknoben/CWARHM_data/domain_global/visualization')
-fig_name = 'mean_january_1979_runoff_FOR_global_v6.png'
+fig_name = 'mean_january_1979_runoff_FOR_global_v12.png'
 
 # Make the folder if it doesn't exist
 fig_path.mkdir(parents=True, exist_ok=True)
@@ -86,7 +86,7 @@ shp = shp.sort_values(by=stats_varId)
 # #### Prepare plotting settings
 # Basin settings
 q_ttl = '(b) Mean simulated total runoff'
-q_lbl = '[m s-1]'
+q_lbl = '$[m~s^{-1}]$'
 q_col = 'Blues'
 q_min = 1e-9
 q_max = 1e-7

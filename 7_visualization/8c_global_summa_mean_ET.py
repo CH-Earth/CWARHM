@@ -41,7 +41,7 @@ stats_varId = 'scalarTotalET'
 
 # Define where to save the figure
 fig_path = Path('/gpfs/tp/gwf/gwf_cmt/wknoben/CWARHM_data/domain_global/visualization')
-fig_name = 'mean_january_1979_evap_FOR_global_v11.jpg'
+fig_name = 'mean_january_1979_evap_FOR_global_v12.jpg'
 
 # Make the folder if it doesn't exist
 fig_path.mkdir(parents=True, exist_ok=True)
@@ -87,7 +87,7 @@ shp = shp.sort_values(by=stats_varId)
 # #### Prepare plotting settings
 # Basin settings
 et_ttl = '(a) Mean simulated total evapotranspiration'
-et_lbl = '[kg m-2 s-1]'
+et_lbl = '$[kg~m^{-2}~s^{-1}]$'
 
 # Make a global ET colormap
 #colors_low = plt.cm.YlGnBu_r(np.linspace(0,1,256))
