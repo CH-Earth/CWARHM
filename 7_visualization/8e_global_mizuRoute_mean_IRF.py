@@ -43,7 +43,7 @@ stats_varId = 'IRFroutedRunoff'
 
 # Define where to save the figure
 fig_path = Path('/gpfs/tp/gwf/gwf_cmt/wknoben/CWARHM_data/domain_global/visualization')
-fig_name = 'mean_january_1979_streamflow_per_segment_FOR_global_v5.png'
+fig_name = 'mean_january_1979_streamflow_per_segment_FOR_global_v12.png'
 
 # Make the folder if it doesn't exist
 fig_path.mkdir(parents=True, exist_ok=True)
@@ -84,7 +84,7 @@ shp = shp.sort_values(by='IRFroutedRunoff')
 linewidth = np.maximum(np.log10(shp[stats_varId])-2,0)
 river_col = 'Blues'
 river_ttl = '(c) Mean simulated streamflow'
-river_lbl = '[m3 s-1]'
+river_lbl = '$[m^3~s^{-1}]$'
 river_min = 1e-1
 river_max = 1e5
 river_nrm = matplotlib.colors.LogNorm(vmin=river_min, vmax=river_max)
