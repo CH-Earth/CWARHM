@@ -278,7 +278,7 @@ Hengl T, Mendes de Jesus J, Heuvelink GBM, Ruiperez Gonzalez M, Kilibarda M, Bla
 
 Knoben, W. J. M. (2021). Global USDA-NRCS soil texture class map, HydroShare, https://doi.org/10.4211/hs.1361509511e44adfba814f6950c6e742 	
 
-Knoben, W. J. M., Clark, M. P., Bales, J., Bennett, A., Gharari, S., Marsh, C. B., Nijssen, B., Pietroniro, A., Spiteri, R. J., Tang, G., Tarboton, D. G., & Wood, A. W. (2022). Community Workflows to Advance Reproducibility in Hydrologic Modeling: Separating model-agnostic and model-specific configuration steps in applications of large-domain hydrologic models [Preprint]. Hydrology. https://doi.org/10.1002/essoar.10509195.2
+Knoben, W. J. M., Clark, M. P., Bales, J., Bennett, A., Gharari, S., Marsh, C. B., Nijssen, B., Pietroniro, A., Spiteri, R. J., Tarboton, D. G. & Wood, A. W. (2022). Community Workflows to Advance Reproducibility in Hydrologic Modeling: Separating model-agnostic and model-specific configuration steps in applications of large-domain hydrologic models. Water Resources Research, e2021WR031753. https://doi.org/10.1029/2021WR031753
 
 Knoben, W. J. M., M. P. Clark, S. Gharari, G. Tang (2022a). Community Workflows to Advance Reproducibility in Hydrologic Modeling: Separating model-agnostic and model-specific configuration steps in applications of large-domain hydrologic models - Continental basin discretizations and river networks, HydroShare, https://doi.org/10.4211/hs.46d980a71d2c4365aa290dc1bfdac823
 
