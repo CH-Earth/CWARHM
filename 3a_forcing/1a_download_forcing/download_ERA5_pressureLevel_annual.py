@@ -7,22 +7,26 @@ import math
 from pathlib import Path
 from shutil import copyfile
 from datetime import datetime
+import argparse
 
 ''' 
 Downloads 1 year of ERA5 data as monthly chunks.
 Usage: python download_ERA5_pressureLevel_annual.py <year> <coordinates> <path/to/save/data> 
 '''
 
-# Get the year we're downloading from command line argument
-year = int(sys.argv[1]) # arguments are string by default; string to integer
+parser = argparse.ArgumentParser(description='Downloads 1 year of ERA5 data as monthly chunks')
+parser.add_argument('--year', type = int, required=True)
+parser.add_argument('--bounding-box', '-bb', type = str, help='Input north/east/south/west coordinates', required=True)
+parser.add_argument('--forcing-path', '-fp', type = str, required=True)
+
+args = parser.parse_args()
 
 # Get the spatial coordinates as the second command line argument
-bounding_box = sys.argv[2] # string
-bounding_box = bounding_box.split('/') # split string
+bounding_box = args.bounding_box.split('/') # split string
 bounding_box = [float(value) for value in bounding_box] # string to array
 
 # Get the path as the second command line argument
-forcingPath = Path(sys.argv[3]) # string to Path()
+forcingPath = Path(args.forcing_path) # string to Path()
 
 # --- Convert the bounding box to download coordinates
 # function to round coordinates of a bounding box to ERA5s 0.25 degree resolution
@@ -61,17 +65,18 @@ coordinates,_,_ = round_coords_to_ERA5(bounding_box)
 for month in range (1,13): # this loops through numbers 1 to 12
        
     # find the number of days in this month
-    daysInMonth = calendar.monthrange(year,month) 
+    daysInMonth = calendar.monthrange(args.year,month) 
         
     # compile the date string in the required format. Append 0's to the month number if needed (zfill(2))
-    date = str(year) + '-' + str(month).zfill(2) + '-01/to/' + \
-        str(year) + '-' + str(month).zfill(2) + '-' + str(daysInMonth[1]).zfill(2) 
-        
+    date = "{year}-{month}-01/to/{year}-{month}-{days}".format(year=args.year,
+                                                               month=str(month).zfill(2), 
+                                                               days=str(daysInMonth[1]).zfill(2))
+       
     # compile the file name string
-    file = forcingPath / ('ERA5_pressureLevel137_' + str(year) + str(month).zfill(2) + '.nc')
+    file = forcingPath / ('ERA5_pressureLevel137_' + str(args.year) + str(month).zfill(2) + '.nc')
 
     # track progress
-    print('Trying to download ' + date + ' into ' + str(file))
+    print(f'Trying to download {date} into {file}')
 
     # if file doesn't yet exist, download the data
     if not os.path.isfile(file):
@@ -102,10 +107,10 @@ for month in range (1,13): # this loops through numbers 1 to 12
                 }, file)
             
                 # track progress
-                print('Successfully downloaded ' + str(file))
+                print(f'Successfully downloaded {file}')
 
             except Exception as e:
-                print('Error downloading ' + str(file) + ' on try ' + str(retries_cur))
+                print(f'Error downloading {file} on try {retries_cur}')
                 print(str(e))
                 retries_cur += 1
                 continue
