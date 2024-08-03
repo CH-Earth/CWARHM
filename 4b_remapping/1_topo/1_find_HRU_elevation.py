@@ -1,22 +1,18 @@
 # Intersect catchment with MERIT DEM
-# Finds the mean elevation of each HRU in the model setup with pyQGIS.
+# Finds the mean elevation of each HRU in the model setup with rasterstats.
 #
 # Note:
-# The pyQGIS function `QgsZonalStatistics` automatically adds the calculated value to the shapefile used as input to the function. The workflow is thus:
 # 1. Find the source catchment shapefile;
 # 2. Copy the source catchment shapefile to the destintion location;
 # 3. Run the zonal statistics algorithm on the copy.
 
 # modules
 import os
+import geopandas as gpd
+from rasterstats import zonal_stats
 from pathlib import Path
-from shutil import which
 from shutil import copyfile
 from datetime import datetime
-from qgis.core import QgsApplication
-from qgis.core import QgsVectorLayer
-from qgis.core import QgsRasterLayer
-from qgis.analysis import QgsZonalStatistics
 
 
 # --- Control file handling
@@ -115,39 +111,22 @@ for file in os.listdir(catchment_path):
         copyfile(catchment_path/file, intersect_path/newfile);
         
         
-# --- QGIS analysis
-# Initialize QGIS
-os.environ["QT_QPA_PLATFORM"] = "offscreen" # disable QT trying to connect to display; needed on HPC infrastructure
-qgis_path = which('qgis') # find the QGIS install location
-QgsApplication.setPrefixPath(qgis_path, True) # supply path to qgis install location
-qgs = QgsApplication([], False) # create a reference to the QgsApplication, GUI = False
-qgs.initQgis() # load providers
+# --- Rasterstats analysis
+# Load the shapefile
+gdf = gpd.read_file(str(intersect_path/intersect_name))
 
-# Convert Path() to string for QGIS
-catchment_file = str(intersect_path/intersect_name) # needs to be the copied file because output is automatically added to this
-dem_file = str(dem_path/dem_name)
+# Calculate zonal statistics
+stats = zonal_stats(gdf, 
+                    str(dem_path/dem_name), 
+                    stats=['mean'], 
+                    all_touched=True)
 
-# Load the shape and raster
-layer_polygon = QgsVectorLayer(catchment_file,'merit_hydro_basin','ogr')
-layer_raster  = QgsRasterLayer(dem_file,'merit_hydro_dem')
+# Add the mean elevation to the GeoDataFrame
+gdf['elev_mean'] = [stat['mean'] for stat in stats]
 
-# Check we loaded the layers correctly
-if not layer_raster.isValid():
-    print('Raster layer failed to load')
-    
-if not layer_polygon.isValid():
-    print('Polygon layer failed to load')
-    
-# Create a zonal statistics object, automatically saved to file
-band = 1 # raster band with the data we are after
-zonalstats = QgsZonalStatistics(layer_polygon,                 # shapefile
-                                layer_raster,                  # .tif
-                                'elev_',                       # prefix for the new column added to the shapefile  
-                                band,                          # raster band we're interested in
-                                stats=QgsZonalStatistics.Mean).calculateStatistics(None)
+# Save the updated GeoDataFrame
+gdf.to_file(str(intersect_path/intersect_name))
                                 
-# Clean memory
-qgs.exitQgis()
 
                                 
 # --- Code provenance

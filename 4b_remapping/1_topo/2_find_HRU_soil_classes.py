@@ -1,18 +1,16 @@
 # Intersect catchment with SOILGRIDS soil classes
-# Counts the occurence of each soil class in each HRU in the model setup with pyQGIS.
+# Counts the occurence of each soil class in each HRU in the model setup with rasterstats.
 
 # modules
 import os
-import sys
 from pathlib import Path
-from shutil import which
 from shutil import copyfile
 from datetime import datetime
-from qgis.core import QgsApplication
-from qgis.core import QgsVectorLayer
-from qgis.core import QgsRasterLayer
-from qgis.core import QgsProcessingFeedback
-from qgis.analysis import QgsNativeAlgorithms
+import geopandas as gpd
+import rasterio
+from rasterstats import zonal_stats
+import pandas as pd
+import numpy as np
 
 
 # --- Control file handling
@@ -94,46 +92,35 @@ else:
 intersect_path.mkdir(parents=True, exist_ok=True)
 
 
-# --- Initialize QGIS connection
-qgis_path = which('qgis') # find the QGIS install location
-QgsApplication.setPrefixPath(qgis_path, True) # supply path to qgis install location
+# --- Rasterstats analysis
+# Load the shapefile
+gdf = gpd.read_file(catchment_path / catchment_name)
 
-# Now import the processing toolbox
-import processing # QGIS algorithm runner
+# Open the raster file
+with rasterio.open(soil_path / soil_name) as src:
+    affine = src.transform
+    array = src.read(1)  # Read the first band
 
-# Import all native QGIS algorithms
-QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms());
+# Get unique values in the raster
+unique_values = np.unique(array).astype(int)
+unique_values = unique_values[unique_values != src.nodata]  # Remove nodata value if present
 
+# Perform zonal statistics for each unique value
+results = []
+for value in unique_values:
+    category_stats = zonal_stats(gdf, array, affine=affine, stats=['count'], categorical=True, 
+                                 category_map={value: 1})
+    counts = [stat.get(1, 0) for stat in category_stats]  # Get count for category 1, default to 0 if not present
+    results.append(pd.DataFrame(counts, columns=[f'USGS_{value}']))
 
-# --- QGIS analysis
-# Convert Path() to string for QGIS
-catchment_file = str(catchment_path/catchment_name)
-soil_file      = str(soil_path/soil_name)
+# Combine all results
+hist_df = pd.concat(results, axis=1).fillna(0).astype(int)
 
-# Load the shape and raster
-layer_polygon = QgsVectorLayer(catchment_file,'merit_hydro_basin','ogr') # this works
-layer_raster  = QgsRasterLayer(soil_file,'soilgrids_soil_classes') # this works
+# Combine the original GeoDataFrame with the histogram results
+result = gdf.join(hist_df)
 
-# Check we loaded the layers correctly
-if not layer_raster.isValid():
-    print('Raster layer failed to load')
-    
-if not layer_polygon.isValid():
-    print('Polygon layer failed to load')
-    
-# Specify the parameters for the zonalHistogram function
-band = 1 # raster band with the data we are after
-params = { 'COLUMN_PREFIX': 'USGS_',
-           'INPUT_RASTER' : layer_raster, 
-           'INPUT_VECTOR' : layer_polygon, 
-           'OUTPUT'       : str(intersect_path/intersect_name), 
-           'RASTER_BAND'  : band }
-           
-# Algorithm feedback
-feedback = QgsProcessingFeedback()
-
-# Run the zonalHistogram
-res = processing.run("native:zonalhistogram", params, feedback=feedback)
+# Save the result
+result.to_file(intersect_path / intersect_name)
 
 
 # --- Code provenance

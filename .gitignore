@@ -12,3 +12,9 @@ core.*
 rtd/build
 
 rtd/source/*.md
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore environment configuration files
+.env
