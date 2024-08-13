@@ -12,16 +12,24 @@ Makes the initial folder structure for a given control file. All other files in 
 The destination folders are referred to as "domain folders".
 '''
 
-# Specify the control file to use
-sourceFile  = 'control_Bow_at_Banff.txt'
+# Specify the control file to use. Use 
+
 
 # --- Do not change below this line.
 
 # Modules
-import os
+import sys
 from pathlib import Path
 from shutil import copyfile
 from datetime import datetime
+
+
+# Access to the source file
+if len(sys.argv) > 2:
+    print("Usage: %s <control_file>" % sys.argv[0])
+    sys.exit(0)
+# Otherwise continue
+sourceFile = sys.argv[1]
 
 # --- Copy the control file into `control_active.txt`
 # Easy access to control file folder
