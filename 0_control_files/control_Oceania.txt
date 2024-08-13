@@ -142,8 +142,8 @@ settings_mizu_control_file  | mizuroute.control                           # Name
 settings_mizu_routing_var   | averageRoutedRunoff                         # Name of SUMMA output variable to use for routing.
 settings_mizu_routing_units | m/s                                         # Units of the variable to be routed.
 settings_mizu_routing_dt    | 3600                                        # Size of the routing time step [s].
-settings_mizu_output_freq   | annual                                      # Frequency with which mizuRoute generates new output files. Must be one of 'single', 'day', 'month', 'annual'.
-settings_mizu_output_vars   | 0                                           # Routing output. '0' for both KWT and IRF; '1' IRF only; '2' KWT only.
+settings_mizu_output_freq   | yearly                                      # Frequency with which mizuRoute generates new output files. Must be one of 'single', 'daily', 'monthly', 'yearly'.
+settings_mizu_output_vars   | 2                                           # Option for routing schemes. 0: Sum; 1: IRF; 2: KWT; 3: KW: 4: MC; 5: DW. Saves no data if not specified 
 settings_mizu_within_basin  | 0                                           # '0' (no) or '1' (IRF routing). Flag to enable within-basin routing by mizuRoute. Should be set to 0 if SUMMA is run with "subRouting" decision "timeDlay".
 settings_mizu_make_outlet   | n/a                                         # Segment ID or IDs that should be set as network outlet. Specify multiple IDs separated by commas: X,Y,Z. Specify no IDs as: n/a. Note that this can also be done in the network shapefile.
 
