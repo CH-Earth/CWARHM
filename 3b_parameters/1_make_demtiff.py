@@ -2,6 +2,7 @@
 # Copies the base settings into the mizuRoute settings folder.
 
 # modules
+import pandas as pd
 from pathlib import Path
 from shutil import copyfile
 from datetime import datetime
@@ -63,8 +64,28 @@ else:
     CAMELS_spath = Path(CAMELS_spath) # make sure a user-specified path is a Path()
 
 
-dem_file_path =  CAMELS_spath / domainName / 'geospatial' / 'merit' / 'raw'
-dem_file_name = 'merit_hydro_elv.tif'
+# Metadata
+metadata_path = CAMELS_spath
+metadata_name = "camels-spat-metadata.csv"
+
+df_metadata = pd.read_csv(metadata_path / metadata_name)
+
+
+country, station_id = domainName.split("_")
+
+# Get categories 
+category_value = df_metadata.loc[(df_metadata['Country'] == country) & (df_metadata['Station_id'] == station_id), 'subset_category']
+
+# Ensure category_value is a string
+if not category_value.empty:
+    category_value = category_value.iloc[0]  # Convert Series to string
+else:
+    raise ValueError("No matching subset category found.")  # Handle missing value
+    
+    
+#DEM
+dem_file_path =  CAMELS_spath / 'geospatial' / category_value / 'merit' / domainName
+dem_file_name = domainName + '_merit_hydro_elv.tif'
 
 
 # --- Find where the dem will be

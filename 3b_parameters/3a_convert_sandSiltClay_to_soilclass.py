@@ -18,7 +18,7 @@
 # Hengl T, Mendes de Jesus J, Heuvelink GBM, Ruiperez Gonzalez M, Kilibarda M, Blagotic A, et al. (2017) SoilGrids250m: Global gridded soil information based on machine learning. PLoS ONE 12(2): e0169748. https://doi.org/10.1371/journal.pone.0169748
 # Benham, E., Ahrens, R. J., & Nettleton, W. D. (2009). Clarification of Soil Texture Class Boundaries. United States Department of Agriculture. https://www.nrcs.usda.gov/wps/portal/nrcs/detail/ks/soils/?cid=nrcs142p2_033171
 
-
+import pandas as pd
 import numpy as np
 from osgeo import gdal
 from pathlib import Path
@@ -80,13 +80,31 @@ if CAMELS_spath == 'default':
     CAMELS_spath = rootPath / 'CAMELS-spat'
 else:
     CAMELS_spath = Path(CAMELS_spath) # make sure a user-specified path is a Path()
+    
+# Metadata
+metadata_path = CAMELS_spath
+metadata_name = "camels-spat-metadata.csv"
+
+df_metadata = pd.read_csv(metadata_path / metadata_name)
 
 
-soil_file_path =  CAMELS_spath / domainName / 'geospatial' / 'soilgrids' / 'raw'
+country, station_id = domainName.split("_")
 
-file_clay = 'clay_'
-file_sand = 'sand_'
-file_silt = 'silt_'
+# Get categories 
+category_value = df_metadata.loc[(df_metadata['Country'] == country) & (df_metadata['Station_id'] == station_id), 'subset_category']
+
+# Ensure category_value is a string
+if not category_value.empty:
+    category_value = category_value.iloc[0]  # Convert Series to string
+else:
+    raise ValueError("No matching subset category found.")  # Handle missing value    
+
+# Soil
+soil_file_path =  CAMELS_spath / 'geospatial' / category_value / 'soilgrids' / domainName
+
+file_clay = domainName + '_clay_'
+file_sand = domainName + '_sand_'
+file_silt = domainName + '_silt_'
 file_end = '_mean.tif'
 
 # --- Find where the soil will be
@@ -201,9 +219,9 @@ for sl in sl_list:
 
     # For the specified soil depth ...
     # Explicitly create the path
-    clay_path = soil_file_path / 'clay' / (file_clay + sl + file_end)
-    sand_path = soil_file_path / 'sand' / (file_sand + sl + file_end)
-    silt_path = soil_file_path / 'silt' / (file_silt + sl + file_end)
+    clay_path = soil_file_path / (file_clay + sl + file_end)
+    sand_path = soil_file_path / (file_sand + sl + file_end)
+    silt_path = soil_file_path / (file_silt + sl + file_end)
     
     # Get the geotif bands that contain sand/silt/clay and their coordinates
     sand, sand_coord = open_soilgrids_geotif( sand_path ) 
@@ -225,7 +243,7 @@ for sl in sl_list:
     soilclass,_ = find_usda_soilclass(sand,silt,clay,noData)
     
     # Save resulting soil class file as a new .tif, using an existing one as template
-    src = soil_file_path / 'clay' / (file_clay + sl + file_end)
+    src = soil_file_path / (file_clay + sl + file_end)
     des = parameter_soil_domain_path / (file_des + sl + file_end)
     create_new_tif(src,soilclass,des)
 

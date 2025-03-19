@@ -52,7 +52,7 @@ exe_name_mizuroute          | mizuroute.exe                               # Name
 
 # Forcing settings
 forcing_raw_time            | 2000,2020                                   # Years to download: Jan-[from],Dec-[to].
-forcing_data_name           | ERA5                                        # ERA5 or EM-Earth.
+forcing_data_name           | era5                                        # era5 or rdrs.
 forcing_time_step_size      | 3600                                        # Size of the forcing time step in [s]. Must be constant.
 forcing_measurement_height  | 3                                           # Reference height for forcing measurements [m].
 forcing_summa_path          | default                                     # If 'default', uses 'root_path/domain_[name]/forcing/4_SUMMA_input'.
@@ -115,7 +115,7 @@ settings_mizu_routing_var   | averageRoutedRunoff                         # Name
 settings_mizu_routing_units | m/s                                         # Units of the variable to be routed.
 settings_mizu_routing_dt    | 3600                                        # Size of the routing time step [s].
 settings_mizu_output_freq   | yearly                                      # Frequency with which mizuRoute generates new output files. Must be one of 'single', 'daily', 'monthly', 'yearly'.
-settings_mizu_output_vars   | 2                                           # Option for routing schemes. 0: Sum; 1: IRF; 2: KWT; 3: KW: 4: MC; 5: DW. Saves no data if not specified 
+settings_mizu_output_vars   | 1                                           # Option for routing schemes. 0: Sum; 1: IRF; 2: KWT; 3: KW: 4: MC; 5: DW. Saves no data if not specified 
 settings_mizu_within_basin  | 0                                           # '0' (no) or '1' (IRF routing). Flag to enable within-basin routing by mizuRoute. Should be set to 0 if SUMMA is run with "subRouting" decision "timeDlay".
 settings_mizu_make_outlet   | default                                     # Segment ID or IDs that should be set as network outlet. Specify multiple IDs separated by commas: X,Y,Z. Specify no IDs as: n/a. Note that this can also be done in the network shapefile. If default, The HRU with the largest upstream surface is selected.
 

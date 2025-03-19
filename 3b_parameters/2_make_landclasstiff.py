@@ -2,6 +2,7 @@
 # Copies the base settings into the mizuRoute settings folder.
 
 # modules
+import pandas as pd
 from pathlib import Path
 from shutil import copyfile
 from datetime import datetime
@@ -61,10 +62,28 @@ if CAMELS_spath == 'default':
     CAMELS_spath = rootPath / 'CAMELS-spat'
 else:
     CAMELS_spath = Path(CAMELS_spath) # make sure a user-specified path is a Path()
+    
+# Metadata
+metadata_path = CAMELS_spath
+metadata_name = "camels-spat-metadata.csv"
+
+df_metadata = pd.read_csv(metadata_path / metadata_name)
 
 
-landclass_file_path =  CAMELS_spath / domainName / 'geospatial' / 'modis_land' / 'raw'
-landclass_file_name = '2001_2022_mode_MCD12Q1_LC_Type1.tif'
+country, station_id = domainName.split("_")
+
+# Get categories 
+category_value = df_metadata.loc[(df_metadata['Country'] == country) & (df_metadata['Station_id'] == station_id), 'subset_category']
+
+# Ensure category_value is a string
+if not category_value.empty:
+    category_value = category_value.iloc[0]  # Convert Series to string
+else:
+    raise ValueError("No matching subset category found.")  # Handle missing value    
+
+# Landclass
+landclass_file_path =  CAMELS_spath / 'geospatial' / category_value / 'modis-land' / domainName
+landclass_file_name = domainName + '_2001_2022_mode_MCD12Q1_LC_Type1.tif'
 
 
 # --- Find where the landclass will be

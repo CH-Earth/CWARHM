@@ -6,7 +6,7 @@
 # - Catchment shapefile with HRU delineation
 # - River network shapefile with stream segments
 # - SUMMA output `scalarSWE`
-# - mizuRoute output `KWTroutedRunoff`
+# - mizuRoute output `IRFroutedRunoff`
 
 # In[1]:
 
@@ -204,7 +204,7 @@ else:
 
 # Specify the variable of interest
 mizu_output_name = 'run1*.nc'
-mizu_plot_var = 'KWTroutedRunoff'
+mizu_plot_var = 'IRFroutedRunoff'
 
 
 # #### Load the shape and data

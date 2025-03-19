@@ -66,13 +66,139 @@ if CAMELS_spath == 'default':
 else:
     CAMELS_spath = Path(CAMELS_spath) # make sure a user-specified path is a Path()
 
+# Metadata
+metadata_path = CAMELS_spath
+metadata_name = "camels-spat-metadata.csv"
 
-shapefiles_path =  CAMELS_spath / domainName / 'shapefiles' / 'distributed'
+df_metadata = pd.read_csv(metadata_path / metadata_name)
 
-river_file_name = domainName + '_distributed_river.shp'
-catchment_file_name = domainName + '_distributed_basin.shp'
 
-# --- Find where the river network will be
+country, station_id = domainName.split("_")
+
+# Get categories 
+category_value = df_metadata.loc[(df_metadata['Country'] == country) & (df_metadata['Station_id'] == station_id), 'subset_category']
+
+# Ensure category_value is a string
+if not category_value.empty:
+    category_value = category_value.iloc[0]  # Convert Series to string
+else:
+    raise ValueError("No matching subset category found.")  # Handle missing value
+    
+    
+#shapefiles
+spa = 'distributed'
+
+shapefiles_path =  CAMELS_spath / 'shapefiles' / category_value / ('shapes-' + spa) / domainName
+
+river_file_name = domainName + '_'+ spa + '_river.shp'
+catchment_file_name = domainName + '_'+ spa + '_basin.shp'
+
+
+# --- Modify the river basin shapefile for MizuRoute
+
+
+shp_river_basin = gpd.read_file( shapefiles_path / catchment_file_name )
+
+shp_river_basin['COMID'] = (10*shp_river_basin['COMID']).astype(int)
+shp_river_basin = shp_river_basin.assign(area = shp_river_basin['unitarea']*1000000)
+shp_river_basin = shp_river_basin.assign(hru_to_seg = shp_river_basin['COMID'])
+
+
+
+# --- Modify the the river network shapefile for Mizuroute
+
+shp_river_network_ini = gpd.read_file( shapefiles_path / river_file_name )
+
+# Correction step for splitted catchments
+def fixed_shp(shp_river_network):
+    # Make a copy of the original dataframe
+    shp_river_network_fixed = shp_river_network.copy()
+    
+    # Identify COMIDs with decimals (split COMIDs) and store the non-split version
+    splitted_catchments = shp_river_network[shp_river_network['COMID'] % 1 != 0]['COMID']
+    
+    for catchment in splitted_catchments:
+        comid_ini = catchment  
+        non_splitted = float(str(comid_ini).split('.')[0])
+        
+        # Get NextDownID for the current COMID
+        nextdownid_ini = shp_river_network.loc[shp_river_network["COMID"] == comid_ini, "NextDownID"].iloc[0]
+        
+        # Check if NextDownID is a natural number (not a split catchment)
+        if nextdownid_ini % 1 != 0:
+            for up_col in ["up1", "up2", "up3", "up4"]:
+                comid_new = shp_river_network.loc[shp_river_network["COMID"] == comid_ini, up_col].iloc[0]
+                shp_river_network_fixed.loc[shp_river_network_fixed["COMID"] == comid_new, "NextDownID"] = comid_ini
+        else:
+            comid_new = nextdownid_ini
+            for up_col in ["up1", "up2", "up3", "up4"]:
+                if shp_river_network.loc[shp_river_network["COMID"] == comid_new, up_col].values[0] == non_splitted:
+                    shp_river_network_fixed.loc[shp_river_network_fixed["COMID"] == comid_new, up_col] = comid_ini
+    
+    return shp_river_network_fixed
+
+shp_river_network = fixed_shp(shp_river_network_ini)
+
+shp_river_network['COMID'] = (10*shp_river_network['COMID']).astype(int)
+shp_river_network['NextDownID'] = (10*shp_river_network['NextDownID']).astype(int)
+for col in ['up1', 'up2', 'up3', 'up4']:
+    shp_river_network[col] = (
+        shp_river_network[col]
+        .where(shp_river_network[col] == 0, (10 * shp_river_network[col]).astype(int))
+        .astype(int)  # Ensures integer type even with NaNs
+    )
+
+
+shp_river_network = shp_river_network.assign(length = shp_river_network['new_len_km']*1000)
+# shp_river_network.loc[shp_river_network['length'] <= 0, 'length'] = 1
+
+
+# Set the NextDownID of the downstream GRU to 0
+next_down_ids = set(shp_river_network["NextDownID"])
+comid_values = set(shp_river_network["COMID"])  
+
+search_value = next_down_ids - comid_values
+search_value = next(iter(search_value))
+
+matching_row = shp_river_network[shp_river_network["NextDownID"] == search_value]
+
+
+shp_river_network.loc[matching_row.index, 'NextDownID'] = 0
+
+shp_river_network = shp_river_network.set_index('COMID')
+shp_river_network = shp_river_network.reindex(shp_river_basin['COMID'])
+shp_river_network = shp_river_network.reset_index()
+
+
+
+# --- Modify the the catchment shapefile for SUMMA
+
+shp_catchment = gpd.read_file( shapefiles_path / catchment_file_name )
+
+shp_catchment['COMID'] = (10*shp_catchment['COMID']).astype(int)
+shp_catchment = shp_catchment.assign(HRU_area = shp_catchment['unitarea']*1000000)
+shp_catchment = shp_catchment.assign(HRU_ID = shp_catchment['COMID'])
+shp_catchment = shp_catchment.assign(GRU_ID = shp_catchment['COMID'])
+
+
+
+# Use forcing to get the lat and lon values
+forcing_name = read_from_control(controlFolder/controlFile,'forcing_data_name')
+forcing_path =  CAMELS_spath / 'forcing' / category_value / forcing_name / (forcing_name + '-' + spa) 
+
+forcing_file = domainName + "_" + forcing_name + "_" + spa +".nc"
+
+nc_forcing = xr.open_dataset(forcing_path / forcing_file)
+
+lat = nc_forcing['latitude'].isel(time=0).values
+lon = nc_forcing['longitude'].isel(time=0).values
+
+shp_catchment = shp_catchment.assign(center_lat = lat)
+shp_catchment = shp_catchment.assign(center_lon = lon)
+
+
+
+# --- Find river network output folder
 # River network shapefile path & name
 river_network_path = read_from_control(controlFolder/controlFile,'river_network_shp_path')
 river_network_name = read_from_control(controlFolder/controlFile,'river_network_shp_name')
@@ -85,7 +211,7 @@ else:
 
 
 
-# --- Find where the river basin shapefile (routing catchments) will be
+# --- Find river basin shapefile (routing catchments) output folder
 
 pd.options.mode.chained_assignment = None # Avoid warning: value is trying to be set on a copy of a slice from a DataFrame
 
@@ -101,7 +227,7 @@ else:
     
     
     
-# --- Find where the catchment shapefile will be
+# --- Find catchment shapefile output folder
 # Catchment shapefile path & name
 catchment_path = read_from_control(controlFolder/controlFile,'catchment_shp_path')
 catchment_name = read_from_control(controlFolder/controlFile,'catchment_shp_name')
@@ -112,83 +238,13 @@ if catchment_path == 'default':
 else:
     catchment_path = Path(catchment_path) # make sure a user-specified path is a Path()
 
-
-
-
-# --- Modify the the river network shapefile for Mizuroute
-
-shp_river_network = gpd.read_file( shapefiles_path / river_file_name )
-
-shp_river_network = shp_river_network.assign(length = shp_river_network['lengthkm']*1000)
-shp_river_network['length'][shp_river_network['length'] <= 0] = 1
-
-# Function to compare if the values of set1 are in set2
-def in4set(set1, set2):
-    answer = list()
-    for x in list(set1) :
-        answer.append(x in list(set2))
-    return(answer)
-
-# Set the NextDownID of the downstream GRU to 0
-max_value = max(shp_river_network['uparea'])
-max_index = list(shp_river_network['uparea']).index(max_value)
-
-shp_river_network['NextDownID'][max_index] = 0
-
-shp_river_network.to_file(river_network_path / river_network_name)
-
-
-
-# --- Modify the the river basin shapefile for MizuRoute
-
-
-shp_river_basin = gpd.read_file( shapefiles_path / catchment_file_name )
-
-shp_river_basin = shp_river_basin.assign(area = shp_river_basin['unitarea']*1000000)
-shp_river_basin = shp_river_basin.assign(hru_to_seg = shp_river_basin['COMID'])
-
+    
+# --- Save shapefiles
 
 shp_river_basin.to_file(river_basin_path / river_basin_name)
-
-
-# --- Modify the the catchment shapefile for SUMMA
-
-shp_catchment = gpd.read_file( shapefiles_path / catchment_file_name )
-
-shp_catchment = shp_catchment.assign(HRU_area = shp_catchment['unitarea']*1000000)
-shp_catchment = shp_catchment.assign(HRU_ID = shp_catchment['COMID'])
-shp_catchment = shp_catchment.assign(GRU_ID = shp_catchment['COMID'])
-
-
-# Spatialisation
-spa = 'distributed'
-
-if spa == 'distributed':
-    spa_name = 'dist' # name for forcing files
-else:
-    spa_name = spa
-
-# Forcing path
-forcing_path =  CAMELS_spath / domainName / 'forcing' / spa
-
-# Forcing data product
-forcing_data = read_from_control(controlFolder/controlFile,'forcing_data_name')
-
-forcing_files = glob.glob(str(forcing_path / str(forcing_data + '*.nc')))
-
-
-nc = xr.open_dataset(forcing_files[0])
-
-lat = nc['latitude']
-lon = nc['longitude']
-
-shp_catchment = shp_catchment.assign(center_lat = lat)
-shp_catchment = shp_catchment.assign(center_lon = lon)
-
-
+shp_river_network.to_file(river_network_path / river_network_name)
 shp_catchment.to_file(catchment_path / catchment_name)
 
-    
     
 # --- Code provenance
 # Generates a basic log file in the domain folder and copies the control file and itself there.
