@@ -150,14 +150,7 @@ forcing_hruIds = forc['hruId'].values.astype(int) # 'hruId' is prescribed by SUM
 
 # Make the hruId variable in the shapefile the index
 shp = shp.set_index(catchment_hruId_var)
-
-# Enforce index as integers
-shp.index = shp.index.astype(int)
-
-# Sort the shape based on the forcing HRU order
-shp = shp.loc[forcing_hruIds]
-
-# Reset the index so that we reference each row properly in later code
+shp = shp.reindex(forcing_hruIds)
 shp = shp.reset_index()
 
 

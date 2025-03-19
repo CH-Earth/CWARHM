@@ -104,22 +104,29 @@ else:
 # Make the folder if it doesn't exist
 topology_path.mkdir(parents=True, exist_ok=True)
 
-# --- Find if we need to enforce any segments as outlet(s)
-river_outlet_ids  = read_from_control(controlFolder/controlFile,'settings_mizu_make_outlet')
-
-# Set flag and convert variable type if needed
-if 'n/a' in river_outlet_ids:
-    enforce_outlets = False
-else:
-    enforce_outlets = True
-    river_outlet_ids = river_outlet_ids.split(',') # does nothing if string contains no comma
-    river_outlet_ids = [int(outlet_id) for outlet_id in river_outlet_ids]    
 
 
 # --- Make the river network topology file
 # Open the shapefile
 shp_river = gpd.read_file(river_network_path/river_network_name)
 shp_basin = gpd.read_file(river_basin_path/river_basin_name)
+
+# Find if we need to enforce any segments as outlet(s)
+river_outlet_ids  = read_from_control(controlFolder/controlFile,'settings_mizu_make_outlet')
+
+# Set flag and convert variable type if needed
+if 'n/a' in river_outlet_ids:
+    enforce_outlets = False
+elif 'default' in river_outlet_ids:
+    enforce_outlets = True
+    river_outlet_ids = shp_river[shp_river['NextDownID'] == 0]['COMID'].tolist()
+
+else:
+    enforce_outlets = True
+    river_outlet_ids = river_outlet_ids.split(',') # does nothing if string contains no comma
+    river_outlet_ids = [int(outlet_id) for outlet_id in river_outlet_ids]    
+
+
 
 # Find the number of segments and mizuRoute-HRUs (SUMMA-GRUs)
 num_seg = len(shp_river)
@@ -166,11 +173,11 @@ with nc4.Dataset(topology_path/topology_name, 'w', format='NETCDF4') as ncid:
     ncid.createDimension('hru', num_hru)
     
     # --- Variables
-    create_and_fill_nc_var(ncid, 'segId', 'int', 'seg', False, \
-                           shp_river[river_seg_id].values.astype(int), \
+    create_and_fill_nc_var(ncid, 'segId', 'i4', 'seg', False, \
+                           shp_river[river_seg_id].values.astype(float), \
                            'Unique ID of each stream segment', '-')
-    create_and_fill_nc_var(ncid, 'downSegId', 'int', 'seg', False, \
-                           shp_river[river_down_seg_id].values.astype(int), \
+    create_and_fill_nc_var(ncid, 'downSegId', 'i4', 'seg', False, \
+                           shp_river[river_down_seg_id].values.astype(float), \
                            'ID of the downstream segment', '-')
     create_and_fill_nc_var(ncid, 'slope', 'f8', 'seg', False, \
                            shp_river[river_slope].values.astype(float), \
@@ -178,11 +185,11 @@ with nc4.Dataset(topology_path/topology_name, 'w', format='NETCDF4') as ncid:
     create_and_fill_nc_var(ncid, 'length', 'f8', 'seg', False, \
                            shp_river[river_length].values.astype(float), \
                            'Segment length', 'm')
-    create_and_fill_nc_var(ncid, 'hruId', 'int', 'hru', False, \
-                           shp_basin[basin_hru_id].values.astype(int), \
+    create_and_fill_nc_var(ncid, 'hruId', 'i4', 'hru', False, \
+                           shp_basin[basin_hru_id].values.astype(float), \
                            'Unique hru ID', '-') 
-    create_and_fill_nc_var(ncid, 'hruToSegId', 'int', 'hru', False, \
-                           shp_basin[basin_hru_to_seg].values.astype(int), \
+    create_and_fill_nc_var(ncid, 'hruToSegId', 'i4', 'hru', False, \
+                           shp_basin[basin_hru_to_seg].values.astype(float), \
                            'ID of the stream segment to which the HRU discharges', '-')
     create_and_fill_nc_var(ncid, 'area', 'f8', 'hru', False, \
                            shp_basin[basin_hru_area].values.astype(float), \
