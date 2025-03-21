@@ -137,7 +137,7 @@ with open(filemanager_path / filemanager_name, 'w') as fm:
     # Simulation times
     fm.write("simStartTime         '{}' ! \n".format(sim_start))
     fm.write("simEndTime           '{}' ! \n".format(sim_end))
-    fm.write("tmZoneInfo           'utcTime' ! \n")
+    fm.write("tmZoneInfo           'localTime' ! \n")
     
     # Prefix for SUMMA outputs
     fm.write("outFilePrefix        '{}' ! \n".format(experiment_id))

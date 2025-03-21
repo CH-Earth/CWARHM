@@ -5,10 +5,13 @@
 from pathlib import Path
 from shutil import copyfile
 from geopandas import gpd
+from rasterstats import point_query
 import pandas as pd
 import xarray as xr
-import glob 
+import numpy as np 
 from datetime import datetime
+from shapely.geometry import Point
+
 
 # --- Control file handling
 # Easy access to control file folder
@@ -139,6 +142,34 @@ def fixed_shp(shp_river_network):
 
 shp_river_network = fixed_shp(shp_river_network_ini)
 
+# Get slope information when NA values are encoutnered (splitted catchments)
+
+dem_path = CAMELS_spath / 'geospatial' / category_value / 'merit' / domainName
+dem_file_name = domainName + '_merit_hydro_elv.tif'
+dem_file = dem_path / dem_file_name
+
+start_points = [Point(geom.coords[0]) for geom in shp_river_network.geometry]
+start_gdf = gpd.GeoDataFrame(geometry=start_points, crs=shp_river_network.crs)
+elev_start = point_query(start_gdf, dem_file)
+
+end_points = [Point(geom.coords[-1]) for geom in shp_river_network.geometry]
+end_gdf = gpd.GeoDataFrame(geometry=end_points, crs=shp_river_network.crs)
+elev_end = point_query(end_gdf, dem_file)
+
+elev_start_array = np.array(elev_start)
+elev_end_array = np.array(elev_end)
+elevation_diff = np.abs(elev_start_array - elev_end_array)
+
+length_m = np.array(shp_river_network["new_len_km"]) * 1000
+
+slope_values = elevation_diff / length_m
+
+shp_river_network = shp_river_network.rename(columns={'slope': 'slope_merit'})
+shp_river_network['slope'] = slope_values
+
+
+
+# Multiply COMID by 10 and convert to integer to ensure splitted catchments are taken into account
 shp_river_network['COMID'] = (10*shp_river_network['COMID']).astype(int)
 shp_river_network['NextDownID'] = (10*shp_river_network['NextDownID']).astype(int)
 for col in ['up1', 'up2', 'up3', 'up4']:
