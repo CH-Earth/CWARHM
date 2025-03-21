@@ -206,8 +206,8 @@ with open(control_path / control_name, 'w') as cf:
     cf.write("<case_name>             {:{}}    ! Simulation case name. This used for output netCDF, and restart netCDF name \n".format(experiment_id, pad_to))
     cf.write("<sim_start>             {:{}}    ! Time of simulation start. format: yyyy-mm-dd or yyyy-mm-dd hh:mm:ss \n".format(sim_start, pad_to))
     cf.write("<sim_end>               {:{}}    ! Time of simulation end. format: yyyy-mm-dd or yyyy-mm-dd hh:mm:ss \n".format(sim_end, pad_to))
-    cf.write("<route_opt>             {:{}}    ! Option for routing schemes. 0: both; 1: IRF; 2: KWT. Saves no data if not specified \n".format(output_vars, pad_to))
-    cf.write("<newFileFrequency>      {:{}}    ! Frequency for new output files (single, day, month, or annual) \n".format(output_freq, pad_to))
+    cf.write("<route_opt>             {:{}}    ! Option for routing schemes. 0: Sum; 1: IRF; 2: KWT; 3: KW: 4: MC; 5: DW. Saves no data if not specified \n".format(output_vars, pad_to))
+    cf.write("<newFileFrequency>      {:{}}    ! Frequency for new output files (single, dayly, monthly, or yearly) \n".format(output_freq, pad_to))
     
     # Topology file
     cf.write("!\n! --- DEFINE TOPOLOGY FILE \n")
